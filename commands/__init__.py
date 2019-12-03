@@ -1,17 +1,19 @@
+import sys
 from optparse import OptionGroup
 
+from scrapy.crawler import CrawlerProcess
 from scrapy.exceptions import UsageError
-from scrapy.utils.conf import arglist_to_dict
+from scrapy.settings import Settings
+from scrapy.utils.conf import arglist_to_dict, get_config
+from scrapy.utils.project import get_project_settings
 
 
 class ScrapycwCommand:
 
-    crawler_process = None
+    cmdline_settings = {}
+
     can_print = False
     can_crawl_log_print = False
-
-    def __init__(self):
-        self.settings = None  # set in scrapy.cmdline
 
     def syntax(self):
         return "[options]"
@@ -38,7 +40,6 @@ class ScrapycwCommand:
 
     def process_options(self, args, opts):
         try:
-            self.settings.setdict(arglist_to_dict(opts.set), priority='cmdline')
+            self.cmdline_settings = arglist_to_dict(opts.set)
         except ValueError:
             raise UsageError("Invalid -s value, use -s NAME=VALUE", print_help=False)
-

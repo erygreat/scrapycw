@@ -37,11 +37,10 @@ def run():
     parser.description = cmd.long_desc()
     cmd.add_options(parser)
     opts, args = parser.parse_args(args=argv[1:])
-    settings = _get_settings(opts)
-    cmd.settings = settings
 
+    # 获取命令行setting
     _run_print_help(parser, cmd.process_options, args, opts)
-    cmd.crawler_process = CrawlerProcess(settings, cmd.can_crawl_log_print)
+    # 运行命令
     result = _run_print_help(parser, cmd.run, args, opts)
 
     if cmd.can_print:
@@ -88,21 +87,6 @@ def _run_print_help(parser, func, *args, **opts):
         if e.print_help:
             parser.print_help()
         sys.exit(2)
-
-
-def _get_settings(opts):
-    if hasattr(opts, "project"):
-        config = get_config()
-        for project, dir in config.items('settings'):
-            if project == opts.project:
-                settings = Settings()
-                settings.setmodule(dir, priority='project')
-                return settings
-        print("don't have {} project".format(opts.project))
-        sys.exit(2)
-    else:
-        return get_project_settings()
-
 
 def _print_commands():
     print("Usage:")

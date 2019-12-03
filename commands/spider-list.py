@@ -1,6 +1,7 @@
 from scrapy.utils.conf import get_config
 
 from scrapycw.commands import ScrapycwCommand
+from scrapycw.helpers.spider import SpiderListHelper
 
 
 class Command(ScrapycwCommand):
@@ -8,14 +9,7 @@ class Command(ScrapycwCommand):
     can_print = True
 
     def run(self, args, opts):
-        spiders = []
-        for s in sorted(self.crawler_process.spider_loader.list()):
-            spiders.append({"name": s})
-        return {
-            "status": "success",
-            "spiders": spiders,
-            "project": opts.project
-        }
+        return SpiderListHelper(opts.project, self.cmdline_settings).get_json()
 
     def short_desc(self):
         return "List of Spider"
