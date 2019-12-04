@@ -17,33 +17,33 @@ class Command(ScrapycwCommand):
         sys.argv.append(os.path.abspath(os.path.dirname(__file__)) + "/../django_manage.py")
         sys.argv.append("runserver")
         sys.argv.append("{}:{}".format(opts.host, opts.port))
-
-        pid = os.fork()
-        if pid:
-            sys.exit(0)
-
-        os.umask(0)
-        os.setsid()
-
-        _pid = os.fork()
-        if _pid:
-            sys.exit(0)
-
-        sys.stdout.flush()
-        sys.stderr.flush()
-
-        with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
-            os.dup2(read_null.fileno(), sys.stdin.fileno())
-            os.dup2(write_null.fileno(), sys.stdout.fileno())
-            os.dup2(write_null.fileno(), sys.stderr.fileno())
+        #
+        # pid = os.fork()
+        # if pid:
+        #     sys.exit(0)
+        #
+        # os.umask(0)
+        # os.setsid()
+        #
+        # _pid = os.fork()
+        # if _pid:
+        #     sys.exit(0)
+        #
+        # sys.stdout.flush()
+        # sys.stderr.flush()
+        #
+        # with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
+        #     os.dup2(read_null.fileno(), sys.stdin.fileno())
+        #     os.dup2(write_null.fileno(), sys.stdout.fileno())
+        #     os.dup2(write_null.fileno(), sys.stderr.fileno())
 
         main()
 
     def short_desc(self):
-        return "Web Service Port"
+        return "Run Web Service"
 
     def long_desc(self):
-        return "Web Service Port"
+        return "Run Web Service"
 
     def add_options(self, parser):
         ScrapycwCommand.add_options(self, parser)

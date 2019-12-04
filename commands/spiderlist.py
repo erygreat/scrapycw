@@ -6,8 +6,6 @@ from scrapycw.helpers.spider import SpiderListHelper
 
 class Command(ScrapycwCommand):
 
-    can_print = True
-
     def run(self, args, opts):
         return SpiderListHelper(opts.project, self.cmdline_settings).get_json()
 

@@ -12,7 +12,7 @@ class ScrapycwCommand:
 
     cmdline_settings = {}
 
-    can_print = False
+    can_print_result = True
     can_crawl_log_print = False
 
     def syntax(self):

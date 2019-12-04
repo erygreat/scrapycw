@@ -5,8 +5,6 @@ from scrapycw.helpers.project import ProjectListHelper
 
 class Command(ScrapycwCommand):
 
-    can_print = True
-
     def run(self, args, opts):
         return ProjectListHelper().get_json()
 

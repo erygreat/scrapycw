@@ -43,7 +43,7 @@ def run():
     # 运行命令
     result = _run_print_help(parser, cmd.run, args, opts)
 
-    if cmd.can_print:
+    if cmd.can_print_result:
         print(result)
 
     sys.exit(0)
