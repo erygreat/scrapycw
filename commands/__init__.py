@@ -1,11 +1,7 @@
-import sys
 from optparse import OptionGroup
 
-from scrapy.crawler import CrawlerProcess
 from scrapy.exceptions import UsageError
-from scrapy.settings import Settings
 from scrapy.utils.conf import arglist_to_dict, get_config
-from scrapy.utils.project import get_project_settings
 
 
 class ScrapycwCommand:

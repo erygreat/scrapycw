@@ -1,4 +1,4 @@
-from scrapy.crawler import CrawlerProcess
+from scrapy.crawler import CrawlerProcess, CrawlerRunner
 
 from scrapycw.helpers import Helper, ScrapycwHelperException
 
@@ -9,7 +9,7 @@ class SpiderListHelper(Helper):
         spiders = []
         if self.project is None:
             raise ScrapycwHelperException("没有查询到项目：{}".format(self.param_project))
-        crawler_process = CrawlerProcess(self.settings, False)
+        crawler_process = CrawlerRunner(self.settings)
         for s in sorted(crawler_process.spider_loader.list()):
             spiders.append(s)
         return spiders

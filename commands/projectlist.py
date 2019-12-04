@@ -1,4 +1,3 @@
-
 from scrapycw.commands import ScrapycwCommand
 from scrapycw.helpers.project import ProjectListHelper
 

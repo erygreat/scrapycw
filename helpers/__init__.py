@@ -1,6 +1,8 @@
 from scrapy.settings import Settings
 from scrapy.utils.conf import get_config
 
+from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
+
 
 class ScrapycwHelperException(Exception):
 
@@ -19,7 +21,7 @@ class Helper:
     def get_json(self):
         pass
 
-    def __init__(self, project="default", cmdline_settings=None):
+    def __init__(self, project=SCRAPY_DEFAULT_PROJECT, cmdline_settings=None):
         if cmdline_settings is None:
             cmdline_settings = {}
         self.param_project = project

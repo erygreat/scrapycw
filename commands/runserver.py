@@ -2,8 +2,8 @@ import multiprocessing
 import os
 import sys
 
-from scrapy.utils.conf import get_config
 
+import scrapycw_settings
 from scrapycw.commands import ScrapycwCommand
 from scrapycw.django_manage import main
 
@@ -47,5 +47,5 @@ class Command(ScrapycwCommand):
 
     def add_options(self, parser):
         ScrapycwCommand.add_options(self, parser)
-        parser.add_option("--port", metavar="<PORT>", help="web服务端口", default=8923, type="int")
-        parser.add_option("--host", metavar="<HOST>", help="监听的IP地址，当为0时表示完全公开", default="localhost")
+        parser.add_option("--port", metavar="<PORT>", help="web服务端口", default=scrapycw_settings.SERVER_PORT, type="int")
+        parser.add_option("--host", metavar="<HOST>", help="监听的IP地址，当为0时表示完全公开", default=scrapycw_settings.SERVER_HOST)

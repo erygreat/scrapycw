@@ -16,6 +16,6 @@ class ProjectListHelper(Helper):
                 "name": project
             })
         return {
-            "success": True,
+            "status": "success",
             "projects": projects,
         }
