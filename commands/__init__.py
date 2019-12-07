@@ -1,7 +1,7 @@
 from optparse import OptionGroup
 
 from scrapy.exceptions import UsageError
-from scrapy.utils.conf import arglist_to_dict, get_config
+from scrapy.utils.conf import arglist_to_dict
 
 
 class ScrapycwCommand:

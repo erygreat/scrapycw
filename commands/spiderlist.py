@@ -1,5 +1,3 @@
-from scrapy.utils.conf import get_config
-
 from scrapycw.commands import ScrapycwCommand
 from scrapycw.helpers.spider import SpiderListHelper
 

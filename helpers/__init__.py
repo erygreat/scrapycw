@@ -1,6 +1,5 @@
 from scrapy.settings import Settings
 from scrapy.utils.conf import get_config
-
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 
 
@@ -8,6 +7,7 @@ class ScrapycwHelperException(Exception):
 
     def __init__(self, message):
         self.message = message
+
 
 class Helper:
 
