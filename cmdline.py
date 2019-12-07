@@ -1,13 +1,11 @@
 import inspect
 import optparse
+import re
 import sys
 
-from scrapy.crawler import CrawlerProcess
 from scrapy.exceptions import UsageError
-from scrapy.settings import Settings
-from scrapy.utils.conf import get_config
 from scrapy.utils.misc import walk_modules
-from scrapy.utils.project import inside_project, get_project_settings
+from scrapy.utils.project import inside_project
 
 from scrapycw.commands import ScrapycwCommand
 
@@ -106,3 +104,8 @@ def _print_not_in_project():
 def _print_unknown_command(cmdname):
     print("Unknown command: %s\n" % cmdname)
     print('Use "scrapycw" to see available commands')
+
+
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
+    sys.exit(run())
