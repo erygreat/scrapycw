@@ -31,7 +31,7 @@ $ git checkout -b release origin/release
 
 - projectlist
 - spiderlist
-- runserver
+- server
 
 #### projectlist命令
 语法：`python3 scrapycw/main.py projectlist`
@@ -57,21 +57,46 @@ $ python scrapycw/main.py spiderlist -p dmhy
 {'success': true, 'spiders': [{'name': 'ipip'}, {'name': 'daili'}], 'project': 'dmhy'}
 ```
 
-#### runserver命令
-语法：`python3 scrapycw/main.py runserver [--port <端口>] [--host <允许访问的地址>]`
+#### server命令
+语法：`python3 scrapycw/main.py server [<sub-command>] [--port <端口>] [--host <允许访问的地址>]`
 说明：启动一个web服务，可以通过http请求获取scrapy服务信息
+子命令:
+
+- start: 开启web服务（默认值）
+- stop: 关闭web服务
+- restart: 重启web服务
+
 属性：
+
+start命令：
 
 - --port：web服务端口，默认值为2312，可以通过覆盖 SERVER_PORT 修改默认值
 - --host：web服务允许访问地址，默认值为localhost，如果设置为 0 表示完全开放，允许所有IP访问，可以通过覆盖 SERVER_HOST 修改默认值
+- --daemon：后台启动web服务（开启一个守护进程）
 
 示例：
 ```bash
-$ python scrapycw/main.py runserver --port 8080 --host 0
+$ # 开启一个web服务
+$ python scrapycw/main.py server start --port 8080 --host 0 --daemon
+start web service ...
+
+$ python scrapycw/main.py server stop
+stop web server...
+关闭进程成功! 进程ID: 19572
+关闭进程成功! 进程ID: 19581
+关闭web service 完成
+
+$ python scrapycw/main.py server stop --daemon
+stop web server...
+关闭进程成功! 进程ID: 19976
+关闭进程成功! 进程ID: 19985
+关闭web service 完成
+
+start web service ...
 ```
 
 ### 2. web接口
-使用`runserver`命令启动一个web服务，然后就可以通过web接口方式控制scray运行。见![runserver命令](#### runserver命令)
+使用`server`命令启动一个web服务，然后就可以通过web接口方式控制scray运行。见![server](#### server命令)
 #### 获取项目列表
 
 - 请求地址：`/api/project-list`
