@@ -48,7 +48,7 @@ $ python scrapycw/main.py projectlist
 说明：获取当前工作目录下某个scrapy项目下面所有爬虫的名称
 属性：
 
--p: scrapy项目名称，默认值为default
+- -p: scrapy项目名称，默认值为default
 
 示例：
 
@@ -62,8 +62,8 @@ $ python scrapycw/main.py spiderlist -p dmhy
 说明：启动一个web服务，可以通过http请求获取scrapy服务信息
 属性：
 
---port：web服务端口，默认值为2312，可以通过覆盖 SERVER_PORT 修改默认值
---host：web服务允许访问地址，默认值为localhost，如果设置为 0 表示完全开放，允许所有IP访问，可以通过覆盖 SERVER_HOST 修改默认值
+- --port：web服务端口，默认值为2312，可以通过覆盖 SERVER_PORT 修改默认值
+- --host：web服务允许访问地址，默认值为localhost，如果设置为 0 表示完全开放，允许所有IP访问，可以通过覆盖 SERVER_HOST 修改默认值
 
 示例：
 ```bash
@@ -105,7 +105,7 @@ $ curl "localhost:3984/api/project-list"
 - 请求参数：
 
 |请求参数|类型|是否允许为空|默认值|示例|
-|---|---|---|---|
+|---|---|---|---|---|
 |project| string | 是 | default| default|
 
 - 响应结果：
