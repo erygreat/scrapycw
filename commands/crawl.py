@@ -1,8 +1,7 @@
-from scrapy.crawler import CrawlerRunner, CrawlerProcess
+from scrapy.crawler import CrawlerProcess
 from scrapy.exceptions import UsageError
+from scrapy.extensions.telnet import TelnetConsole
 from scrapy.settings import Settings
-from scrapy.utils.log import configure_logging
-from twisted.internet import reactor
 from scrapy.utils.conf import get_config, arglist_to_dict
 
 from scrapycw.commands import ScrapycwCommand
@@ -19,14 +18,14 @@ class Command(ScrapycwCommand):
             raise ScrapycwHelperException("Project not find: {}".format(opts.project))
         spname = args[0]
 
-        # process = CrawlerProcess(settings)
-        # process.crawl(spname, **opts.spargs)
+        process = CrawlerProcess(settings)
+        process.crawl(spname, **opts.spargs)
+        for crawl in process.crawlers:
+            for mv in crawl.extensions.middlewares:
+                if isinstance(mv, TelnetConsole):
+                    print("host: {}, port: {}, username: {}, password: {}".format(mv.host, mv.port.port, mv.username, mv.password))
         # process.start()
 
-        runner = CrawlerRunner(settings)
-        runner.crawl(spname, **opts.spargs)
-        reactor.run()  # blocking call
-        # return SpiderListHelper(opts.project, self.cmdline_settings).get_json()
 
     def short_desc(self):
         return "Run Spider"
