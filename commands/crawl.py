@@ -20,12 +20,18 @@ class Command(ScrapycwCommand):
 
         process = CrawlerProcess(settings)
         process.crawl(spname, **opts.spargs)
+
+        # 获取Scrapy Telnet
+        telnet_middleware = None
         for crawl in process.crawlers:
             for mv in crawl.extensions.middlewares:
                 if isinstance(mv, TelnetConsole):
-                    print("host: {}, port: {}, username: {}, password: {}".format(mv.host, mv.port.port, mv.username, mv.password))
-        # process.start()
+                    telnet_middleware = mv
 
+        # 开启
+        print("host: {}, port: {}, username: {}, password: {}".format(telnet_middleware.host, telnet_middleware.port.port, telnet_middleware.username, telnet_middleware.password))
+        process.start()
+        print("host: {}, port: {}, username: {}, password: {}".format(telnet_middleware.host, telnet_middleware.port.port, telnet_middleware.username, telnet_middleware.password))
 
     def short_desc(self):
         return "Run Spider"
