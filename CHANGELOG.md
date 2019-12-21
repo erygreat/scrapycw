@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] - 2019-12-21
+
 ### UPDATED
 
 - 修改启动web服务的命令名称
+- 修改安装方式
 
 ### FIXED
 

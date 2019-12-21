@@ -14,10 +14,10 @@ Scrapycw是一个Scrapy监控程序，你可以通过命令行或者web服务的
 ```
 $ git clone git@github.com:erygreat/scrapycw.git
 ```
-切换到release分支
+切换到master分支
 ```
 $ cd scrapycw;
-$ git checkout -b release origin/release
+$ git checkout -b master origin/master
 ```
 
 <font color="red">暂不支持通过pip安装（不久之后会支持,）</font>
