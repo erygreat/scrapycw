@@ -1,12 +1,11 @@
 from scrapy.settings import Settings
 from scrapy.utils.conf import get_config
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
+from scrapycw.utils.exception import ScrapycwException
 
 
-class ScrapycwHelperException(Exception):
-
-    def __init__(self, message):
-        self.message = message
+class ScrapycwHelperException(ScrapycwException):
+    pass
 
 
 class Helper:
