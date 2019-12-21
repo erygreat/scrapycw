@@ -3,6 +3,12 @@ from optparse import OptionGroup
 from scrapy.exceptions import UsageError
 from scrapy.utils.conf import arglist_to_dict
 
+from scrapycw.utils.exception import ScrapycwException
+
+
+class ScrapycwCommandException(ScrapycwException):
+    pass
+
 
 class ScrapycwCommand:
 

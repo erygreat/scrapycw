@@ -9,7 +9,7 @@ from scrapy.utils.misc import walk_modules
 from scrapy.utils.project import inside_project
 
 from scrapycw.commands import ScrapycwCommand
-
+from scrapycw.utils.constant import Constant
 
 _SCRAPYCW_COMMAND_CLASS = "scrapycw.commands"
 
@@ -32,7 +32,7 @@ def run():
     cmds = _get_command_objs(_SCRAPYCW_COMMAND_CLASS)
     cmd = cmds[name]
     parser = optparse.OptionParser(formatter=optparse.TitledHelpFormatter())
-    parser.usage = "scrapycw %s %s" % (name, cmd.syntax())
+    parser.usage = "{} %s %s".format(Constant.PROJECT_NAME) % (name, cmd.syntax())
     parser.description = cmd.long_desc()
     cmd.add_options(parser)
     opts, args = parser.parse_args(args=argv[1:])
@@ -89,13 +89,13 @@ def _run_print_help(parser, func, *args, **opts):
 
 def _print_commands():
     print("Usage:")
-    print("  scrapycw <command> [options] [args]\n")
+    print("  {} <command> [options] [args]\n".format(Constant.PROJECT_NAME))
     print("Available commands:")
     cmds = _get_command_objs(_SCRAPYCW_COMMAND_CLASS)
     for cmdname, cmdclass in sorted(cmds.items()):
         print("  %-15s %s" % (cmdname, cmdclass.short_desc()))
     print()
-    print('Use "scrapycw <command> -h" to see more info about a command')
+    print('Use "{} <command> -h" to see more info about a command'.format(Constant.PROJECT_NAME))
 
 
 def _print_not_in_project():
@@ -104,7 +104,7 @@ def _print_not_in_project():
 
 def _print_unknown_command(cmdname):
     print("Unknown command: %s\n" % cmdname)
-    print('Use "scrapycw" to see available commands')
+    print('Use "{}" to see available commands'.format(Constant.PROJECT_NAME))
 
 
 if __name__ == '__main__':
