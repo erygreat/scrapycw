@@ -1,3 +1,7 @@
+import os
+import time
+from multiprocessing import Process
+
 from scrapy.crawler import CrawlerProcess
 from scrapy.exceptions import UsageError
 from scrapy.extensions.telnet import TelnetConsole
@@ -6,6 +10,7 @@ from scrapy.utils.conf import get_config, arglist_to_dict
 
 from scrapycw.commands import ScrapycwCommand
 from scrapycw.helpers import ScrapycwHelperException
+from scrapycw.utils import random
 
 
 class Command(ScrapycwCommand):
@@ -18,6 +23,7 @@ class Command(ScrapycwCommand):
             raise ScrapycwHelperException("Project not find: {}".format(opts.project))
         spname = args[0]
 
+        settings.setdict(self.cmdline_settings, priority='cmdline')
         process = CrawlerProcess(settings)
         process.crawl(spname, **opts.spargs)
 
@@ -28,10 +34,22 @@ class Command(ScrapycwCommand):
                 if isinstance(mv, TelnetConsole):
                     telnet_middleware = mv
 
+        # 生成唯一标识
+        job_id = "{}-{}".format(int(time.time()), random.rand_str(12))
+        p = Process(target=self.run_spider, args=(process,))
+        p.start()
+
+        return {
+            "job_id": job_id
+        }
         # 开启
+
         print("host: {}, port: {}, username: {}, password: {}".format(telnet_middleware.host, telnet_middleware.port.port, telnet_middleware.username, telnet_middleware.password))
+
+    def run_spider(self, process):
+        os.umask(0)
+        os.setsid()
         process.start()
-        print("host: {}, port: {}, username: {}, password: {}".format(telnet_middleware.host, telnet_middleware.port.port, telnet_middleware.username, telnet_middleware.password))
 
     def short_desc(self):
         return "Run Spider"

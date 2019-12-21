@@ -95,6 +95,7 @@ class Command(ScrapycwCommand):
             print("port:{} is used".format(opts.port))
             return
 
+        # TODO 简化、抽取创建守护进程流程，修改为只使用一次fork，主进程基本上会很快死掉，不存在僵尸进程的问题
         if opts.daemon:
             pid = os.fork()
             if pid:
