@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 from multiprocessing import Process
 
@@ -36,20 +37,40 @@ class Command(ScrapycwCommand):
 
         # 生成唯一标识
         job_id = "{}-{}".format(int(time.time()), random.rand_str(12))
-        p = Process(target=self.run_spider, args=(process,))
-        p.start()
-
-        return {
-            "job_id": job_id
-        }
-        # 开启
-
-        print("host: {}, port: {}, username: {}, password: {}".format(telnet_middleware.host, telnet_middleware.port.port, telnet_middleware.username, telnet_middleware.password))
+        pid = self.run_spider(process)
+        if pid:
+            return {
+                "job_id": job_id,
+                "telnet": {
+                    "host": telnet_middleware.host,
+                    "port": telnet_middleware.port.port,
+                    "username": telnet_middleware.username,
+                    "password": telnet_middleware.password
+                }
+            }
 
     def run_spider(self, process):
+        pid = os.fork()
+        if pid:
+            return pid
+
+        os.chdir('/')
         os.umask(0)
         os.setsid()
+
+        _pid = os.fork()
+        if _pid:
+            sys.exit(0)
+
+        sys.stdout.flush()
+        sys.stderr.flush()
+
+        with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
+            os.dup2(read_null.fileno(), sys.stdin.fileno())
+            os.dup2(write_null.fileno(), sys.stdout.fileno())
+            os.dup2(write_null.fileno(), sys.stderr.fileno())
         process.start()
+        return pid
 
     def short_desc(self):
         return "Run Spider"
