@@ -1,7 +1,7 @@
+import datetime
 import os
 import sys
 import time
-from multiprocessing import Process
 
 from scrapy.crawler import CrawlerProcess
 from scrapy.exceptions import UsageError
@@ -12,6 +12,7 @@ from scrapy.utils.conf import get_config, arglist_to_dict
 from scrapycw.commands import ScrapycwCommand
 from scrapycw.helpers import ScrapycwHelperException
 from scrapycw.utils import random
+from scrapycw.web.api.models import SpiderJob
 
 
 class Command(ScrapycwCommand):
@@ -30,17 +31,38 @@ class Command(ScrapycwCommand):
 
         # 获取Scrapy Telnet
         telnet_middleware = None
-        for crawl in process.crawlers:
-            for mv in crawl.extensions.middlewares:
-                if isinstance(mv, TelnetConsole):
-                    telnet_middleware = mv
+        crawl = None
+        for _crawl in process.crawlers:
+            crawl = _crawl
+
+        for mv in crawl.extensions.middlewares:
+            if isinstance(mv, TelnetConsole):
+                telnet_middleware = mv
 
         # 生成唯一标识
-        job_id = "{}-{}".format(int(time.time()), random.rand_str(12))
+        job_id = "{}_{}".format(time.strftime("%Y%m%d_%H%M%S", time.localtime()), random.rand_str(6))
         pid = self.run_spider(process)
+        log_path = os.path.abspath(crawl.settings.get("LOG_FILE"))
+        job_model = SpiderJob(
+            job_id=job_id,
+            project=self.project,
+            spider=spname,
+            telnet_username=telnet_middleware.username,
+            telnet_password=telnet_middleware.password,
+            telnet_host=telnet_middleware.host,
+            telnet_port=telnet_middleware.port.port,
+            status=SpiderJob.STATUS.RUNNING,
+            log_file=log_path,
+            job_start_time=datetime.datetime.now()
+        )
+        job_model.save()
+
         if pid:
             return {
                 "job_id": job_id,
+                "project": self.project,
+                "spider": spname,
+                "log_file": log_path,
                 "telnet": {
                     "host": telnet_middleware.host,
                     "port": telnet_middleware.port.port,

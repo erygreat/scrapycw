@@ -3,6 +3,8 @@ import optparse
 import os
 import re
 import sys
+import time
+import django
 
 from scrapy.exceptions import UsageError
 from scrapy.utils.misc import walk_modules
@@ -15,6 +17,9 @@ _SCRAPYCW_COMMAND_CLASS = "scrapycw.commands"
 
 
 def run():
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'scrapycw.web.settings')
+    django.setup()
+
     argv = sys.argv
     # 判断是否在项目中, 如果不在项目中则退出
     if not inside_project():
@@ -36,7 +41,6 @@ def run():
     parser.description = cmd.long_desc()
     cmd.add_options(parser)
     opts, args = parser.parse_args(args=argv[1:])
-
     # 获取命令行setting
     _run_print_help(parser, cmd.process_options, args, opts)
     # 运行命令
