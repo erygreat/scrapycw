@@ -16,7 +16,7 @@ class Command(ScrapycwCommand):
         print("=========== 初始化完成 ===========")
 
     def short_desc(self):
-        return "List of project"
+        return "init project, create database"
 
     def long_desc(self):
-        return "List of project"
+        return "init project, create database"
