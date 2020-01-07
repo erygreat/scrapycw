@@ -20,7 +20,7 @@ class SpiderJob(models.Model):
     telnet_host = models.CharField(max_length=50, null=False, verbose_name="scrapy telnet host")
     telnet_port = models.IntegerField(null=False, verbose_name="scrapy telnet port")
     status = models.IntegerField(choices=STATUS.choices, null=False, default=STATUS.RUNNING, verbose_name="status: {}".format(STATUS.choices))
-    log_file = models.CharField(max_length=255, verbose_name="log file path")
+    log_file = models.CharField(max_length=255, null=True, verbose_name="log file path")
     job_start_time = models.DateTimeField(null=True, default=None, verbose_name="job start time")
     job_end_time = models.DateTimeField(null=True, default=None, verbose_name="job end time")
     stat_info = models.TextField(default="{}", verbose_name="stat info")
