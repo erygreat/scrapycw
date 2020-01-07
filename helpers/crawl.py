@@ -3,11 +3,11 @@ import os
 import sys
 import time
 
-import scrapy
 from scrapy.crawler import CrawlerProcess
 from scrapy.extensions.telnet import TelnetConsole
 
 from scrapycw.helpers import Helper, ScrapycwHelperException
+from scrapycw.helpers.spider import SpiderRefreshStatusHelper
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 from scrapycw.utils import random
 from scrapycw.web.api.models import SpiderJob
@@ -15,16 +15,17 @@ from scrapycw.web.api.models import SpiderJob
 
 class CrawlHelper(Helper):
 
-    def __init__(self, spname, spargs, project=SCRAPY_DEFAULT_PROJECT, cmdline_settings=None):
+    def __init__(self, spname, spargs, can_print_crawl_log=False, project=SCRAPY_DEFAULT_PROJECT, cmdline_settings=None):
         self.spname = spname
         self.spargs = spargs
+        self.can_print_crawl_log = can_print_crawl_log
         super().__init__(project=project, cmdline_settings=cmdline_settings)
 
     def get_value(self):
         if self.project is None:
             raise ScrapycwHelperException("Project not find: {}".format(self.param_project))
 
-        process = CrawlerProcess(self.settings, install_root_handler=False)
+        process = CrawlerProcess(self.settings, install_root_handler=self.can_print_crawl_log)
         try:
             process.crawl(self.spname, **self.spargs)
         except KeyError as e:
@@ -42,7 +43,6 @@ class CrawlHelper(Helper):
 
         # 生成唯一标识
         job_id = "{}_{}".format(time.strftime("%Y%m%d_%H%M%S", time.localtime()), random.rand_str(6))
-        pid = self.__run_spider(process)
 
         # 获取日志文件
         log_path = crawl.settings.get("LOG_FILE", None)
@@ -61,7 +61,8 @@ class CrawlHelper(Helper):
             job_start_time=datetime.datetime.now()
         )
         job_model.save()
-
+        # 开始运行
+        pid = self.__run_spider(process, job_id)
         if pid:
             return {
                 "job_id": job_id,
@@ -87,7 +88,7 @@ class CrawlHelper(Helper):
                 "spider": self.spname,
             }
 
-    def __run_spider(self, process):
+    def __run_spider(self, process, job_id):
         pid = os.fork()
         if pid:
             return pid
@@ -102,10 +103,14 @@ class CrawlHelper(Helper):
 
         sys.stdout.flush()
         sys.stderr.flush()
-
-        with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
+        with open('/dev/ttys012') as read_null, open('/dev/ttys012', 'w') as write_null:
+            # with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
             os.dup2(read_null.fileno(), sys.stdin.fileno())
             os.dup2(write_null.fileno(), sys.stdout.fileno())
             os.dup2(write_null.fileno(), sys.stderr.fileno())
         process.start()
+
+        helper = SpiderRefreshStatusHelper(job_id=job_id)
+        helper.get_value()
+
         return pid
