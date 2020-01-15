@@ -47,13 +47,12 @@ class Telnet:
         self.__conn = None
 
 
-if __name__ == "__main__":
-    telnet = Telnet("127.0.0.1", 6023, "scrapy", 'be2447b3dbb59139', log_level=logging.DEBUG)
-    if telnet.connect():
-        # telnet.command(content="hello")
-        telnet.close()
-    else:
-        print(telnet.err_message)
+# if __name__ == "__main__":
+#     telnet = Telnet("127.0.0.1", 6023, "scrapy", 'a3225440ae0e5ee1', log_level=logging.DEBUG)
+#     if telnet.connect():
+#         telnet.close()
+#     else:
+#         print(telnet.err_message)
 
     # telnet = Telnet("127.0.0.1", "6023", "scrapy", "18964c4c0bf0cfe0")
     # if telnet.connect():
@@ -61,3 +60,20 @@ if __name__ == "__main__":
     #     telnet.close()
     # else:
     #     print(telnet.err_message)
+
+if __name__ == "__main__":
+    tn = telnetlib.Telnet(host="127.0.0.1", port=6023,)
+    sock = tn.get_socket()
+    buf = sock.recv(50)
+    print(buf)
+    sock.send(b"scrapy\r\n")
+    # tn.write(telnetlib.IAC + telnetlib.DO + telnetlib.ECHO)
+    buf = sock.recv(50)
+    print(buf)
+    sock.send(b"592939f76ebbad40\r\n")
+    buf = sock.recv(50)
+    sock.send(b"hello\r\n")
+    print(buf)
+    buf = sock.recv(50)
+    print(buf)
+    sock.close()
