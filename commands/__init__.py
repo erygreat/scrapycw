@@ -3,6 +3,7 @@ from optparse import OptionGroup
 from scrapy.exceptions import UsageError
 from scrapy.utils.conf import arglist_to_dict
 
+from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 from scrapycw.utils.exception import ScrapycwException
 
 
@@ -34,7 +35,7 @@ class ScrapycwCommand:
         Populate option parse with options available for this command
         """
         group = OptionGroup(parser, "Global Options")
-        group.add_option("-p", "--project", action="store", help="the project name, default value is 'default'", default="default")
+        group.add_option("-p", "--project", action="store", help="the project name, default value is 'default'", default=SCRAPY_DEFAULT_PROJECT)
         # group.add_option("--pidfile", metavar="FILE", help="write process ID to FILE")
         group.add_option("-s", "--set", action="append", default=[], metavar="NAME=VALUE", help="set/override setting (may be repeated)")
 
