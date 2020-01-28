@@ -54,8 +54,9 @@ class Command(ScrapycwCommand):
         children_pids = []
         for _proc in psutil.process_iter():
             if pid == _proc.pid:
-                cwd = _proc.cwd()
-                if cwd.find(Constant.PROJECT_NAME) > -1:
+                cmdline = _proc.cmdline()
+                cmdline = " ".join(cmdline)
+                if cmdline.find(Constant.PROJECT_NAME) > -1:
                     is_project = True
                 proc = _proc
             if _proc.parent() is not None and _proc.parent().pid == pid:
