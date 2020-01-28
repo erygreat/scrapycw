@@ -13,7 +13,6 @@ class Helper:
     param_project = ""
     project = None
     settings = None
-    load_settings = True
 
     def get_value(self):
         pass
@@ -23,12 +22,11 @@ class Helper:
 
     def __init__(self, project=SCRAPY_DEFAULT_PROJECT, cmdline_settings=None):
         self.param_project = project
-        if self.load_settings:
-            if cmdline_settings is None:
-                cmdline_settings = {}
-            self.settings = self.__get_settings(project)
-            if self.settings is not None:
-                self.settings.setdict(cmdline_settings, priority='cmdline')
+        if cmdline_settings is None:
+            cmdline_settings = {}
+        self.settings = self.__get_settings(project)
+        if self.settings is not None:
+            self.settings.setdict(cmdline_settings, priority='cmdline')
 
     def __get_settings(self, project):
         config = get_config()

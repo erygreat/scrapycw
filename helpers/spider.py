@@ -34,17 +34,3 @@ class SpiderListHelper(Helper):
             "spiders": spiders,
             "project": self.project
         }
-
-
-class SpiderRefreshStatusHelper(Helper):
-
-    load_settings = False
-
-    def __init__(self, job_id):
-        super().__init__()
-        self.job_id = job_id
-
-    def get_value(self):
-        model = SpiderJob.objects.filter(job_id=self.job_id).get()
-        print(self.job_id)
-

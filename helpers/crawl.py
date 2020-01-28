@@ -103,14 +103,11 @@ class CrawlHelper(Helper):
 
         sys.stdout.flush()
         sys.stderr.flush()
-        with open('/dev/ttys012') as read_null, open('/dev/ttys012', 'w') as write_null:
-            # with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
+        # with open('/dev/ttys000') as read_null, open('/dev/ttys000', 'w') as write_null:
+        with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
             os.dup2(read_null.fileno(), sys.stdin.fileno())
             os.dup2(write_null.fileno(), sys.stdout.fileno())
             os.dup2(write_null.fileno(), sys.stderr.fileno())
         process.start()
-
-        helper = SpiderRefreshStatusHelper(job_id=job_id)
-        helper.get_value()
 
         return pid
