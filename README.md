@@ -6,7 +6,7 @@ Scrapycw是一个Scrapy监控程序，你可以通过命令行或者web服务的
 ## 依赖
 
 - Python 3.5+
-- 操作系统：Linux, Mac OSX, Windows
+- 操作系统：Linux, Mac OSX
 
 ## 安装
 
@@ -14,13 +14,13 @@ Scrapycw是一个Scrapy监控程序，你可以通过命令行或者web服务的
 ```
 $ git clone git@github.com:erygreat/scrapycw.git
 ```
-切换到master分支
-```
-$ cd scrapycw;
-$ git checkout -b master origin/master
-```
 
 <font color="red">暂不支持通过pip安装（不久之后会支持,）</font>
+
+安装依赖包
+```
+$ pip3 install -r scrapycw/requirements.txt
+```
 
 ## 使用方式
 
@@ -35,17 +35,21 @@ $ git checkout -b master origin/master
 
 #### projectlist命令
 语法：`python3 scrapycw/main.py projectlist`
+
 说明：获取当前工作目录下所有的scrapy项目名称
+
 示例：
 
 ```
-$ python scrapycw/main.py projectlist
+$ python3 scrapycw/main.py projectlist
 {'success': true, 'projects': [{'name': 'default'}, {'name': 'dmhy'}]}
 ```
 
 #### spiderlist命令
 语法：`python3 scrapycw/main.py spiderlist [-p <project>]`
+
 说明：获取当前工作目录下某个scrapy项目下面所有爬虫的名称
+
 属性：
 
 - -p: scrapy项目名称，默认值为default
@@ -53,13 +57,15 @@ $ python scrapycw/main.py projectlist
 示例：
 
 ```
-$ python scrapycw/main.py spiderlist -p dmhy
+$ python3 scrapycw/main.py spiderlist -p dmhy
 {'success': true, 'spiders': [{'name': 'ipip'}, {'name': 'daili'}], 'project': 'dmhy'}
 ```
 
 #### server命令
 语法：`python3 scrapycw/main.py server [<sub-command>] [--port <端口>] [--host <允许访问的地址>]`
+
 说明：启动一个web服务，可以通过http请求获取scrapy服务信息
+
 子命令:
 
 - start: 开启web服务（默认值）
@@ -68,7 +74,7 @@ $ python scrapycw/main.py spiderlist -p dmhy
 
 属性：
 
-start命令：
+start/restart命令：
 
 - --port：web服务端口，默认值为2312，可以通过覆盖 SERVER_PORT 修改默认值
 - --host：web服务允许访问地址，默认值为localhost，如果设置为 0 表示完全开放，允许所有IP访问，可以通过覆盖 SERVER_HOST 修改默认值
@@ -77,16 +83,16 @@ start命令：
 示例：
 ```bash
 $ # 开启一个web服务
-$ python scrapycw/main.py server start --port 8080 --host 0 --daemon
+$ python3 scrapycw/main.py server start --port 8080 --host 0 --daemon
 start web service ...
 
-$ python scrapycw/main.py server stop
+$ python3 scrapycw/main.py server stop
 stop web server...
 关闭进程成功! 进程ID: 19572
 关闭进程成功! 进程ID: 19581
 关闭web service 完成
 
-$ python scrapycw/main.py server stop --daemon
+$ python3 scrapycw/main.py server restart --daemon
 stop web server...
 关闭进程成功! 进程ID: 19976
 关闭进程成功! 进程ID: 19985
