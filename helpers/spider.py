@@ -1,8 +1,6 @@
 from scrapy.crawler import CrawlerRunner
 
 from scrapycw.helpers import Helper, ScrapycwHelperException
-from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
-from scrapycw.web.api.models import SpiderJob
 
 
 class SpiderListHelper(Helper):

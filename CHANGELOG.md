@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 修正README中命令错误，安装依赖
 - 修复无法关闭服务问题
 
+### ADDED
+
+- 添加项目初始化脚本，用于创建数据库（目前仅支持sqlite3）
+- 通过脚本启动爬虫
+
 ## [0.0.4] - 2019-12-21
 
 ### UPDATED

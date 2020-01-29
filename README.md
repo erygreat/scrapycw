@@ -22,6 +22,11 @@ $ git clone git@github.com:erygreat/scrapycw.git
 $ pip3 install -r scrapycw/requirements.txt
 ```
 
+初始化项目，创建数据库(安装后或版本升级都需要运行该命令)
+```
+python3 scrapycw/main.py init
+```
+
 ## 使用方式
 
 ### 1. 命令行
@@ -29,9 +34,47 @@ $ pip3 install -r scrapycw/requirements.txt
 
 可用命令：
 
+- init
 - projectlist
 - spiderlist
 - server
+- crawl
+
+#### init命令
+语法：`python3 scrapycw/main.py init`
+
+说明：初始化项目，创建数据库表结构，安装或版本升级后都需要运行该命令（后续会使用其他方式自动执行），目前仅支持sqlite3，数据库文件在`RUNTIME_PATH`下
+
+示例：
+```
+$ python3 scrapycw/main.py init
+
+=========== 开始初始化 ===========
+==== 创建数据库表 ===
+Operations to perform:
+  Apply all migrations: api
+Running migrations:
+  No migrations to apply.
+=========== 初始化完成 ===========
+```
+
+#### crawl命令
+
+语法: `python3 scrapycw/main.py crawl <spider-name> [-p <project>] [-a <爬虫参数>] [-s <scrapy设置]`
+
+说明: 启动爬虫
+
+示例：
+```
+$ python3 scrapycw/main.py crawl ipip -p dmhy
+{'job_id': '20200129_131016_pouL0B', 'project': 'dmhy', 'spider': 'ipip', 'log_file': '/Users/mac/Git/spider/logs/scrapy.spiders.ipip_spider_2020_1_29.log', 'telnet': {'host': '127.0.0.1', 'port': 6024, 'username': 'scrapy', 'password': 'a78971039f8a176a'}}
+
+$ python3 scrapycw/main.py crawl ipip -p dmhy -a name=zhangsan
+{"job_id": "20200129_170543_y74To1", "project": "dmhy", "spider": "ipip", "log_file": "/Users/mac/Git/spider/logs/scrapy_dmhy.spiders.ipip_spider_2020_1_29.log", "telnet": {"host": "127.0.0.1", "port": 6023, "username": "scrapy", "password": "85b242b121624500"}}
+
+$ python3 scrapycw/main.py crawl ip
+{"success": false, "message": "Spider not found: ip", "project": "default", "spider": "ip"}
+```
 
 #### projectlist命令
 语法：`python3 scrapycw/main.py projectlist`
@@ -42,7 +85,7 @@ $ pip3 install -r scrapycw/requirements.txt
 
 ```
 $ python3 scrapycw/main.py projectlist
-{'success': true, 'projects': [{'name': 'default'}, {'name': 'dmhy'}]}
+{"success": true, "message": null, "projects": [{"name": "default"}, {"name": "dmhy"}]}
 ```
 
 #### spiderlist命令
@@ -58,7 +101,7 @@ $ python3 scrapycw/main.py projectlist
 
 ```
 $ python3 scrapycw/main.py spiderlist -p dmhy
-{'success': true, 'spiders': [{'name': 'ipip'}, {'name': 'daili'}], 'project': 'dmhy'}
+{"success": true, "message": null, "spiders": [{"name": "ipip"}], "project": "dmhy"}
 ```
 
 #### server命令
@@ -171,3 +214,4 @@ $ curl "localhost:3984/api/spider-list?project=my-project"
 |SERVER_PORT| int | 2312 | web服务的默认端口号|
 |SERVER_HOST| string| localhost|web服务允许访问的IP地址|
 |SCRAPY_DEFAULT_PROJECT| string | default | scrapy默认项目|
+|RUNTIME_PATH| string | scrapycw上级目录下的runtime_scrapycw | scrapycw运行中存储的内容目录|

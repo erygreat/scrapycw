@@ -1,4 +1,5 @@
 import inspect
+import json
 import optparse
 import os
 import re
@@ -47,7 +48,7 @@ def run():
     result = _run_print_help(parser, cmd.run, args, opts)
 
     if cmd.can_print_result:
-        print(result)
+        print(json.dumps(result))
 
     sys.exit(0)
 

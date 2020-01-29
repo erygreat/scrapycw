@@ -7,7 +7,6 @@ from scrapy.crawler import CrawlerProcess
 from scrapy.extensions.telnet import TelnetConsole
 
 from scrapycw.helpers import Helper, ScrapycwHelperException
-from scrapycw.helpers.spider import SpiderRefreshStatusHelper
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 from scrapycw.utils import random
 from scrapycw.web.api.models import SpiderJob
@@ -29,7 +28,7 @@ class CrawlHelper(Helper):
         try:
             process.crawl(self.spname, **self.spargs)
         except KeyError as e:
-            raise ScrapycwHelperException(e)
+            raise ScrapycwHelperException("Spider not found: {}".format(self.spname))
 
         # 获取Scrapy Telnet
         telnet_middleware = None
