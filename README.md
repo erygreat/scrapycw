@@ -228,6 +228,22 @@ $ curl -XPOST 'http://localhost:2312/api/crawl?spider=ipip&project=dmhy' -d'{"sp
 |spargs| object | 是 | {} | {"keyword": "scrapy", "mode": "hello"} | 爬虫传入的参数，等同于`scrapy crawl`的 -a, 不管使用POST还是GET都必须在请求体中 |
 |settings| object | 是 | {} | {"DOWNLOAD_DELAY": 10} | 自定义scrapy settings配置，等同于`scrapy crawl`的 -a, 不管使用POST还是GET都必须在请求体中 |
 
+- 响应结果：
+```
+{
+    "job_id": "20200130_193440_Q9pfAl", 
+    "project": "dmhy", 
+    "spider": "ipip", 
+    "log_file": "/Users/mac/Git/spider/logs/scrapy_dmhy.spiders.ipip_spider_2020_1_30.log", 
+    "telnet": {
+        "host": "127.0.0.1", 
+        "port": 6023, 
+        "username": "scrapy", 
+        "password": "c93fc576575bf2c8"
+    }
+}
+```
+
 ### 修改默认配置
 可以在项目根目录下创建`scrapycw_settings.py`文件来覆盖一些默认配置的值。可以覆盖的配置的值如下：
 
