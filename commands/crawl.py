@@ -15,7 +15,7 @@ class Command(ScrapycwCommand):
                 "project": opts.project,
             }
         spname = args[0]
-        return CrawlHelper(spname=spname, spargs=opts.spargs, can_print_crawl_log=self.can_crawl_log_print, project=opts.project, cmdline_settings=self.cmdline_settings).get_json()
+        return CrawlHelper(spname=spname, spargs=opts.spargs, project=opts.project, cmdline_settings=self.cmdline_settings).get_json()
 
     def short_desc(self):
         return "Run Spider"

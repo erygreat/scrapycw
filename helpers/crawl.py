@@ -3,10 +3,10 @@ import os
 import sys
 import time
 
-from scrapy.crawler import CrawlerProcess
 from scrapy.extensions.telnet import TelnetConsole
 
 from scrapycw.helpers import Helper, ScrapycwHelperException
+from scrapycw.scrapyrewrite.crawler import CustomCrawlerProcess
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 from scrapycw.utils import random
 from scrapycw.web.api.models import SpiderJob
@@ -14,17 +14,19 @@ from scrapycw.web.api.models import SpiderJob
 
 class CrawlHelper(Helper):
 
-    def __init__(self, spname, spargs, can_print_crawl_log=False, project=SCRAPY_DEFAULT_PROJECT, cmdline_settings=None):
+    def __init__(self, spname, spargs=None, project=SCRAPY_DEFAULT_PROJECT, cmdline_settings=None):
+        if spargs is None:
+            spargs = {}
         self.spname = spname
         self.spargs = spargs
-        self.can_print_crawl_log = can_print_crawl_log
         super().__init__(project=project, cmdline_settings=cmdline_settings)
 
     def get_value(self):
+        if self.spname is None:
+            raise ScrapycwHelperException("Spider not null")
         if self.project is None:
             raise ScrapycwHelperException("Project not find: {}".format(self.param_project))
-
-        process = CrawlerProcess(self.settings, install_root_handler=self.can_print_crawl_log)
+        process = CustomCrawlerProcess(self.settings)
         try:
             process.crawl(self.spname, **self.spargs)
         except KeyError as e:
@@ -88,25 +90,26 @@ class CrawlHelper(Helper):
             }
 
     def __run_spider(self, process, job_id):
+        # TODO 后续尝试将现在fork子进程修改为通过命令行创建爬虫（应该坑很多），目前的方式存在潜在BUG，fork的进程会同时创建一个新的django的socket。需要验证是否存在问题
         pid = os.fork()
         if pid:
             return pid
-
         os.chdir('/')
         os.umask(0)
         os.setsid()
 
         _pid = os.fork()
-        if _pid:
-            sys.exit(0)
-
-        sys.stdout.flush()
-        sys.stderr.flush()
         # with open('/dev/ttys000') as read_null, open('/dev/ttys000', 'w') as write_null:
         with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
             os.dup2(read_null.fileno(), sys.stdin.fileno())
             os.dup2(write_null.fileno(), sys.stdout.fileno())
             os.dup2(write_null.fileno(), sys.stderr.fileno())
+
+        if _pid:
+            sys.exit(0)
+
+        sys.stdout.flush()
+        sys.stderr.flush()
         process.start()
 
         return pid
