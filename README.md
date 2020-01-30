@@ -206,6 +206,28 @@ $ curl "localhost:3984/api/spider-list?project=play"
 $ curl "localhost:3984/api/spider-list?project=my-project"
 {"success": false, "message": "Project not find: my-project"}
 ```
+
+#### 启动爬虫
+
+- 请求地址：`/api/crawl`
+- 请求方式：Post | Get
+- 请求示例：
+
+```shell
+$ curl -XPOST 'http://localhost:2312/api/crawl?spider=ipip&project=dmhy' -d'{"spargs": {"keyword": "scrapy", "mode": "hello"}, "settings": {"DOWNLOAD_DELAY": 10}}'
+
+{"job_id": "20200130_193440_Q9pfAl", "project": "dmhy", "spider": "ipip", "log_file": "/Users/mac/Git/spider/logs/scrapy_dmhy.spiders.ipip_spider_2020_1_30.log", "telnet": {"host": "127.0.0.1", "port": 6023, "username": "scrapy", "password": "c93fc576575bf2c8"}}
+```
+
+- 请求参数:
+
+|请求参数|类型|是否允许为空|默认值|示例|说明|
+|---|---|---|---|---|---|
+|project| string | 是 | default| default | 指定爬虫所在项目|
+|spider| string | 否 | - | ipip | 启动的爬虫名称 |
+|spargs| object | 是 | {} | {"keyword": "scrapy", "mode": "hello"} | 爬虫传入的参数，等同于`scrapy crawl`的 -a, 不管使用POST还是GET都必须在请求体中 |
+|settings| object | 是 | {} | {"DOWNLOAD_DELAY": 10} | 自定义scrapy settings配置，等同于`scrapy crawl`的 -a, 不管使用POST还是GET都必须在请求体中 |
+
 ### 修改默认配置
 可以在项目根目录下创建`scrapycw_settings.py`文件来覆盖一些默认配置的值。可以覆盖的配置的值如下：
 
