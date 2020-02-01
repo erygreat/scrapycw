@@ -2,7 +2,7 @@ from scrapy.exceptions import UsageError
 from scrapy.utils.conf import arglist_to_dict
 
 from scrapycw.commands import ScrapycwCommand
-from scrapycw.helpers.crawl import CrawlHelper
+from scrapycw.helpers.spider import SpiderHelper
 
 
 class Command(ScrapycwCommand):
@@ -15,7 +15,7 @@ class Command(ScrapycwCommand):
                 "project": opts.project,
             }
         spname = args[0]
-        return CrawlHelper(spname=spname, spargs=opts.spargs, project=opts.project, cmdline_settings=self.cmdline_settings).get_json()
+        return SpiderHelper(project=opts.project, cmdline_settings=self.cmdline_settings).crawl(spname=spname, spargs=opts.spargs)
 
     def short_desc(self):
         return "Run Spider"

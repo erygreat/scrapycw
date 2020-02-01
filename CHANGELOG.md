@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0]
+
+### UPDATED
+
+- 修改：爬虫启动核心代码由原本 CrawlHelper 类的 get_json 方法修改为 SpiderHelper 的 crawl 方法
+- 修改：爬虫列表查询核心代码由原本 SpiderListHelper 类的 get_json 方法修改为 SpiderHelper 的 list 方法
+- 修改：修改查询爬虫列表响应结果格式，去除 spiders 中的 name 字段
+- 修改：项目列表核心代码由原本 ProjectListHelper 类的 get_json 方法修改为 ProjectHelper 的 list 方法
+- 修改：修改查询项目列表响应结果格式，去除 projects 中的 name 字段
+
+### ADDED
+
+- 添加：使用命令行关闭爬虫
+- 添加：使用web api关闭爬虫
+- 添加：对scrapy Telnet接口设置连接超时时间配置
+
 ## [0.1.1] - 2020-1-31
 
 ### FIXED

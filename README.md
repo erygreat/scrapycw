@@ -39,6 +39,7 @@ python3 scrapycw/main.py init
 - spiderlist
 - server
 - crawl
+- stop
 
 #### init命令
 语法：`python3 scrapycw/main.py init`
@@ -75,6 +76,29 @@ $ python3 scrapycw/main.py crawl ipip -p dmhy -a name=zhangsan
 $ python3 scrapycw/main.py crawl ip
 {"success": false, "message": "Spider not found: ip", "project": "default", "spider": "ip"}
 ```
+
+#### stop命令
+
+语法: `python3 scrapycw/main.py stop <job-id>`
+
+说明: 关闭爬虫
+
+示例：
+```
+$ python3 scrapycw/main.py stop 20200129_131016_pouL0B
+{"success": true, "project": "dmhy", "spider": "ipip", "message": "Finish", "status": "pending"}
+
+$ python3 scrapycw/main.py stop 20200129_131016_pouL0B
+{"success": false, "project": "dmhy", "spider": "ipip", "message": "Spider is Closed: timed out", "status": "close"}
+
+$ python3 scrapycw/main.py stop 20200129_131016_pouL0B
+{"success": false, "project": "dmhy", "spider": "ipip", "message": "Spider is Closed: [Errno 61] Connection refused", "status": "close"}
+```
+
+响应结果：
+
+- status: 爬虫状态, pending表示正在关闭, close 表示已经关闭（可能telnet还未关闭，但是此时爬虫已经停止了）
+- message: 操作消息，Finish表示完成，其他的表示爬虫已关闭
 
 #### projectlist命令
 语法：`python3 scrapycw/main.py projectlist`
@@ -244,6 +268,38 @@ $ curl -XPOST 'http://localhost:2312/api/crawl?spider=ipip&project=dmhy' -d'{"sp
 }
 ```
 
+### 关闭爬虫
+
+- 请求地址：`/api/stop`
+- 请求方式：Get
+- 请求示例：
+
+```shell
+$ curl 'http://localhost:2312/api/stop?job_id=20200201_182340_XJDfiY'
+
+{"success": true, "project": "dmhy", "spider": "ipip", "message": "Finish", "status": "pending"}
+```
+
+- 请求参数：
+
+|请求参数|类型|是否允许为空|默认值|示例|说明|
+|---|---|---|---|---|---|
+|job_id| string | 否 | - | 20200201_182340_XJDfiY | 请求的任务ID |
+
+- 响应结果:
+
+```
+{
+    "success": true, 
+    "project": "dmhy", 
+    "spider": "ipip", 
+    "message": "Finish", 
+    "status": "pending"
+}
+```
+
+- status: 爬虫状态, pending表示正在关闭, close 表示已经关闭（可能telnet还未关闭，但是此时爬虫已经停止了）
+
 ### 修改默认配置
 可以在项目根目录下创建`scrapycw_settings.py`文件来覆盖一些默认配置的值。可以覆盖的配置的值如下：
 
@@ -253,3 +309,4 @@ $ curl -XPOST 'http://localhost:2312/api/crawl?spider=ipip&project=dmhy' -d'{"sp
 |SERVER_HOST| string| localhost|web服务允许访问的IP地址|
 |SCRAPY_DEFAULT_PROJECT| string | default | scrapy默认项目|
 |RUNTIME_PATH| string | scrapycw上级目录下的runtime_scrapycw | scrapycw运行中存储的内容目录|
+|TELNET_TIMEOUT|int| 10 | telnet的超时时间，当为None是表示不设置超时时间(当关闭爬虫时，telnet会延后关闭，此时连接会超时)

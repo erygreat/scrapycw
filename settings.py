@@ -10,6 +10,8 @@ __BASE_URL = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RUNTIME_PATH = os.path.join(__BASE_URL, "runtime_scrapycw")
 PID_FILENAME = "server.pid"
 
+TELNET_TIMEOUT = 10
+
 try:
     from scrapycw_settings import *
 except ImportError:

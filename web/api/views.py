@@ -2,20 +2,20 @@ import json
 
 from django.http import HttpResponse
 
-from scrapycw.helpers.crawl import CrawlHelper
-from scrapycw.helpers.project import ProjectListHelper
-from scrapycw.helpers.spider import SpiderListHelper
+from scrapycw.helpers.job import JobHelper
+from scrapycw.helpers.project import ProjectHelper
+from scrapycw.helpers.spider import SpiderHelper
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 
 
 def project_list(request):
-    result = ProjectListHelper().get_json()
+    result = ProjectHelper().list()
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 
 def spider_list(request):
     project = request.GET.get("project", SCRAPY_DEFAULT_PROJECT)
-    result = SpiderListHelper(project=project).get_json()
+    result = SpiderHelper(project=project).list()
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 
@@ -25,5 +25,12 @@ def crawl(request):
     body = json.loads(request.body)
     spargs = body.get("spargs")
     settings = body.get("settings")
-    result = CrawlHelper(spname=spname, project=project, spargs=spargs, cmdline_settings=settings).get_json()
+
+    result = SpiderHelper(project=project, cmdline_settings=settings).crawl(spname=spname, spargs=spargs)
+    return HttpResponse(json.dumps(result), content_type='application/json')
+
+
+def stop(request):
+    job_id = request.GET.get("job_id")
+    result = JobHelper(job_id=job_id).stop()
     return HttpResponse(json.dumps(result), content_type='application/json')
