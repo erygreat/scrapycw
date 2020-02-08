@@ -47,7 +47,7 @@ class Telnet:
             buf = self.__sock.recv(50)
             if str(buf).find("Authentication failed") != -1:
                 self.__conn.close()
-                raise ScrapycwAuthenticationFailException("Scrapy Authentication failed")
+                raise ScrapycwAuthenticationFailException("Authentication failed")
         except ConnectionResetError as e:
             raise ScrapycwTelnetException(str(e))
         except socket.timeout as e:

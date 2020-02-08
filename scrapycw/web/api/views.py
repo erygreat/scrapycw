@@ -34,3 +34,15 @@ def stop(request):
     job_id = request.GET.get("job_id")
     result = JobHelper(job_id=job_id).stop()
     return HttpResponse(json.dumps(result), content_type='application/json')
+
+
+def pause(request):
+    job_id = request.GET.get("job_id")
+    result = JobHelper(job_id=job_id).pause()
+    return HttpResponse(json.dumps(result), content_type='application/json')
+
+
+def unpause(request):
+    job_id = request.GET.get("job_id")
+    result = JobHelper(job_id=job_id).unpause()
+    return HttpResponse(json.dumps(result), content_type='application/json')

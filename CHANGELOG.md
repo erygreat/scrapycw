@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.0]
+## [0.3.0]
 
 ### UPDATED
 
@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 添加：使用命令行关闭爬虫
 - 添加：使用web api关闭爬虫
 - 添加：对scrapy Telnet接口设置连接超时时间配置
+- 添加：暂停爬虫
+- 添加：恢复爬虫
+- 添加：pypi发布版本，可以使用pip安装环境
+- 添加：每次运行命令的时候都会初始化环境（尝试创建数据库、尝试创建运行目录），可以配置 INIT_EACH_RUN 参数关闭
 
 ## [0.1.1] - 2020-1-31
 

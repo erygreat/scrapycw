@@ -10,21 +10,9 @@ Scrapycw是一个Scrapy监控程序，你可以通过命令行或者web服务的
 
 ## 安装
 
-在项目根目录下克隆项目 scrapycw
-```
-$ git clone git@github.com:erygreat/scrapycw.git
-```
-
-<font color="red">暂不支持通过pip安装（不久之后会支持,）</font>
-
 安装依赖包
 ```
-$ pip3 install -r scrapycw/requirements.txt
-```
-
-初始化项目，创建数据库(安装后或版本升级都需要运行该命令)
-```
-python3 scrapycw/main.py init
+$ pip3 install scrapycw
 ```
 
 ## 使用方式
@@ -41,23 +29,8 @@ python3 scrapycw/main.py init
 - crawl
 - stop
 
-#### init命令
-语法：`python3 scrapycw/main.py init`
-
-说明：初始化项目，创建数据库表结构，安装或版本升级后都需要运行该命令（后续会使用其他方式自动执行），目前仅支持sqlite3，数据库文件在`RUNTIME_PATH`下
-
-示例：
-```
-$ python3 scrapycw/main.py init
-
-=========== 开始初始化 ===========
-==== 创建数据库表 ===
-Operations to perform:
-  Apply all migrations: api
-Running migrations:
-  No migrations to apply.
-=========== 初始化完成 ===========
-```
+注意：本项目依赖于scrapy的telnet，请不要使用`TELNETCONSOLE_ENABLED`配置禁用他。telnet本身是不安全的（即使有用户名和密码）因为响应的端口不应该对本机外开放，可以使用防火墙屏蔽掉这些端口。
+另外`TELNETCONSOLE_PASSWORD`必须设置为None（自动生成密码）, 必须启动`scrapy.extensions.telnet.TelnetConsole`拓展
 
 #### crawl命令
 
@@ -86,18 +59,18 @@ $ python3 scrapycw/main.py crawl ip
 示例：
 ```
 $ python3 scrapycw/main.py stop 20200129_131016_pouL0B
-{"success": true, "project": "dmhy", "spider": "ipip", "message": "Finish", "status": "pending"}
+{"success": true, "message": "Finish", "status": "pending"}
 
 $ python3 scrapycw/main.py stop 20200129_131016_pouL0B
-{"success": false, "project": "dmhy", "spider": "ipip", "message": "Spider is Closed: timed out", "status": "close"}
+{"success": false, "message": "Spider is Closed: timed out", "status": "close"}
 
 $ python3 scrapycw/main.py stop 20200129_131016_pouL0B
-{"success": false, "project": "dmhy", "spider": "ipip", "message": "Spider is Closed: [Errno 61] Connection refused", "status": "close"}
+{"success": false, "message": "Spider is Closed: [Errno 61] Connection refused", "status": "close"}
 ```
 
 响应结果：
 
-- status: 爬虫状态, pending表示正在关闭, close 表示已经关闭（可能telnet还未关闭，但是此时爬虫已经停止了）
+- status: 爬虫状态, closing 表示正在关闭, close 表示已经关闭（可能telnet还未关闭，但是此时爬虫已经停止了）
 - message: 操作消息，Finish表示完成，其他的表示爬虫已关闭
 
 #### projectlist命令
@@ -167,6 +140,25 @@ stop web server...
 
 start web service ...
 ```
+
+#### init命令
+语法：`python3 scrapycw/main.py init`
+
+说明：初始化项目，除非将`INIT_EACH_RUN`设置为False，否则会在每次程序运行时自动运行。创建数据库表结构，安装或版本升级后都需要运行该命令（后续会使用其他方式自动执行），目前仅支持sqlite3，数据库文件在`RUNTIME_PATH`下
+
+示例：
+```
+$ python3 scrapycw/main.py init
+
+=========== 开始初始化 ===========
+==== 创建数据库表 ===
+Operations to perform:
+  Apply all migrations: api
+Running migrations:
+  No migrations to apply.
+=========== 初始化完成 ===========
+```
+
 
 ### 2. web接口
 使用`server`命令启动一个web服务，然后就可以通过web接口方式控制scray运行。见![server](#### server命令)
@@ -277,7 +269,7 @@ $ curl -XPOST 'http://localhost:2312/api/crawl?spider=ipip&project=dmhy' -d'{"sp
 ```shell
 $ curl 'http://localhost:2312/api/stop?job_id=20200201_182340_XJDfiY'
 
-{"success": true, "project": "dmhy", "spider": "ipip", "message": "Finish", "status": "pending"}
+{"success": true, "message": "Finish", "status": "pending"}
 ```
 
 - 请求参数：
@@ -291,8 +283,6 @@ $ curl 'http://localhost:2312/api/stop?job_id=20200201_182340_XJDfiY'
 ```
 {
     "success": true, 
-    "project": "dmhy", 
-    "spider": "ipip", 
     "message": "Finish", 
     "status": "pending"
 }
@@ -310,3 +300,4 @@ $ curl 'http://localhost:2312/api/stop?job_id=20200201_182340_XJDfiY'
 |SCRAPY_DEFAULT_PROJECT| string | default | scrapy默认项目|
 |RUNTIME_PATH| string | scrapycw上级目录下的runtime_scrapycw | scrapycw运行中存储的内容目录|
 |TELNET_TIMEOUT|int| 10 | telnet的超时时间，当为None是表示不设置超时时间(当关闭爬虫时，telnet会延后关闭，此时连接会超时)
+| INIT_EACH_RUN| boolean| True|每次运行命令时都会尝试初始化项目环境|

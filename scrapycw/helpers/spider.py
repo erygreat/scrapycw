@@ -5,11 +5,11 @@ import time
 
 from scrapy.crawler import CrawlerRunner
 from scrapy.extensions.telnet import TelnetConsole
+from scrapycw.web.api.models import SpiderJob
 
 from scrapycw.helpers import Helper, ScrapycwHelperException
 from scrapycw.scrapyrewrite.crawler import CustomCrawlerProcess
 from scrapycw.utils import random
-from scrapycw.web.api.models import SpiderJob
 
 
 class SpiderHelper(Helper):
