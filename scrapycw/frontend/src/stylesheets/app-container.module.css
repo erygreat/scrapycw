@@ -1,0 +1,22 @@
+.app-container,
+.spider-menu {
+    height: inherit;
+    position: relative;
+}
+
+.app-container {
+    display: flex;
+}
+
+.menu {
+    height: inherit;
+    padding-bottom: 36px;
+}
+
+.collapse-btn {
+    position: absolute;
+    left: 24px;
+    bottom: 10px;
+    font-size: 16px;
+    line-height: 36px;
+}

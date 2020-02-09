@@ -4,6 +4,32 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [Unreleased]
+
+### UPDATED
+
+- 在job表添加settings字段
+
+## [0.3.0] - 2020-2-9
+
+### UPDATED
+
+- 修改：爬虫启动核心代码由原本 CrawlHelper 类的 get_json 方法修改为 SpiderHelper 的 crawl 方法
+- 修改：爬虫列表查询核心代码由原本 SpiderListHelper 类的 get_json 方法修改为 SpiderHelper 的 list 方法
+- 修改：修改查询爬虫列表响应结果格式，去除 spiders 中的 name 字段
+- 修改：项目列表核心代码由原本 ProjectListHelper 类的 get_json 方法修改为 ProjectHelper 的 list 方法
+- 修改：修改查询项目列表响应结果格式，去除 projects 中的 name 字段
+
+### ADDED
+
+- 添加：使用命令行关闭爬虫
+- 添加：使用web api关闭爬虫
+- 添加：对scrapy Telnet接口设置连接超时时间配置
+- 添加：暂停爬虫
+- 添加：恢复爬虫
+- 添加：pypi发布版本，可以使用pip安装环境
+- 添加：可以配置 INIT_EACH_RUN 参数开启每次运行命令的时候都会初始化环境（尝试创建数据库、尝试创建运行目录）
+- 添加：版本查询命令
 
 ## [0.1.1] - 2020-1-31
 

@@ -1,0 +1,11 @@
+.App {
+    height: 100vh;
+}
+header.header {
+    height: 48px;
+    line-height: 48px;
+}
+.content-container {
+    height: calc(100vh - 48px);
+    overflow: scroll;
+}
