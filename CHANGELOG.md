@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 添加：恢复爬虫
 - 添加：pypi发布版本，可以使用pip安装环境
 - 添加：可以配置 INIT_EACH_RUN 参数开启每次运行命令的时候都会初始化环境（尝试创建数据库、尝试创建运行目录）
+- 添加：版本查询命令
 
 ## [0.1.1] - 2020-1-31
 
