@@ -6,18 +6,23 @@ import sys
 import django
 
 from scrapy.exceptions import UsageError
+from scrapy.utils.conf import closest_scrapy_cfg
 from scrapy.utils.misc import walk_modules
 from scrapy.utils.project import inside_project
 
 from scrapycw.commands import ScrapycwCommand, init
 from scrapycw.utils.constant import Constant
 
-from modules.scrapycw.settings import INIT_EACH_RUN
+from scrapycw.settings import INIT_EACH_RUN
 
 _SCRAPYCW_COMMAND_CLASS = "scrapycw.commands"
 
 
 def execute():
+    # 添加环境变量
+    project_dir = os.path.dirname(closest_scrapy_cfg())
+    sys.path.append(project_dir)
+
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'scrapycw.web.settings')
     django.setup()
 

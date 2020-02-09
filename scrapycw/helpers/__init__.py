@@ -1,5 +1,8 @@
+import os
+import sys
+
 from scrapy.settings import Settings
-from scrapy.utils.conf import get_config
+from scrapy.utils.conf import get_config, closest_scrapy_cfg
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 from scrapycw.utils.exception import ScrapycwException
 
@@ -21,6 +24,8 @@ class Helper:
         pass
 
     def __init__(self, project=SCRAPY_DEFAULT_PROJECT, cmdline_settings=None):
+        project_dir = os.path.dirname(closest_scrapy_cfg())
+        sys.path.append(project_dir)
         self.param_project = project
         if cmdline_settings is None:
             cmdline_settings = {}

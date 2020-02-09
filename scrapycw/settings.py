@@ -19,7 +19,7 @@ PID_FILENAME = "server.pid"
 # Telnet链接超时时间
 TELNET_TIMEOUT = 10
 # 每次运行时都会初始化项目数据库、文件等内容
-INIT_EACH_RUN = True
+INIT_EACH_RUN = False
 
 try:
     from scrapycw_settings import *

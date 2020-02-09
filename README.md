@@ -144,7 +144,7 @@ start web service ...
 #### init命令
 语法：`python3 scrapycw/main.py init`
 
-说明：初始化项目，除非将`INIT_EACH_RUN`设置为False，否则会在每次程序运行时自动运行。创建数据库表结构，安装或版本升级后都需要运行该命令（后续会使用其他方式自动执行），目前仅支持sqlite3，数据库文件在`RUNTIME_PATH`下
+说明：初始化项目，创建数据库表结构（如将`INIT_EACH_RUN`True，则每次程序运行时自动运行。），安装或版本升级后都需要运行该命令（后续会使用其他方式自动执行），目前仅支持sqlite3，数据库文件在`RUNTIME_PATH`下
 
 示例：
 ```
@@ -300,4 +300,4 @@ $ curl 'http://localhost:2312/api/stop?job_id=20200201_182340_XJDfiY'
 |SCRAPY_DEFAULT_PROJECT| string | default | scrapy默认项目|
 |RUNTIME_PATH| string | scrapycw上级目录下的runtime_scrapycw | scrapycw运行中存储的内容目录|
 |TELNET_TIMEOUT|int| 10 | telnet的超时时间，当为None是表示不设置超时时间(当关闭爬虫时，telnet会延后关闭，此时连接会超时)
-| INIT_EACH_RUN| boolean| True|每次运行命令时都会尝试初始化项目环境|
+| INIT_EACH_RUN| boolean| False|每次运行命令时都会尝试初始化项目环境|

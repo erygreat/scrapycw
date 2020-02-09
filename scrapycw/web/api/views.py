@@ -22,9 +22,13 @@ def spider_list(request):
 def crawl(request):
     project = request.GET.get("project", SCRAPY_DEFAULT_PROJECT)
     spname = request.GET.get("spider")
-    body = json.loads(request.body)
-    spargs = body.get("spargs")
-    settings = body.get("settings")
+    try:
+        body = json.loads(request.body)
+        spargs = body.get("spargs")
+        settings = body.get("settings")
+    except:
+        spargs = {}
+        settings = {}
 
     result = SpiderHelper(project=project, cmdline_settings=settings).crawl(spname=spname, spargs=spargs)
     return HttpResponse(json.dumps(result), content_type='application/json')

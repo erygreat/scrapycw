@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='scrapycw',
-    version='0.2.1.rc2',
+    version='0.2.1',
     description="一个web监控scrapy的工具",
     long_description="""
         一个通过web监控和操作scrapy爬虫程序的监控工具。可以通过该工具启动、关闭、操作爬虫程序，也可以通过他观察爬虫的运行情况
@@ -18,11 +18,12 @@ setup(
         ],
     },
     include_package_data=True,
-    packages=find_packages(exclude=('tests', 'tests.*')),
+    packages=find_packages(include=["scrapycw*"]),
     author='erygreat',
     author_email='ery991172821@gmail.com',
     keywords='scrapy web monitor',
     url='https://github.com/erygreat/scrapycw',
+    license="BSD",
     # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         "Development Status :: 1 - Planning",
@@ -33,5 +34,4 @@ setup(
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 3"
     ],
-    license='',
 )
