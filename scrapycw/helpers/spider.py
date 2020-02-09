@@ -3,34 +3,40 @@ import os
 import sys
 import time
 
+from scrapy.crawler import CrawlerRunner
 from scrapy.extensions.telnet import TelnetConsole
+from scrapycw.web.api.models import SpiderJob
 
 from scrapycw.helpers import Helper, ScrapycwHelperException
 from scrapycw.scrapyrewrite.crawler import CustomCrawlerProcess
-from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 from scrapycw.utils import random
-from scrapycw.web.api.models import SpiderJob
 
 
-class CrawlHelper(Helper):
+class SpiderHelper(Helper):
 
-    def __init__(self, spname, spargs=None, project=SCRAPY_DEFAULT_PROJECT, cmdline_settings=None):
-        if spargs is None:
-            spargs = {}
-        self.spname = spname
-        self.spargs = spargs
-        super().__init__(project=project, cmdline_settings=cmdline_settings)
+    def crawl(self, spname, spargs=None):
+        try:
+            return self._crawl(spname, spargs)
+        except ScrapycwHelperException as e:
+            return {
+                "success": False,
+                "message": e.message,
+                "project": self.project,
+                "spider": spname,
+            }
 
-    def get_value(self):
-        if self.spname is None:
+    def _crawl(self, spname, spargs=None):
+        if spname is None:
             raise ScrapycwHelperException("Spider not null")
+
         if self.project is None:
             raise ScrapycwHelperException("Project not find: {}".format(self.param_project))
+
         process = CustomCrawlerProcess(self.settings)
         try:
-            process.crawl(self.spname, **self.spargs)
+            process.crawl(spname, **spargs)
         except KeyError as e:
-            raise ScrapycwHelperException("Spider not found: {}".format(self.spname))
+            raise ScrapycwHelperException("Spider not found: {}".format(spname))
 
         # 获取Scrapy Telnet
         telnet_middleware = None
@@ -52,7 +58,7 @@ class CrawlHelper(Helper):
         job_model = SpiderJob(
             job_id=job_id,
             project=self.project,
-            spider=self.spname,
+            spider=spname,
             telnet_username=telnet_middleware.username,
             telnet_password=telnet_middleware.password,
             telnet_host=telnet_middleware.host,
@@ -63,33 +69,23 @@ class CrawlHelper(Helper):
         )
         job_model.save()
         # 开始运行
-        pid = self.__run_spider(process, job_id)
+        pid = self.__run_spider(process)
         if pid:
             return {
                 "job_id": job_id,
                 "project": self.project,
-                "spider": self.spname,
+                "spider": spname,
                 "log_file": log_path,
                 "telnet": {
                     "host": telnet_middleware.host,
                     "port": telnet_middleware.port.port,
                     "username": telnet_middleware.username,
                     "password": telnet_middleware.password
-                }
+                },
+                "message": None
             }
 
-    def get_json(self):
-        try:
-            return self.get_value()
-        except ScrapycwHelperException as e:
-            return {
-                "success": False,
-                "message": e.message,
-                "project": self.project,
-                "spider": self.spname,
-            }
-
-    def __run_spider(self, process, job_id):
+    def __run_spider(self, process):
         # TODO 后续尝试将现在fork子进程修改为通过命令行创建爬虫（应该坑很多），目前的方式存在潜在BUG，fork的进程会同时创建一个新的django的socket。需要验证是否存在问题
         pid = os.fork()
         if pid:
@@ -113,3 +109,26 @@ class CrawlHelper(Helper):
         process.start()
 
         return pid
+
+    def list(self):
+        try:
+            return {
+                "success": True,
+                "message": None,
+                "spiders": self._list(),
+                "project": self.project
+            }
+        except ScrapycwHelperException as e:
+            return {
+                "success": False,
+                "message": e.message
+            }
+
+    def _list(self):
+        spiders = []
+        if self.project is None:
+            raise ScrapycwHelperException("Project not find: {}".format(self.param_project))
+        crawler_process = CrawlerRunner(self.settings)
+        for s in sorted(crawler_process.spider_loader.list()):
+            spiders.append(s)
+        return spiders

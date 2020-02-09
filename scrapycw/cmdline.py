@@ -2,24 +2,32 @@ import inspect
 import json
 import optparse
 import os
-import re
 import sys
-import time
 import django
 
 from scrapy.exceptions import UsageError
+from scrapy.utils.conf import closest_scrapy_cfg
 from scrapy.utils.misc import walk_modules
 from scrapy.utils.project import inside_project
 
-from scrapycw.commands import ScrapycwCommand
+from scrapycw.commands import ScrapycwCommand, init
 from scrapycw.utils.constant import Constant
+
+from scrapycw.settings import INIT_EACH_RUN
 
 _SCRAPYCW_COMMAND_CLASS = "scrapycw.commands"
 
 
-def run():
+def execute():
+    # 添加环境变量
+    project_dir = os.path.dirname(closest_scrapy_cfg())
+    sys.path.append(project_dir)
+
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'scrapycw.web.settings')
     django.setup()
+
+    if INIT_EACH_RUN:
+        __init_project()
 
     argv = sys.argv
     # 判断是否在项目中, 如果不在项目中则退出
@@ -92,6 +100,7 @@ def _run_print_help(parser, func, *args, **opts):
             parser.print_help()
         sys.exit(2)
 
+
 def _print_commands():
     print("Usage:")
     print("  {} <command> [options] [args]\n".format(Constant.PROJECT_NAME))
@@ -112,6 +121,11 @@ def _print_unknown_command(cmdname):
     print('Use "{}" to see available commands'.format(Constant.PROJECT_NAME))
 
 
+def __init_project():
+    command = init.Command()
+    command.can_print_result = False
+    command.run([], {})
+
+
 if __name__ == '__main__':
-    sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
-    sys.exit(run())
+    execute()

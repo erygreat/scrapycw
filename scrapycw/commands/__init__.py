@@ -36,7 +36,6 @@ class ScrapycwCommand:
         """
         group = OptionGroup(parser, "Global Options")
         group.add_option("-p", "--project", action="store", help="the project name, default value is 'default'", default=SCRAPY_DEFAULT_PROJECT)
-        # group.add_option("--pidfile", metavar="FILE", help="write process ID to FILE")
         group.add_option("-s", "--set", action="append", default=[], metavar="NAME=VALUE", help="set/override setting (may be repeated)")
 
         parser.add_option_group(group)
