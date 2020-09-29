@@ -1,0 +1,30 @@
+.help-content {
+    display: flex;
+    height: 100%;
+}
+.help-content > div {
+    height: 100%;
+}
+.menu,
+.menu > ul {
+    width: 200px;
+}
+.menu > ul {
+    height: 100%;
+}
+.menu {
+    border: 1px solid #ddd;
+    transition: width 0.5s;
+    overflow: hidden;
+}
+.menu.hide {
+    width: 0;
+    transition: width 0.5s;
+}
+.help-content .controls {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    font-size: 20px;
+    height: 20px;
+}

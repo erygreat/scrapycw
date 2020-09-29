@@ -1,15 +1,18 @@
 import datetime
+import json
 import os
 import sys
 import time
 
 from scrapy.crawler import CrawlerRunner
 from scrapy.extensions.telnet import TelnetConsole
+
+from scrapycw.utils.json_encoder import ScrapySettingEncoder
 from scrapycw.web.api.models import SpiderJob
 
 from scrapycw.helpers import Helper, ScrapycwHelperException
 from scrapycw.scrapyrewrite.crawler import CustomCrawlerProcess
-from scrapycw.utils import random
+from scrapycw.utils import rand
 
 
 class SpiderHelper(Helper):
@@ -49,8 +52,8 @@ class SpiderHelper(Helper):
                 telnet_middleware = mv
 
         # 生成唯一标识
-        job_id = "{}_{}".format(time.strftime("%Y%m%d_%H%M%S", time.localtime()), random.rand_str(6))
-
+        job_id = "{}_{}".format(time.strftime("%Y%m%d_%H%M%S", time.localtime()), rand.rand_str(6))
+        settings_str = json.dumps({key: value for key, value in self.settings.items()}, cls=ScrapySettingEncoder)
         # 获取日志文件
         log_path = crawl.settings.get("LOG_FILE", None)
         if log_path is not None:
@@ -64,6 +67,7 @@ class SpiderHelper(Helper):
             telnet_host=telnet_middleware.host,
             telnet_port=telnet_middleware.port.port,
             status=SpiderJob.STATUS.RUNNING,
+            settings=settings_str,
             log_file=log_path,
             job_start_time=datetime.datetime.now()
         )
@@ -95,7 +99,7 @@ class SpiderHelper(Helper):
         os.setsid()
 
         _pid = os.fork()
-        # with open('/dev/ttys000') as read_null, open('/dev/ttys000', 'w') as write_null:
+        # with open('/dev/ttys007') as read_null, open('/dev/ttys007', 'w') as write_null:
         with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
             os.dup2(read_null.fileno(), sys.stdin.fileno())
             os.dup2(write_null.fileno(), sys.stdout.fileno())

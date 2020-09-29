@@ -21,7 +21,8 @@ class SpiderJob(models.Model):
     log_file = models.CharField(max_length=255, null=True, verbose_name="log file path")
     job_start_time = models.DateTimeField(null=True, default=None, verbose_name="job start time")
     job_end_time = models.DateTimeField(null=True, default=None, verbose_name="job end time")
-    stat_info = models.TextField(default="{}", verbose_name="stat info")
+    stats = models.TextField(default="{}", verbose_name="stat info")
+    settings = models.TextField(default="{}", verbose_name="settings info")
     created_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
 

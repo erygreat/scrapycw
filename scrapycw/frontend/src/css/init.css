@@ -1,0 +1,9 @@
+:root {
+    font-size: 12px;
+}
+
+.clear-float::after {
+    content: '';
+    display: block;
+    clear: both;
+}
