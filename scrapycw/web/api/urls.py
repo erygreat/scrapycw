@@ -3,8 +3,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('project-list', views.project_list, name='project-list'),
-    path('spider-list', views.spider_list, name='spider-list'),
+    path('projects', views.projects, name='projects'),
+    path('spiders', views.spiders, name='spiders'),
+    path('all-spiders', views.all_spiders, name='all-spiders'),
     path('crawl', views.crawl, name='crawl'),
     path('stop', views.stop, name='stop'),
     path('pause', views.pause, name='pause'),

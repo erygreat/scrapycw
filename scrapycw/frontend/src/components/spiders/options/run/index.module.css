@@ -1,0 +1,15 @@
+.label {
+    width: 80px;
+}
+
+.settingsContent {
+    width: 500px;
+}
+
+.controlBtn {
+    margin: 0 10px;
+}
+
+.btnGroup {
+    text-align: center;
+}

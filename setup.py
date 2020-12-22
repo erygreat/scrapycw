@@ -13,6 +13,7 @@ setup(
         "Django>=3.0.0",
         'Scrapy>=1.0',
         "psutil>=5.0.0",
+        "django-apscheduler>=0.5.2"
     ],
     entry_points={
         "console_scripts": [

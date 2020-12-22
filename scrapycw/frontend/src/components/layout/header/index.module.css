@@ -1,0 +1,9 @@
+.menu-btn a {
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+.header {
+    height: 4rem;
+    line-height: 4rem;
+}

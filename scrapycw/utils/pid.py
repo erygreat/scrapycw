@@ -32,7 +32,7 @@ def kill_pid(pid):
         while is_running(pid):
             time.sleep(0.01)
         return True
-    except OSError as e:
+    except OSError:
         return False
 
 

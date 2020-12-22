@@ -3,16 +3,20 @@ import json
 import optparse
 import os
 import sys
-import django
 
 from scrapy.exceptions import UsageError
 from scrapy.utils.conf import closest_scrapy_cfg
 from scrapy.utils.misc import walk_modules
 from scrapy.utils.project import inside_project
 
+if __name__ == '__main__':
+    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, current_dir)
+
+from scrapycw.utils.django_env import init_django_env
+from scrapycw.utils.json_encoder import DatetimeJsonEncoder
 from scrapycw.commands import ScrapycwCommand, init
 from scrapycw.utils.constant import Constant
-
 from scrapycw.settings import INIT_EACH_RUN
 
 _SCRAPYCW_COMMAND_CLASS = "scrapycw.commands"
@@ -23,8 +27,7 @@ def execute():
     project_dir = os.path.dirname(closest_scrapy_cfg())
     sys.path.append(project_dir)
 
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'scrapycw.web.settings')
-    django.setup()
+    init_django_env()
 
     if INIT_EACH_RUN:
         __init_project()
@@ -49,14 +52,17 @@ def execute():
     parser.usage = "{} %s %s".format(Constant.PROJECT_NAME) % (name, cmd.syntax())
     parser.description = cmd.long_desc()
     cmd.add_options(parser)
+    add_options(parser)
     opts, args = parser.parse_args(args=argv[1:])
     # 获取命令行setting
     _run_print_help(parser, cmd.process_options, args, opts)
     # 运行命令
     result = _run_print_help(parser, cmd.run, args, opts)
 
-    if cmd.can_print_result:
-        print(json.dumps(result))
+    if cmd.can_print_result and opts.pretty:
+        print(json.dumps(result, cls=DatetimeJsonEncoder, indent=2))
+    elif cmd.can_print_result:
+        print(json.dumps(result, cls=DatetimeJsonEncoder))
 
     sys.exit(0)
 
@@ -75,6 +81,9 @@ def get_command_name(argv):
         i += 1
 
 
+def add_options(parser):
+    parser.add_option("--pretty", help="pretty", action="store_true", default=False)
+
 def _iter_command_classes(module_name):
     for module in walk_modules(module_name):
         for obj in vars(module).values():
@@ -86,7 +95,7 @@ def _get_command_objs(module_name):
     cmds = {}
     for cls_name in _iter_command_classes(module_name):
         cmd_name = cls_name.__module__.split('.')[-1]
-        cmds[cmd_name] = cls_name()
+        cmds[cmd_name] = cls_name(cmd_name)
     return cmds
 
 
@@ -127,5 +136,5 @@ def __init_project():
     command.run([], {})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     execute()

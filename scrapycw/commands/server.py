@@ -4,6 +4,7 @@ import psutil
 
 from scrapycw import settings
 from scrapycw.commands import ScrapycwCommand, ScrapycwCommandException
+from scrapycw.core.error_code import ERROR_CODE
 from scrapycw.django_manage import main
 from scrapycw.settings import PID_FILENAME
 from scrapycw.utils.constant import Constant
@@ -30,7 +31,10 @@ class Command(ScrapycwCommand):
 
         if sub_command not in self.SUB_COMMAND:
             sub_command_str = "|".join(self.SUB_COMMAND)
-            raise ScrapycwCommandException("Can't find sub command {}, you can us {}".format(sub_command, sub_command_str))
+            raise ScrapycwCommandException(
+                code=ERROR_CODE.NOT_SUPPORT_SUB_COMMAND,
+                message="Can't find sub command {}, you can us {}".format(sub_command, sub_command_str)
+            )
 
         if sub_command == "start":
             return self.__start(args, opts)
@@ -90,7 +94,7 @@ class Command(ScrapycwCommand):
         sys.argv.append("{}:{}".format(opts.host, opts.port))
 
         can_use_port = not port_is_used(opts.port)
-        print("start web service ...".format(opts.host, opts.port))
+        print("start web service {}:{} ...".format(opts.host, opts.port))
 
         if not can_use_port:
             print("port:{} is used".format(opts.port))

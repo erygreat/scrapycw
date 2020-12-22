@@ -1,10 +1,9 @@
-from optparse import OptionGroup
-
 from scrapy.exceptions import UsageError
 from scrapy.utils.conf import arglist_to_dict
+from scrapycw.core.slogger import getLogger
 
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
-from scrapycw.utils.exception import ScrapycwException
+from scrapycw.core.exception import ScrapycwException
 
 
 class ScrapycwCommandException(ScrapycwException):
@@ -17,6 +16,11 @@ class ScrapycwCommand:
 
     can_print_result = True
     can_crawl_log_print = False
+
+    logger = None
+
+    def __init__(self, name):
+        self.logger = getLogger(name)
 
     def syntax(self):
         return "[options]"
@@ -34,11 +38,8 @@ class ScrapycwCommand:
         """
         Populate option parse with options available for this command
         """
-        group = OptionGroup(parser, "Global Options")
-        group.add_option("-p", "--project", action="store", help="the project name, default value is 'default'", default=SCRAPY_DEFAULT_PROJECT)
-        group.add_option("-s", "--set", action="append", default=[], metavar="NAME=VALUE", help="set/override setting (may be repeated)")
-
-        parser.add_option_group(group)
+        parser.add_option("-p", "--project", action="store", help="项目名称，默认为'default'", default=SCRAPY_DEFAULT_PROJECT)
+        parser.add_option("-s", "--set", action="append", default=[], metavar="NAME=VALUE", help="set/override setting (may be repeated)")
 
     def process_options(self, args, opts):
         try:

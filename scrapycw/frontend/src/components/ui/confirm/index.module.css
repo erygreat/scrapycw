@@ -1,0 +1,41 @@
+.noticeContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1010;
+    background-color: #0000005d;
+}
+
+.notice {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: fit-content;
+    height: fit-content;
+    margin: auto;
+    z-index: 1010;
+    background: #fff;
+    box-shadow: 0 0 1px 1px #eee;
+    border-radius: 2px;
+}
+
+.title {
+    margin: 10px 20px
+}
+
+.content {
+    margin: 15px 20px;
+}
+
+.btnGroup {
+    text-align: center;
+    margin: 10px;
+}
+
+.btn {
+    margin: 0 10px;
+}

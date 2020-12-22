@@ -1,0 +1,11 @@
+.tip {
+    position: absolute;
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+.error {
+    font-size: 12px;
+    padding: 5px 0;
+    color: red;
+}

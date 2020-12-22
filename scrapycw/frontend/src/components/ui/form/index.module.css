@@ -1,0 +1,11 @@
+.item {
+    display: flex;
+    padding: 10px 0;
+    min-height: 32px;
+    align-items: center;
+}
+.label {
+    line-height: 32px;
+    font-weight: 600;
+    align-self: start;
+}

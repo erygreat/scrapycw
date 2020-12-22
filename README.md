@@ -31,7 +31,9 @@ $ pip3 install scrapycw
 - version
 
 注意：本项目依赖于scrapy的telnet，请不要使用`TELNETCONSOLE_ENABLED`配置禁用他。telnet本身是不安全的（即使有用户名和密码）因为响应的端口不应该对本机外开放，可以使用防火墙屏蔽掉这些端口。
-另外`TELNETCONSOLE_PASSWORD`必须设置为None（自动生成密码）, 必须启动`scrapy.extensions.telnet.TelnetConsole`拓展
+另外`TELNETCONSOLE_PASSWORD`必须设置为None（自动生成密码）, 必须启动`scrapy.extensions.telnet.TelnetConsole`拓展。
+
+~~后续版本中会尝试优化这些问题。(如果有时间)~~
 
 #### version命令
 
@@ -174,7 +176,7 @@ Running migrations:
 
 
 ### 2. web接口
-使用`server`命令启动一个web服务，然后就可以通过web接口方式控制scray运行。见![server](#### server命令)
+使用`server`命令启动一个web服务，然后就可以通过web接口方式控制scrapy运行。见![server](#### server命令)
 #### 获取项目列表
 
 - 请求地址：`/api/project-list`
@@ -255,7 +257,7 @@ $ curl -XPOST 'http://localhost:2312/api/crawl?spider=ipip&project=dmhy' -d'{"sp
 |project| string | 是 | default| default | 指定爬虫所在项目|
 |spider| string | 否 | - | ipip | 启动的爬虫名称 |
 |spargs| object | 是 | {} | {"keyword": "scrapy", "mode": "hello"} | 爬虫传入的参数，等同于`scrapy crawl`的 -a, 不管使用POST还是GET都必须在请求体中 |
-|settings| object | 是 | {} | {"DOWNLOAD_DELAY": 10} | 自定义scrapy settings配置，等同于`scrapy crawl`的 -a, 不管使用POST还是GET都必须在请求体中 |
+|settings| object | 是 | {} | {"DOWNLOAD_DELAY": 10} | 自定义scrapy settings配置，等同于`scrapy crawl`的 -s, 不管使用POST还是GET都必须在请求体中 |
 
 - 响应结果：
 ```

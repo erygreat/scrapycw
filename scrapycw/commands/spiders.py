@@ -1,11 +1,11 @@
 from scrapycw.commands import ScrapycwCommand
-from scrapycw.helpers.spider import SpiderHelper
+from scrapycw.helpers.spider import SpiderListHelper
 
 
 class Command(ScrapycwCommand):
 
     def run(self, args, opts):
-        return SpiderHelper(opts.project, self.cmdline_settings).list()
+        return SpiderListHelper(opts.project, self.cmdline_settings).get_response()
 
     def short_desc(self):
         return "List of Spider"

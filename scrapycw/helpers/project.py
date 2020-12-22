@@ -1,14 +1,11 @@
 from scrapy.utils.conf import get_config
-
 from scrapycw.helpers import Helper
 
 
-class ProjectHelper(Helper):
+class ProjectListHelper(Helper):
 
-    def list(self):
+    def get(self):
         config = get_config()
         return {
-            "success": True,
-            "message": None,
             "projects": [project for project, _ in config.items('settings')],
         }
