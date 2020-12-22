@@ -1,15 +1,19 @@
 import datetime
+import json
 import os
 import sys
 import time
 
 from scrapy.crawler import CrawlerRunner
 from scrapy.extensions.telnet import TelnetConsole
+
+from scrapycw.utils.json_encoder import ScrapySettingEncoder
 from scrapycw.web.api.models import SpiderJob
 
 from scrapycw.helpers import Helper, ScrapycwHelperException
 from scrapycw.scrapyrewrite.crawler import CustomCrawlerProcess
-from scrapycw.utils import random
+from scrapycw.utils import rand
+from scrapycw.utils.message_code import MESSAGE_CODE
 
 
 class SpiderHelper(Helper):
@@ -23,20 +27,30 @@ class SpiderHelper(Helper):
                 "message": e.message,
                 "project": self.project,
                 "spider": spname,
+                "code": e.code,
             }
 
     def _crawl(self, spname, spargs=None):
         if spname is None:
-            raise ScrapycwHelperException("Spider not null")
+            raise ScrapycwHelperException(
+                code=MESSAGE_CODE.NOT_ENTER_SPIDER_NAME,
+                message="Spider not null"
+            )
 
         if self.project is None:
-            raise ScrapycwHelperException("Project not find: {}".format(self.param_project))
+            raise ScrapycwHelperException(
+                code=MESSAGE_CODE.FAIL_CAN_NOT_FIND_PROJECT,
+                message="Project not find: {}".format(self.param_project)
+            )
 
         process = CustomCrawlerProcess(self.settings)
         try:
             process.crawl(spname, **spargs)
         except KeyError as e:
-            raise ScrapycwHelperException("Spider not found: {}".format(spname))
+            raise ScrapycwHelperException(
+                code=MESSAGE_CODE.FAIL_CAN_NOT_FIND_SPIDER,
+                message="Spider not found: {}".format(spname)
+            )
 
         # 获取Scrapy Telnet
         telnet_middleware = None
@@ -49,8 +63,8 @@ class SpiderHelper(Helper):
                 telnet_middleware = mv
 
         # 生成唯一标识
-        job_id = "{}_{}".format(time.strftime("%Y%m%d_%H%M%S", time.localtime()), random.rand_str(6))
-
+        job_id = "{}_{}".format(time.strftime("%Y%m%d_%H%M%S", time.localtime()), rand.rand_str(6))
+        settings_str = json.dumps({key: value for key, value in self.settings.items()}, cls=ScrapySettingEncoder)
         # 获取日志文件
         log_path = crawl.settings.get("LOG_FILE", None)
         if log_path is not None:
@@ -64,6 +78,7 @@ class SpiderHelper(Helper):
             telnet_host=telnet_middleware.host,
             telnet_port=telnet_middleware.port.port,
             status=SpiderJob.STATUS.RUNNING,
+            settings=settings_str,
             log_file=log_path,
             job_start_time=datetime.datetime.now()
         )
@@ -95,7 +110,7 @@ class SpiderHelper(Helper):
         os.setsid()
 
         _pid = os.fork()
-        # with open('/dev/ttys000') as read_null, open('/dev/ttys000', 'w') as write_null:
+        # with open('/dev/ttys007') as read_null, open('/dev/ttys007', 'w') as write_null:
         with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
             os.dup2(read_null.fileno(), sys.stdin.fileno())
             os.dup2(write_null.fileno(), sys.stdout.fileno())
@@ -116,18 +131,23 @@ class SpiderHelper(Helper):
                 "success": True,
                 "message": None,
                 "spiders": self._list(),
-                "project": self.project
+                "project": self.project,
+                "code": MESSAGE_CODE.SUCCESS,
             }
         except ScrapycwHelperException as e:
             return {
                 "success": False,
-                "message": e.message
+                "message": e.message,
+                "code": e.code,
             }
 
     def _list(self):
         spiders = []
         if self.project is None:
-            raise ScrapycwHelperException("Project not find: {}".format(self.param_project))
+            raise ScrapycwHelperException(
+                code=MESSAGE_CODE.FAIL_CAN_NOT_FIND_PROJECT,
+                message="Project not find: {}".format(self.param_project)
+            )
         crawler_process = CrawlerRunner(self.settings)
         for s in sorted(crawler_process.spider_loader.list()):
             spiders.append(s)

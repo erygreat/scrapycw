@@ -4,6 +4,7 @@ import psutil
 
 from scrapycw import settings
 from scrapycw.commands import ScrapycwCommand, ScrapycwCommandException
+from scrapycw.utils.message_code import MESSAGE_CODE
 from scrapycw.django_manage import main
 from scrapycw.settings import PID_FILENAME
 from scrapycw.utils.constant import Constant
@@ -30,7 +31,10 @@ class Command(ScrapycwCommand):
 
         if sub_command not in self.SUB_COMMAND:
             sub_command_str = "|".join(self.SUB_COMMAND)
-            raise ScrapycwCommandException("Can't find sub command {}, you can us {}".format(sub_command, sub_command_str))
+            raise ScrapycwCommandException(
+                code=MESSAGE_CODE.FAIL_CAN_NOT_FIND_SUB_COMMAND,
+                message="Can't find sub command {}, you can us {}".format(sub_command, sub_command_str)
+            )
 
         if sub_command == "start":
             return self.__start(args, opts)

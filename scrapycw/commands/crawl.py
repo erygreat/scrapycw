@@ -1,6 +1,7 @@
 from scrapy.exceptions import UsageError
 from scrapy.utils.conf import arglist_to_dict
 
+from scrapycw.utils.message_code import MESSAGE_CODE
 from scrapycw.commands import ScrapycwCommand
 from scrapycw.helpers.spider import SpiderHelper
 
@@ -13,6 +14,7 @@ class Command(ScrapycwCommand):
                 "success": False,
                 "message": "Please enter spider name",
                 "project": opts.project,
+                "code": MESSAGE_CODE.NOT_ENTER_SPIDER_NAME
             }
         spname = args[0]
         return SpiderHelper(project=opts.project, cmdline_settings=self.cmdline_settings).crawl(spname=spname, spargs=opts.spargs)
