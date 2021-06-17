@@ -2,7 +2,7 @@ import errno
 import os
 import signal
 import time
-
+import platform
 
 def write_pid_file(pid_file, pid=os.getpid()):
     if os.path.exists(pid_file):
@@ -24,16 +24,6 @@ def get_pid_by_file(pid_file):
     with open(pid_file, 'r', encoding='utf-8') as f:
         pid = f.read()
     return pid
-
-
-def kill_pid(pid):
-    try:
-        os.kill(pid, signal.SIGKILL)
-        while is_running(pid):
-            time.sleep(0.01)
-        return True
-    except OSError:
-        return False
 
 
 def is_running(pid):

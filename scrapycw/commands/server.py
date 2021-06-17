@@ -11,7 +11,6 @@ from scrapycw.utils.constant import Constant
 from scrapycw.utils.network import port_is_used
 from scrapycw.utils.pid import get_pid_by_file, kill_pid, write_pid_file
 
-
 class Command(ScrapycwCommand):
 
     can_print_result = False
@@ -55,7 +54,7 @@ class Command(ScrapycwCommand):
 
         is_project = False
         proc = None
-        children_pids = []
+        children_procs = []
         for _proc in psutil.process_iter():
             if pid == _proc.pid:
                 cmdline = _proc.cmdline()
@@ -64,7 +63,7 @@ class Command(ScrapycwCommand):
                     is_project = True
                 proc = _proc
             if _proc.parent() is not None and _proc.parent().pid == pid:
-                children_pids.append(_proc.pid)
+                children_procs.append(_proc)
 
         if proc is None:
             print('don\'t have pid "{}" '.format(pid))
@@ -74,16 +73,12 @@ class Command(ScrapycwCommand):
             print('pid "{}" is not {} web service'.format(pid, Constant.PROJECT_NAME))
             return
 
-        if kill_pid(pid):
-            print("关闭进程成功! 进程ID: {}".format(pid))
-        else:
-            print("没有该进程! 进程ID: {}".format(pid))
+        proc.kill()
+        print("关闭进程成功! 进程ID: {}".format(pid))
 
-        for children_pid in children_pids:
-            if kill_pid(children_pid):
-                print("关闭进程成功! 进程ID: {}".format(children_pid))
-            else:
-                print("没有该进程! 进程ID: {}".format(children_pid))
+        for children_proc in children_procs:
+            children_proc.kill()
+            print("关闭进程成功! 进程ID: {}".format(children_proc.pid))
 
         print("关闭web service 完成")
 
