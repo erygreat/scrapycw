@@ -2,6 +2,7 @@ import errno
 import os
 import signal
 import time
+import psutil
 
 
 def write_pid_file(pid_file, pid=os.getpid()):
@@ -26,10 +27,21 @@ def get_pid_by_file(pid_file):
     return pid
 
 
-def kill_pid(pid):
+def kill_pid(pid, timeout=5):
+    proc = None
+    for _proc in psutil.process_iter():
+        if pid == _proc.pid:
+            proc = _proc
+            break
+    if not proc:
+        return True
+
+    start_time = time.time()
     try:
-        os.kill(pid, signal.SIGKILL)
+        proc.kill()
         while is_running(pid):
+            if time.time() - start_time > timeout:
+                return False
             time.sleep(0.01)
         return True
     except OSError:
@@ -37,9 +49,7 @@ def kill_pid(pid):
 
 
 def is_running(pid):
-    try:
-        os.kill(pid, 0)
-    except OSError as err:
-        if err.errno == errno.ESRCH:
-            return False
-    return True
+    for _proc in psutil.process_iter():
+        if pid == _proc.pid:
+            return True
+    return False

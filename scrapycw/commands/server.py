@@ -4,6 +4,7 @@ import psutil
 
 from scrapycw import settings
 from scrapycw.commands import ScrapycwCommand, ScrapycwCommandException
+from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.django_manage import main
 from scrapycw.settings import PID_FILENAME
 from scrapycw.utils.constant import Constant
@@ -30,7 +31,10 @@ class Command(ScrapycwCommand):
 
         if sub_command not in self.SUB_COMMAND:
             sub_command_str = "|".join(self.SUB_COMMAND)
-            raise ScrapycwCommandException("Can't find sub command {}, you can us {}".format(sub_command, sub_command_str))
+            raise ScrapycwCommandException(
+                code=RESPONSE_CODE.NOT_SUPPORT_SUB_COMMAND,
+                message="Can't find sub command {}, you can us {}".format(sub_command, sub_command_str)
+            )
 
         if sub_command == "start":
             return self.__start(args, opts)
@@ -45,7 +49,7 @@ class Command(ScrapycwCommand):
         print("stop web server...")
         pid = get_pid_by_file(self.pid_file)
         if pid is None:
-            print('pid file "{}" is not exist, can\'t close'.find(self.pid_file))
+            print("pid file '{}' is not exist, can\'t close".format(self.pid_file))
             return
         pid = int(pid)
 
@@ -81,6 +85,7 @@ class Command(ScrapycwCommand):
             else:
                 print("没有该进程! 进程ID: {}".format(children_pid))
 
+        os.remove(self.pid_file)
         print("关闭web service 完成")
 
     def __start(self, args, opts):
@@ -90,7 +95,7 @@ class Command(ScrapycwCommand):
         sys.argv.append("{}:{}".format(opts.host, opts.port))
 
         can_use_port = not port_is_used(opts.port)
-        print("start web service ...".format(opts.host, opts.port))
+        print("start web service ...")
 
         if not can_use_port:
             print("port:{} is used".format(opts.port))
