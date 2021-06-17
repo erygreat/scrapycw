@@ -3,16 +3,20 @@ import json
 import optparse
 import os
 import sys
-import django
 
 from scrapy.exceptions import UsageError
 from scrapy.utils.conf import closest_scrapy_cfg
 from scrapy.utils.misc import walk_modules
 from scrapy.utils.project import inside_project
 
+if __name__ == '__main__':
+    current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, current_dir)
+
+from scrapycw.utils.django_util import init_django_env
+from scrapycw.utils.json_encoder import DatetimeJsonEncoder
 from scrapycw.commands import ScrapycwCommand, init
 from scrapycw.utils.constant import Constant
-
 from scrapycw.settings import INIT_EACH_RUN
 
 _SCRAPYCW_COMMAND_CLASS = "scrapycw.commands"
@@ -23,8 +27,7 @@ def execute():
     project_dir = os.path.dirname(closest_scrapy_cfg())
     sys.path.append(project_dir)
 
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'scrapycw.web.settings')
-    django.setup()
+    init_django_env()
 
     if INIT_EACH_RUN:
         __init_project()
@@ -56,7 +59,8 @@ def execute():
     result = _run_print_help(parser, cmd.run, args, opts)
 
     if cmd.can_print_result:
-        print(json.dumps(result))
+        print(json.dumps(result, cls=DatetimeJsonEncoder))
+        # pprint.pprint(result)
 
     sys.exit(0)
 
@@ -127,5 +131,5 @@ def __init_project():
     command.run([], {})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     execute()

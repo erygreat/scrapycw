@@ -3,8 +3,6 @@
 import os
 import sys
 
-from scrapy.utils.conf import closest_scrapy_cfg
-
 
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'scrapycw.web.settings')

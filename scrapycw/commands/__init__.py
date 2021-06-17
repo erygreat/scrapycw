@@ -4,7 +4,7 @@ from scrapy.exceptions import UsageError
 from scrapy.utils.conf import arglist_to_dict
 
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
-from scrapycw.utils.exception import ScrapycwException
+from scrapycw.core.exception import ScrapycwException
 
 
 class ScrapycwCommandException(ScrapycwException):
