@@ -34,6 +34,8 @@ TEMP_FILE_DIR = None
 # 开启守护进程超时时间
 START_DAEMON_TIMEOUT = 5000
 
+IS_DEV = True
+
 try:
     from scrapycw_settings import * # noqa # pylint: disable=unused-import
 except ImportError:

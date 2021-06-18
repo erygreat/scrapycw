@@ -50,3 +50,7 @@ def unpause(request):
     job_id = request.GET.get("job_id")
     result = JobHelper(job_id=job_id).unpause()
     return HttpResponse(json.dumps(result), content_type='application/json')
+
+
+def ping(request):
+    return HttpResponse(json.dumps({"message": "ok"}), content_type="application/json")

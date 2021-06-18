@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [Unreleased]
+
+### UPDATED
+
+- 修改：修改代码结构，添加service层
+- 修改：优化文档结构
+- 修改：优化进程关闭方式，添加Windows支持
+
+### ADDED
+
+- 添加：version 查询单元测试和测试用例
+- 添加：项目初始化单元测试
+- 添加：服务启动与关闭添加测试代码
 
 ## [0.3.0] - 2020-2-9
 

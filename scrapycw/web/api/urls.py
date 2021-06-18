@@ -9,4 +9,5 @@ urlpatterns = [
     path('stop', views.stop, name='stop'),
     path('pause', views.pause, name='pause'),
     path('unpause', views.unpause, name='unpause'),
+    path('ping', views.ping, name='ping'),
 ]
