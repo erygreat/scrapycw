@@ -10,6 +10,7 @@ scrapycw <command> -h
 
 - [init](#init)
 - [version](#version)
+- [server](#server)
 
 ## init
 
@@ -32,4 +33,36 @@ $ scrapycw init
 ```
 $ scrapycw version
 {"success": true, "message": null, "code": 0, "data": {"version": "0.3.0"}}
+```
+
+# server
+
+语法: `scrapycw server <start|restart|stop> [options]`
+
+说明：开启和关闭 Web 服务
+
+示例:
+**开启Web服务**
+```
+$ scrapycw server start
+```
+
+**关闭Web服务**
+```
+$ scrapycw server stop
+```
+
+**重启Web服务**
+```
+$ scrapycw server restart
+```
+
+**后台开启Web服务**
+```
+$ scrapycw server start --daemon
+```
+
+**指定端口号**
+```
+$ scrapycw server start --port=8080
 ```
