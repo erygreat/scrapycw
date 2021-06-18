@@ -13,7 +13,9 @@ setup(
         "Django==3.1.12",
         'Scrapy>=1.0',
         "psutil>=5.0.0",
-        'pytest'
+        'pytest',
+        'nanoid>=2.0.0',
+        'request>=2.22.0',
     ],
     entry_points={
         "console_scripts": [
