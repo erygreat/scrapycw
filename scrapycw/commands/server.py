@@ -6,7 +6,7 @@ from scrapycw import settings
 from scrapycw.commands import ScrapycwCommand, ScrapycwCommandException
 from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.django_manage import main
-from scrapycw.settings import PID_FILENAME
+from scrapycw.settings import SERVER_PID_FILENAME
 from scrapycw.utils.constant import Constant
 from scrapycw.utils.network import port_is_used
 from scrapycw.utils.pid import get_pid_by_file, kill_pid, write_pid_file
@@ -16,7 +16,7 @@ class Command(ScrapycwCommand):
 
     can_print_result = False
 
-    pid_file = PID_FILENAME
+    pid_file = SERVER_PID_FILENAME
 
     SUB_COMMAND = ["start", "restart", "stop"]
 
