@@ -31,6 +31,9 @@ RUN_SPIDER_TIMEOUT = 60 * 1000
 # 临时文件路径
 TEMP_FILE_DIR = None
 
+# 开启守护进程超时时间
+START_DAEMON_TIMEOUT = 5000
+
 try:
     from scrapycw_settings import * # noqa # pylint: disable=unused-import
 except ImportError:

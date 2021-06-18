@@ -17,5 +17,17 @@ class ScrapycwNotSupportSystemException(ScrapycwDaemonProcessException):
     pass
 
 
+class ScrapycwCommandParamMissingException(ScrapycwDaemonProcessException):
+    pass
+
+
 class ScrapycwArgsMustCanSerializationException(ScrapycwDaemonProcessException):
+    pass
+
+
+class ScrapycwReadException(ScrapycwException):
+    pass
+
+
+class ScrapycwDaemonStartTimeoutException(ScrapycwDaemonProcessException):
     pass
