@@ -7,3 +7,15 @@ class ScrapycwException(Exception):
 
 class ScrapycwUsageException(ScrapycwException):
     pass
+
+
+class ScrapycwDaemonProcessException(ScrapycwException):
+    pass
+
+
+class ScrapycwNotSupportSystemException(ScrapycwDaemonProcessException):
+    pass
+
+
+class ScrapycwArgsMustCanSerializationException(ScrapycwDaemonProcessException):
+    pass

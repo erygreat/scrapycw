@@ -1,22 +1,7 @@
-import errno
 import os
-import signal
+from scrapycw.utils.file_uilts import write_once
 import time
 import psutil
-
-
-def write_pid_file(pid_file, pid=os.getpid()):
-    if os.path.exists(pid_file):
-        os.remove(pid_file)
-
-    pid_dir = os.path.dirname(pid_file)
-    if not os.path.exists(pid_dir):
-        os.makedirs(pid_dir)
-
-    with open(pid_file, 'w+', encoding='utf-8') as f:
-        f.write(str(pid))
-
-    return str(pid)
 
 
 def get_pid_by_file(pid_file):

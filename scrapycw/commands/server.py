@@ -1,15 +1,19 @@
+from abc import abstractmethod
 import os
+from scrapycw.utils.file_uilts import write_once
+from scrapycw.utils.exception import ScrapycwDaemonProcessException
+from scrapycw.utils.process import run_in_daemon
 import sys
 import psutil
 
 from scrapycw import settings
 from scrapycw.commands import ScrapycwCommand, ScrapycwCommandException
 from scrapycw.core.error_code import RESPONSE_CODE
-from scrapycw.django_manage import main
+from scrapycw.django_manage import main as django_main
 from scrapycw.settings import SERVER_PID_FILENAME
 from scrapycw.utils.constant import Constant
 from scrapycw.utils.network import port_is_used
-from scrapycw.utils.pid import get_pid_by_file, kill_pid, write_pid_file
+from scrapycw.utils.pid import get_pid_by_file, kill_pid
 
 
 class Command(ScrapycwCommand):
@@ -103,29 +107,22 @@ class Command(ScrapycwCommand):
 
         # TODO 简化、抽取创建守护进程流程，修改为只使用一次fork，主进程基本上会很快死掉，不存在僵尸进程的问题
         if opts.daemon:
-            pid = os.fork()
-            if pid:
-                sys.exit(0)
-            os.umask(0)
-            os.setsid()
+            try:
+                run_in_daemon(Command.__start_server, has_return_data=True)
+            except ScrapycwDaemonProcessException as e:
+                print("启动后台服务进程失败，失败原因: {}".format(e.message))
+                return
+        else:
+            ppid = os.getpid()
+            write_once(self.pid_file, ppid)
+            Command.__start_server()
 
-            _pid = os.fork()
-            if _pid:
-                sys.exit(0)
+            print("start web service finish!")
 
-            sys.stdout.flush()
-            sys.stderr.flush()
-
-            with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
-                os.dup2(read_null.fileno(), sys.stdin.fileno())
-                os.dup2(write_null.fileno(), sys.stdout.fileno())
-                os.dup2(write_null.fileno(), sys.stderr.fileno())
-
-        ppid = os.getpid()
-        write_pid_file(self.pid_file, ppid)
-        main()
-
-        # print("start web service finish, {}:{}".format(opts.host, opts.port))
+    @staticmethod
+    def __start_server(callback):
+        callback("开启后台服务进程成功!")
+        django_main()
 
     def short_desc(self):
         return "Run Web Service"
