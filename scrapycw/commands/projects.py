@@ -1,11 +1,11 @@
 from scrapycw.commands import ScrapycwCommand
-from scrapycw.helpers.project import ProjectHelper
+from scrapycw.services.project import Service
 
 
 class Command(ScrapycwCommand):
 
     def run(self, args, opts):
-        return ProjectHelper().list()
+        return Service().list()
 
     def short_desc(self):
         return "List of project"

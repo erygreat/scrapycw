@@ -15,7 +15,7 @@ setup(
         "psutil>=5.0.0",
         'pytest',
         'nanoid>=2.0.0',
-        'request>=2.22.0',
+        'requests>=2.22.0',
     ],
     entry_points={
         "console_scripts": [
