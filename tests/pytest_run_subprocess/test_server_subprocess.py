@@ -26,7 +26,7 @@ def pytest_run_server():
     assert(response.status_code == 200)
     print("请求数据成功!")
 
-    # Command().run(["stop"], None)
+    Command().run(["stop"], None)
 
     print("服务进程关闭!")
     time.sleep(3)
