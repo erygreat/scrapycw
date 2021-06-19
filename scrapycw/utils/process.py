@@ -9,6 +9,8 @@ import subprocess
 import optparse
 import nanoid
 import psutil
+import io
+
 
 if __name__ == "__main__":
     current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -140,6 +142,7 @@ def __run_in_linux(func, args, has_return_data, pid_file_name, return_file_name,
         return
     else:
         __run_main(func, args, has_return_data, pid_file_name, return_file_name, error_file_name)
+        sys.exit(0)
 
 
 def __fork_daemon_in_linux():
@@ -160,7 +163,10 @@ def __fork_daemon_in_linux():
     sys.stderr.flush()
 
     with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
-        os.dup2(read_null.fileno(), sys.stdin.fileno())
+        try:
+            os.dup2(read_null.fileno(), sys.stdin.fileno())
+        except io.UnsupportedOperation:
+            pass
         os.dup2(write_null.fileno(), sys.stdout.fileno())
         os.dup2(write_null.fileno(), sys.stderr .fileno())
     return True
@@ -187,7 +193,6 @@ def __run_main(func, args, has_return_data, pid_file_name, return_file_name, err
             "message": e.message if getattr(e, "message", None) else str(e),
         }
         write_once(error_file_name, json.dumps(error_obj))
-    os._exit(0)
 
 
 def __run_in_windows(func, args, has_return_data, pid_file_name, return_file_name, error_file_name):
