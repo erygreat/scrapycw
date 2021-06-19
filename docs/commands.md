@@ -11,6 +11,7 @@ scrapycw <command> -h
 - [init](#init)
 - [version](#version)
 - [server](#server)
+- [projects](#projects)
 
 ## init
 
@@ -35,7 +36,7 @@ $ scrapycw version
 {"success": true, "message": null, "code": 0, "data": {"version": "0.3.0"}}
 ```
 
-# server
+## server
 
 语法: `scrapycw server <start|restart|stop> [options]`
 
@@ -65,4 +66,16 @@ $ scrapycw server start --daemon
 **指定端口号**
 ```
 $ scrapycw server start --port=8080
+```
+
+## projects
+
+语法：`scrapycw projects`
+
+说明：获取项目列表
+
+示例:
+```
+$ scrapycw projects
+{"success": true, "message": null, "code": 0, "data": ["default", "demo", "project2", "new_project"]}
 ```

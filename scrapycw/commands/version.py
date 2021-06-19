@@ -6,6 +6,9 @@ class Command(ScrapycwCommand):
 
     can_print_result = True
 
+    def syntax(self):
+        return ""
+
     def run(self, args, opts):
         return Service.version()
 
