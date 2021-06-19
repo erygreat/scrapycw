@@ -4,6 +4,9 @@ from scrapycw.services.project import Service
 
 class Command(ScrapycwCommand):
 
+    def syntax(self):
+        return ""
+
     def run(self, args, opts):
         return Service().list()
 
