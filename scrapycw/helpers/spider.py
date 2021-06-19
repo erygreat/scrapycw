@@ -2,6 +2,7 @@ import datetime
 import os
 import sys
 import time
+import nanoid
 
 from scrapy.crawler import CrawlerRunner
 from scrapy.extensions.telnet import TelnetConsole
@@ -9,7 +10,6 @@ from scrapycw.web.api.models import SpiderJob
 
 from scrapycw.helpers import Helper, ScrapycwHelperException
 from scrapycw.scrapyrewrite.crawler import CustomCrawlerProcess
-from scrapycw.utils import random
 
 
 class SpiderHelper(Helper):
@@ -49,7 +49,7 @@ class SpiderHelper(Helper):
                 telnet_middleware = mv
 
         # 生成唯一标识
-        job_id = "{}_{}".format(time.strftime("%Y%m%d_%H%M%S", time.localtime()), random.rand_str(6))
+        job_id = "{}_{}".format(time.strftime("%Y%m%d_%H%M%S", time.localtime()), nanoid.generate(6))
 
         # 获取日志文件
         log_path = crawl.settings.get("LOG_FILE", None)
