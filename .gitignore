@@ -30,4 +30,4 @@ db.sqlite3
 
 node_modules/
 
-tests/utils/*.txt
+tests/test_*/*.txt
