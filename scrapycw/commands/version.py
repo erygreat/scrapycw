@@ -17,3 +17,6 @@ class Command(ScrapycwCommand):
 
     def long_desc(self):
         return "version"
+
+    def add_options(self, parser):
+        pass

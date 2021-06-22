@@ -15,3 +15,6 @@ class Command(ScrapycwCommand):
 
     def long_desc(self):
         return "List of project"
+
+    def add_options(self, parser):
+        pass

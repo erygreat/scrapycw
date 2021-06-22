@@ -34,3 +34,6 @@ class Command(ScrapycwCommand):
     def print(self, message):
         if self.can_print_result:
             print(message)
+
+    def add_options(self, parser):
+        pass
