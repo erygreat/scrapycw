@@ -12,6 +12,7 @@ scrapycw <command> -h
 - [version](#version)
 - [server](#server)
 - [projects](#projects)
+- [spiders](#spiders)
 
 ## init
 
@@ -79,3 +80,13 @@ $ scrapycw server start --port=8080
 $ scrapycw projects
 {"success": true, "message": null, "code": 0, "data": ["default", "demo", "project2", "new_project"]}
 ```
+
+## spiders
+
+语法：`scrapycw spiders [option]`
+
+说明：获取爬虫列表
+
+参数：
+
+- project：显示的项目名称，如果没有设置该选项，则显示所有项目的所有爬虫列表
