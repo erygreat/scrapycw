@@ -1,9 +1,7 @@
-from scrapycw.services import spider
 from scrapycw.helpers.project import ProjectHelper
 from scrapy.crawler import CrawlerRunner
 from scrapycw.helpers import Helper, ScrapycwHelperException
 from scrapycw.core.error_code import RESPONSE_CODE
-
 
 class SpiderHelper(Helper):
 
