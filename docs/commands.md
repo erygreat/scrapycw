@@ -90,3 +90,12 @@ $ scrapycw projects
 参数：
 
 - project：显示的项目名称，如果没有设置该选项，则显示所有项目的所有爬虫列表
+
+示例:
+```
+$ scrapycw spiders
+{"success": true, "message": null, "code": 0, "data": [{"project": "default", "spiders": ["baidu"]}, {"project": "demo", "spiders": []}, {"project": "project2", "spiders": []}, {"project": "new_project", "spiders": []}]}
+
+$ scrapycw spiders -p default
+{"success": true, "message": null, "code": 0, "data": {"spiders": ["baidu"], "project": "default"}}
+```

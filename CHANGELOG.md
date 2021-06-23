@@ -14,9 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ADDED
 
-- 添加：version 查询单元测试和测试用例
-- 添加：项目初始化单元测试
-- 添加：服务启动与关闭添加测试代码
 - 添加：爬虫列表查询添加查询全部爬虫
 
 ## [0.3.0] - 2020-2-9
