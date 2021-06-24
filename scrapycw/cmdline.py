@@ -52,15 +52,17 @@ def execute():
     parser.usage = "{} %s %s".format(Constant.PROJECT_NAME) % (name, cmd.syntax())
     parser.description = cmd.long_desc()
     cmd.add_options(parser)
+    add_options(parser, cmd.can_print_result)
     opts, args = parser.parse_args(args=argv[1:])
     # 获取命令行setting
     _run_print_help(parser, cmd.process_options, args, opts)
     # 运行命令
     result = _run_print_help(parser, cmd.run, args, opts)
 
-    if cmd.can_print_result:
+    if cmd.can_print_result and opts.pretty:
+        print(json.dumps(result, cls=DatetimeJsonEncoder, indent=2))
+    elif cmd.can_print_result:
         print(json.dumps(result, cls=DatetimeJsonEncoder))
-        # pprint.pprint(result)
 
     sys.exit(0)
 
@@ -78,6 +80,10 @@ def get_command_name(argv):
             return arg
         i += 1
 
+
+def add_options(parser, can_pretty):
+    if can_pretty:
+        parser.add_option("--pretty", help="pretty", action="store_true", default=False)
 
 def _iter_command_classes(module_name):
     for module in walk_modules(module_name):

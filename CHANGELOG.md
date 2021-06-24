@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ADDED
 
 - 添加：爬虫列表查询添加查询全部爬虫
+- 添加：命令行输出格式化参数
 
 ## [0.3.0] - 2020-2-9
 
