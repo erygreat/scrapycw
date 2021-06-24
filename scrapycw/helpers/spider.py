@@ -21,7 +21,7 @@ from scrapy.crawler import CrawlerRunner
 from scrapycw.helpers import Helper, ScrapycwHelperException
 from scrapycw.core.error_code import RESPONSE_CODE
 
-class SpiderListHelper(Helper):
+class SpiderHelper(Helper):
 
     def list(self):
         if not self.param_project:
@@ -53,7 +53,7 @@ class SpiderListHelper(Helper):
         return spiders
 
 class SpiderRunnerHelper(Helper):
-    
+
     def get(self, spname, spargs=None):
         try:
             return self._crawl(spname, spargs)

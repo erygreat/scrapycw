@@ -7,7 +7,7 @@ from scrapycw.helpers.project import ProjectListHelper
 from scrapycw.helpers.spider_run import SpiderRunnerHelper
 from scrapycw.helpers.spider import SpiderListHelper
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
-from scrapycw.core.response import Response
+from scrapycw.utils.response import Response
 
 
 def projects(request):

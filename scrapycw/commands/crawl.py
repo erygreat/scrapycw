@@ -4,7 +4,7 @@ from scrapy.utils.conf import arglist_to_dict
 from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.commands import ScrapycwCommand
 from scrapycw.helpers.spider import SpiderRunnerHelper
-from scrapycw.core.response import Response
+from scrapycw.utils.response import Response
 
 
 class Command(ScrapycwCommand):
