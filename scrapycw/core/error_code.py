@@ -1,4 +1,4 @@
-class ERROR_CODE:
+class RESPONSE_CODE:
     """
     响应码：
     0: 成功
@@ -38,7 +38,7 @@ class ERROR_CODE:
     # job id没有找到
     JOB_ID_NOT_FIND = 1023
     # 启动爬虫超时
-    SPIDER_RUN_TIMEOUT =1024
+    SPIDER_RUN_TIMEOUT = 1024
 
     # 爬虫已关闭
     FAIL_SPIDER_IS_CLOSE = 1030

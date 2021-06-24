@@ -7,7 +7,7 @@ from typing import Union
 from scrapycw.utils.logger_parser import ScrapyLoggerParser
 from scrapycw.utils.telnet import ScrapycwTelnetException, Telnet
 from scrapycw.web.api.models import SpiderJob
-from scrapycw.core.error_code import ERROR_CODE
+from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.core.exception import ScrapycwException
 from scrapycw.helpers import Helper
 
@@ -75,7 +75,7 @@ class JobHelper(Helper):
             model = SpiderJob.objects.get(job_id=self.job_id)
         except SpiderJob.DoesNotExist:
             raise ScrapycwJobException(
-                code=ERROR_CODE.JOB_ID_NOT_FIND,
+                code=RESPONSE_CODE.JOB_ID_NOT_FIND,
                 message="Don't have job id: [{}]".format(self.job_id)
             )
         self.model = model

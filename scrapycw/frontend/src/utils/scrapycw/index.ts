@@ -3,8 +3,8 @@ import { AxiosResponse } from 'axios'
 import { URLParam, RequestOptions, RunSpiderOptions, Response, QueryAllSpiderOptions } from "./types";
 
 
-const DEFAULT_HTTP_ERROR_CODE = -1;
-const DEFAULT_SERVER_ERROR_CODE = -1;
+const DEFAULT_HTTP_RESPONSE_CODE = -1;
+const DEFAULT_SERVER_RESPONSE_CODE = -1;
 
 const getUrl = (url: string, params: URLParam | null | undefined): string => {
     let urlParam = '';
@@ -47,9 +47,9 @@ const request = <T extends Response<U>, U>(options: RequestOptions<T>) => {
         }
         let response: AxiosResponse = error.response as AxiosResponse;
         if (response) {
-            options.onError(response.statusText, response.status, DEFAULT_SERVER_ERROR_CODE, error);
+            options.onError(response.statusText, response.status, DEFAULT_SERVER_RESPONSE_CODE, error);
         } else if(error.request){
-            options.onError(error.message, DEFAULT_HTTP_ERROR_CODE, DEFAULT_SERVER_ERROR_CODE, error);
+            options.onError(error.message, DEFAULT_HTTP_RESPONSE_CODE, DEFAULT_SERVER_RESPONSE_CODE, error);
         }
     })
 }

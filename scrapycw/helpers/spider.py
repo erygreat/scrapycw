@@ -9,30 +9,45 @@ import time
 from scrapy.crawler import CrawlerRunner
 from scrapy.extensions.telnet import TelnetConsole
 from scrapycw.helpers import Helper, ScrapycwHelperException
-from scrapycw.core.error_code import ERROR_CODE
+from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.scrapyrewrite.crawler import CustomCrawlerProcess
 from scrapycw.scripts.windows_run_spider import get_spider_windows_run_script_path
 from scrapycw.settings import RUN_SPIDER_TIMEOUT, SPIDER_RUN_CACHE_DIR
 from scrapycw.utils import rand
 from scrapycw.utils.json_encoder import DatetimeJsonEncoder, ScrapySettingEncoder
 from scrapycw.web.api.models import SpiderJob
+from scrapycw.helpers.project import ProjectHelper
+from scrapy.crawler import CrawlerRunner
+from scrapycw.helpers import Helper, ScrapycwHelperException
+from scrapycw.core.error_code import RESPONSE_CODE
 
 class SpiderListHelper(Helper):
-    
-    def get(self):
-        return {
-            "spiders": self._list(),
-            "project": self.project,
-        }
 
-    def _list(self):
+    def list(self):
+        if not self.param_project:
+            return self._all_list()
+        elif self.project:
+            return {
+                "spiders": self._list_by_settings(self.settings),
+                "project": self.project
+            }
+        else:
+            raise ScrapycwHelperException(code=RESPONSE_CODE.PROJECT_NOT_FIND, message="Project not find: {}".format(self.param_project))
+
+    def all_list(self):
+        projects = ProjectHelper().list()
         spiders = []
-        if self.project is None:
-            raise ScrapycwHelperException(
-                code=ERROR_CODE.PROJECT_NOT_FIND,
-                message="Project not find: {}".format(self.param_project)
-            )
-        crawler_process = CrawlerRunner(self.settings)
+        for project in projects:
+            settings = self._get_settings(project)
+            spiders.append({
+                "project": project,
+                "spiders": self._list_by_settings(settings)
+            })
+        return spiders
+
+    def _list_by_settings(self, settings):
+        crawler_process = CrawlerRunner(settings)
+        spiders = []
         for s in sorted(crawler_process.spider_loader.list()):
             spiders.append(s)
         return spiders
@@ -52,13 +67,13 @@ class SpiderRunnerHelper(Helper):
     def _crawl(self, spname, spargs=None):
         if spname is None:
             raise ScrapycwHelperException(
-                code=ERROR_CODE.NOT_ENTER_SPIDER_NAME,
+                code=RESPONSE_CODE.NOT_ENTER_SPIDER_NAME,
                 message="请输入爬虫名称！"
             )
 
         if self.project is None:
             raise ScrapycwHelperException(
-                code=ERROR_CODE.PROJECT_NOT_FIND,
+                code=RESPONSE_CODE.PROJECT_NOT_FIND,
                 message="Project not find: {}".format(self.param_project)
             )
         return self._run(spname, spargs)
@@ -74,7 +89,7 @@ class SpiderRunnerHelper(Helper):
             runner = WindowsSpiderRunner(spname, spargs, self.project, self.settings, job_id, self.cmdline_settings)
         else:
             raise ScrapycwHelperException(
-                code=ERROR_CODE.NOT_SUPPORT_SYSTEM,
+                code=RESPONSE_CODE.NOT_SUPPORT_SYSTEM,
                 message="未知操作系统: {}".format(platform.system())
             )
         return runner.run()
@@ -93,7 +108,7 @@ class SpiderRunner():
         try:
             process.crawl(self.spname, **self.spargs)
         except KeyError:
-            raise ScrapycwHelperException( code=ERROR_CODE.SPIDER_NOT_FIND, message="Spider not found: {}".format(self.spname))
+            raise ScrapycwHelperException( code=RESPONSE_CODE.SPIDER_NOT_FIND, message="Spider not found: {}".format(self.spname))
 
         telnet_middleware = None
         crawl = None
@@ -101,7 +116,7 @@ class SpiderRunner():
             crawl = _crawl
         if not crawl:
             raise ScrapycwHelperException(
-                code=ERROR_CODE.SPIDER_CODE_HAVE_BUG,
+                code=RESPONSE_CODE.SPIDER_CODE_HAVE_BUG,
                 message="爬虫启动失败，请检查爬虫代码是否正确，引入的依赖文件是否存在!"
             )
 
@@ -221,7 +236,7 @@ class WindowsSpiderRunner(SpiderRunner):
                     else:
                         return content['data']
             time.sleep(0.1)
-        raise ScrapycwHelperException(message="启动爬虫超时", code=ERROR_CODE.SPIDER_RUN_TIMEOUT)
+        raise ScrapycwHelperException(message="启动爬虫超时", code=RESPONSE_CODE.SPIDER_RUN_TIMEOUT)
 
     def start_spider(self):
         process = None

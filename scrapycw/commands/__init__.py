@@ -43,6 +43,6 @@ class ScrapycwCommand:
 
     def process_options(self, args, opts):
         try:
-            self.cmdline_settings = arglist_to_dict(opts.set)
+            self.cmdline_settings = arglist_to_dict(opts.set if hasattr(opts, "set") else [])
         except ValueError:
             raise UsageError("Invalid -s value, use -s NAME=VALUE", print_help=False)

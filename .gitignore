@@ -25,7 +25,9 @@ logs/*
 .idea/*
 logs/*
 
-/.DS_Store
+.DS_Store
 db.sqlite3
 
 node_modules/
+
+tests/test_*/*.txt

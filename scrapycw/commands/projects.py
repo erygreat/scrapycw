@@ -1,14 +1,20 @@
 from scrapycw.commands import ScrapycwCommand
-from scrapycw.helpers.project import ProjectListHelper
+from scrapycw.services.project import Service
 
 
 class Command(ScrapycwCommand):
 
+    def syntax(self):
+        return ""
+
     def run(self, args, opts):
-        return ProjectListHelper().get_response()
+        return Service().list()
 
     def short_desc(self):
         return "List of project"
 
     def long_desc(self):
         return "List of project"
+
+    def add_options(self, parser):
+        pass

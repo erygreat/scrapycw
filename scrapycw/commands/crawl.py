@@ -1,7 +1,7 @@
 from scrapy.exceptions import UsageError
 from scrapy.utils.conf import arglist_to_dict
 
-from scrapycw.core.error_code import ERROR_CODE
+from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.commands import ScrapycwCommand
 from scrapycw.helpers.spider import SpiderRunnerHelper
 from scrapycw.core.response import Response
@@ -17,7 +17,7 @@ class Command(ScrapycwCommand):
                 data={
                     "project": opts.project,
                 },
-                code=ERROR_CODE.NOT_ENTER_SPIDER_NAME
+                code=RESPONSE_CODE.NOT_ENTER_SPIDER_NAME
             )
         spname = args[0]
         return SpiderRunnerHelper(

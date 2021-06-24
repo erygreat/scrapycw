@@ -1,4 +1,4 @@
-from scrapycw.core.error_code import RESPONSE_CODE
+from scrapycw.core.REPONSE_CODE import RESPONSE_CODE
 
 
 class Response(dict):

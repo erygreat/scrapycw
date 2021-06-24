@@ -10,6 +10,9 @@ class Command(ScrapycwCommand):
 
     can_print_result = True
 
+    def syntax(self):
+        return ""
+
     def run(self, args, opts):
         self.print("=========== 开始初始化 ===========")
         if not os.path.exists(RUNTIME_PATH):
@@ -31,3 +34,6 @@ class Command(ScrapycwCommand):
     def print(self, message):
         if self.can_print_result:
             print(message)
+
+    def add_options(self, parser):
+        pass

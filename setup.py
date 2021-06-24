@@ -10,10 +10,13 @@ setup(
         一个通过web监控和操作scrapy爬虫程序的监控工具。可以通过该工具启动、关闭、操作爬虫程序，也可以通过他观察爬虫的运行情况
     """,
     install_requires=[
-        "Django==3.1.8",
+        "django-apscheduler>=0.5.2",
+        "Django==3.1.12",
         'Scrapy>=1.0',
         "psutil>=5.0.0",
-        "django-apscheduler>=0.5.2"
+        'pytest',
+        'nanoid>=2.0.0',
+        'requests>=2.22.0',
     ],
     entry_points={
         "console_scripts": [

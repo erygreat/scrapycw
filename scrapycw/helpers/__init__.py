@@ -8,6 +8,9 @@ from scrapycw.core.response import Response
 from scrapycw.utils.scrapy_util import get_scrapy_settings
 from scrapycw.utils.django_env import init_django_env
 init_django_env()
+from scrapycw.utils.response import Response
+
+
 class ScrapycwHelperException(ScrapycwException):
     pass
 
@@ -40,11 +43,11 @@ class Helper:
         self.cmdline_settings = cmdline_settings
         if cmdline_settings is None:
             cmdline_settings = {}
-        self.settings = self.__get_settings(project)
+        self.settings = self._get_settings(project)
         if self.settings is not None:
             self.settings.setdict(cmdline_settings, priority='cmdline')
 
-    def __get_settings(self, project):
+    def _get_settings(self, project):
         settings = get_scrapy_settings(project)
         if settings:
             self.project = project

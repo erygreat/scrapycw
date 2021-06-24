@@ -4,7 +4,7 @@ import telnetlib
 
 from scrapycw.settings import TELNET_TIMEOUT
 from scrapycw.core.exception import ScrapycwException
-from scrapycw.core.error_code import ERROR_CODE
+from scrapycw.core.error_code import RESPONSE_CODE
 
 
 class ScrapycwTelnetException(ScrapycwException):
@@ -36,13 +36,13 @@ class Telnet:
             self.__connect()
         except ConnectionRefusedError as e:
             raise ScrapycwTelnetException(
-                ERROR_CODE.TELNET_CONNECTION_REFUSED_ERROR, e)
+                RESPONSE_CODE.TELNET_CONNECTION_REFUSED_ERROR, e)
         except ConnectionResetError as e:
             raise ScrapycwTelnetException(
-                ERROR_CODE.TELNET_CONNECTION_RESET_ERROR, e)
+                RESPONSE_CODE.TELNET_CONNECTION_RESET_ERROR, e)
         except socket.timeout as e:
             raise ScrapycwTelnetException(
-                ERROR_CODE.TELNET_CONNECTION_TIMEOUT, e)
+                RESPONSE_CODE.TELNET_CONNECTION_TIMEOUT, e)
 
     def __connect(self):
         """
@@ -77,7 +77,7 @@ class Telnet:
         if str(buf).find("Authentication failed") != -1:
             self.__conn.close()
             raise ScrapycwAuthenticationFailException(
-                ERROR_CODE.TELNET_AUTHENTICATION_FAIL, "Telnet Authentication failed")
+                RESPONSE_CODE.TELNET_AUTHENTICATION_FAIL, "Telnet Authentication failed")
 
     def command(self, content: str = "", auto_change_type: bool = True):
         """
@@ -92,7 +92,7 @@ class Telnet:
         """
         if self.__conn is None:
             raise ScrapycwTelnetNotConnectionException(
-                ERROR_CODE.TELNET_NOT_CONNECT, "Telnet don't connect, please connect it")
+                RESPONSE_CODE.TELNET_NOT_CONNECT, "Telnet don't connect, please connect it")
         self.__conn.write(content.encode() + b"\r\n")
         data = self.__conn.read_until(">>>".encode(), timeout=TELNET_TIMEOUT)
         data = str(data)
@@ -117,7 +117,7 @@ class Telnet:
     def read_util_close(self):
         if self.__conn is None:
             raise ScrapycwTelnetNotConnectionException(
-                ERROR_CODE.TELNET_NOT_CONNECT, "Telnet don't connect, please connect it")
+                RESPONSE_CODE.TELNET_NOT_CONNECT, "Telnet don't connect, please connect it")
         self.__conn.close()
 
         return self.__conn.read_all()

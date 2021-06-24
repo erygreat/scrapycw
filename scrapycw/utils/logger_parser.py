@@ -4,7 +4,7 @@ import re
 
 from scrapycw.settings import HANDLE_LOG_MAXIMUM_SIZE
 from scrapycw.core.exception import ScrapycwException
-from scrapycw.core.error_code import ERROR_CODE
+from scrapycw.core.error_code import RESPONSE_CODE
 
 
 class ScrapycwLoggerParserException(ScrapycwException):
@@ -60,7 +60,7 @@ class AsctimeFormatParser(FormatParser):
         for value in self.NOT_SUPPORT_PATTERNS:
             if date_pattern.find(value) != -1:
                 raise ScrapycwLoggerParserException(
-                    ERROR_CODE.LOG_PARSER_DONT_SUPPORT_DATA_FORMAT, "不支持日期格式: {}".format(value))
+                    RESPONSE_CODE.LOG_PARSER_DONT_SUPPORT_DATA_FORMAT, "不支持日期格式: {}".format(value))
         for key, value in self.DATE_PATTERNS.items():
             date_pattern = date_pattern.replace(key, value)
         return date_pattern
@@ -215,7 +215,7 @@ class LoggerParser:
         # 文件是否存在
         if not os.path.exists(self.filename):
             raise ScrapycwLoggerParserException(
-                ERROR_CODE.LOG_PARSER_LOG_NOT_FIND, "日志文件不存在")
+                RESPONSE_CODE.LOG_PARSER_LOG_NOT_FIND, "日志文件不存在")
         # 文件是否超过最大解析大小
         return os.path.getsize(self.filename)
 
@@ -224,7 +224,7 @@ class LoggerParser:
             max_size = self.get_file_size_pretty(HANDLE_LOG_MAXIMUM_SIZE)
             current_size = self.get_file_size_pretty(self.log_size)
             raise ScrapycwLoggerParserException(
-                ERROR_CODE.LOG_PARSER_LOG_SIZE_MAXIMUM, "当前设置最大可解析日志大小为{}，当前日志大小为: {}, 可以修改 HANDLE_LOG_MAXIMUM_SIZE 修改可解析日志大小".format(max_size, current_size))
+                RESPONSE_CODE.LOG_PARSER_LOG_SIZE_MAXIMUM, "当前设置最大可解析日志大小为{}，当前日志大小为: {}, 可以修改 HANDLE_LOG_MAXIMUM_SIZE 修改可解析日志大小".format(max_size, current_size))
         # 获取所有日志内容 TODO 是否会存在内存不够用的问题？如果是，则需要逐行处理
         with open(self.filename) as f:
             return f.read()
