@@ -1,11 +1,10 @@
 import os
 import sys
 
-from scrapy.settings import Settings
-from scrapy.utils.conf import get_config, closest_scrapy_cfg
+from scrapy.utils.conf import closest_scrapy_cfg
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 from scrapycw.core.exception import ScrapycwException
-from scrapycw.utils.response import Response
+from scrapycw.utils.scpraycw import get_scrapy_settings
 
 
 class ScrapycwHelperException(ScrapycwException):
@@ -31,12 +30,7 @@ class Helper:
             self.settings.setdict(cmdline_settings, priority='cmdline')
 
     def _get_settings(self, project):
-        config = get_config()
-
-        for _project, setting_dir in config.items('settings'):
-            if project == _project:
-                self.project = project
-                settings = Settings()
-                settings.setmodule(setting_dir, priority='project')
-                return settings
-        return None
+        settings = get_scrapy_settings(project)
+        if settings:
+            self.project = project
+        return settings

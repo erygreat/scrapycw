@@ -44,7 +44,7 @@ class RESPONSE_CODE:
     FAIL_SPIDER_IS_CLOSE = 1030
     # 不支持的子命令
     NOT_SUPPORT_SUB_COMMAND = 1040
-
+    # 不支持的操作系统
     NOT_SUPPORT_SYSTEM = 1050
 
     # 请输入爬虫名称
