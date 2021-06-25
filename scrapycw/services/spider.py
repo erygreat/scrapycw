@@ -1,3 +1,5 @@
+from scrapycw.core.exception import ScrapycwException
+from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.services import BaseService
 from scrapycw.helpers import ScrapycwHelperException
 from scrapycw.utils.response import Response
@@ -15,3 +17,11 @@ class Service(BaseService):
                 return Response(success=False, message=e.message, code=e.code)
         else:
             return Response(data=SpiderHelper().all_list())
+
+    @classmethod
+    def run(cls, project, spname, cmdline_settings, spargs):
+        try:
+            data = SpiderHelper(project=project, cmdline_settings=cmdline_settings).crawl(spname=spname, spargs=spargs)
+            return Response(data=data)
+        except ScrapycwException as e:
+            return Response(success=False, message=e.message, code=e.code)

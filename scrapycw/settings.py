@@ -34,7 +34,7 @@ RUN_SPIDER_TIMEOUT = 60 * 1000
 TEMP_FILE_DIR = None
 
 # 开启守护进程超时时间
-START_DAEMON_TIMEOUT = 5000
+START_DAEMON_TIMEOUT = 30 * 1000
 
 IS_DEV = True
 # scrapycw 日志文件所在目录
