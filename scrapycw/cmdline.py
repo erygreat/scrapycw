@@ -52,7 +52,7 @@ def execute():
     parser.usage = "{} %s %s".format(Constant.PROJECT_NAME) % (name, cmd.syntax())
     parser.description = cmd.long_desc()
     cmd.add_options(parser)
-    add_options(parser)
+    add_options(parser, cmd.can_print_result)
     opts, args = parser.parse_args(args=argv[1:])
     # 获取命令行setting
     _run_print_help(parser, cmd.process_options, args, opts)
@@ -81,8 +81,9 @@ def get_command_name(argv):
         i += 1
 
 
-def add_options(parser):
-    parser.add_option("--pretty", help="pretty", action="store_true", default=False)
+def add_options(parser, can_pretty):
+    if can_pretty:
+        parser.add_option("--pretty", help="pretty", action="store_true", default=False)
 
 def _iter_command_classes(module_name):
     for module in walk_modules(module_name):

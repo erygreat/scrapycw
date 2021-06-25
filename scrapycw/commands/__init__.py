@@ -4,13 +4,14 @@ from scrapycw.core.slogger import getLogger
 
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 from scrapycw.core.exception import ScrapycwException
+from scrapycw.core.scrapycw_object import ScrapycwObject
 
 
 class ScrapycwCommandException(ScrapycwException):
     pass
 
 
-class ScrapycwCommand:
+class ScrapycwCommand(ScrapycwObject):
 
     cmdline_settings = {}
 

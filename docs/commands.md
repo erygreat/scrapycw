@@ -14,6 +14,22 @@ scrapycw <command> -h
 - [projects](#projects)
 - [spiders](#spiders)
 
+除了`init`和`server`命令，都包含`pretty`参数来格式化输出，例如:
+```
+$ scrapycw projects --pretty
+{
+  "success": true,
+  "message": null,
+  "code": 0,
+  "data": [
+    "default",
+    "demo",
+    "project2",
+    "new_project"
+  ]
+}
+```
+
 ## init
 
 语法：`scrapycw init`

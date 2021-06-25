@@ -3,30 +3,14 @@ from scrapy.utils.conf import arglist_to_dict
 
 from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.commands import ScrapycwCommand
-from scrapycw.helpers.spider import SpiderRunnerHelper
-from scrapycw.utils.response import Response
+from scrapycw.services.spider import Service
 
 
 class Command(ScrapycwCommand):
 
     def run(self, args, opts):
-        if len(args) == 0:
-            return Response(
-                success=False,
-                message="Please enter spider name",
-                data={
-                    "project": opts.project,
-                },
-                code=RESPONSE_CODE.NOT_ENTER_SPIDER_NAME
-            )
-        spname = args[0]
-        return SpiderRunnerHelper(
-            project=opts.project,
-            cmdline_settings=self.cmdline_settings
-        ).get_response(
-            spname=spname,
-            spargs=opts.spargs
-        )
+        spname = args[0] if len(args) > 0 else None
+        return Service.run(project=opts.project, spname=spname, cmdline_settings=self.cmdline_settings, spargs=opts.spargs)
 
     def short_desc(self):
         return "Run Spider"

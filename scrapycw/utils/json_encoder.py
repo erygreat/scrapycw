@@ -24,10 +24,10 @@ class ScrapySettingEncoder(json.JSONEncoder):
             for key, value in obj.attributes.items():
                 items[key] = value.value
             return items
-        if isinstance(obj, datetime.datetime):
-            return obj.strftime("%Y-%m-%d %H:%M:%S")
-        if isinstance(obj, object):
-            return dict({'__classname__': type(obj).__name__}, **vars(obj))
+        # if isinstance(obj, datetime.datetime):
+        #     return obj.strftime("%Y-%m-%d %H:%M:%S")
+        # if isinstance(obj, object):
+        #     return dict({'__classname__': type(obj).__name__}, **vars(obj))
         return super(ScrapySettingEncoder, self).default(obj)
 
 

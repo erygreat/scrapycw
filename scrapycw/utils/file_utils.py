@@ -54,7 +54,7 @@ def read_until_once_or_timeout(filename_and_types, timeout=5000):
     """
     if len(filename_and_types) == 0:
         raise ScrapycwReadException("请输入文件!")
-    start_time = time.time()
+    start_time = time.time() * 1000
     while True:
         for filename_and_type in filename_and_types:
             filename = filename_and_type['filename']
