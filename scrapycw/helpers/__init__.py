@@ -4,14 +4,16 @@ import sys
 from scrapy.utils.conf import closest_scrapy_cfg
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 from scrapycw.core.exception import ScrapycwException
-from scrapycw.utils.scpraycw import get_scrapy_settings
+from scrapycw.utils.scpraycw import get_scrapy_settings, init_django_env
+from scrapycw.core.scrapycw_object import ScrapycwObject
+init_django_env()
 
 
 class ScrapycwHelperException(ScrapycwException):
     pass
 
 
-class Helper:
+class Helper(ScrapycwObject):
 
     param_project = ""
     project = None
