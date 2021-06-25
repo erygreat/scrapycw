@@ -96,7 +96,7 @@ def _get_command_objs(module_name):
     cmds = {}
     for cls_name in _iter_command_classes(module_name):
         cmd_name = cls_name.__module__.split('.')[-1]
-        cmds[cmd_name] = cls_name(cmd_name)
+        cmds[cmd_name] = cls_name()
     return cmds
 
 

@@ -1,6 +1,5 @@
 from scrapy.exceptions import UsageError
 from scrapy.utils.conf import arglist_to_dict
-from scrapycw.core.slogger import getLogger
 
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 from scrapycw.core.exception import ScrapycwException
@@ -17,11 +16,6 @@ class ScrapycwCommand(ScrapycwObject):
 
     can_print_result = True
     can_crawl_log_print = False
-
-    logger = None
-
-    def __init__(self, name):
-        self.logger = getLogger(name)
 
     def syntax(self):
         return "[options]"

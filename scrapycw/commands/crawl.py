@@ -1,7 +1,6 @@
 from scrapy.exceptions import UsageError
 from scrapy.utils.conf import arglist_to_dict
 
-from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.commands import ScrapycwCommand
 from scrapycw.services.spider import Service
 
