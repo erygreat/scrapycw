@@ -12,7 +12,7 @@ from scrapycw.utils.json_encoder import ScrapySettingEncoder
 from scrapycw.helpers import Helper, ScrapycwHelperException
 from scrapycw.helpers.project import ProjectHelper
 from scrapycw.core.error_code import RESPONSE_CODE
-from scrapycw.web.api.models import SpiderJob
+from scrapycw.web.app.models import SpiderJob
 
 class SpiderHelper(Helper):
 
