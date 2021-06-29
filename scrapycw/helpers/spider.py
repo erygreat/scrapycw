@@ -68,25 +68,11 @@ class SpiderHelper(Helper):
         telnet_password = data['telnet_password']
         telnet_host = data['telnet_host']
         telnet_port = data['telnet_port']
-        settings = data['settings']
+        log_file = data['log_file']
         start_time = data['start_time']
-        # TODO 保存到数据库中
-        # job_model = SpiderJob(
-        #     job_id=job_id,
-        #     project=self.project,
-        #     spider=spname,
-        #     spargs=spargs,
-        #     telnet_username=telnet_username,
-        #     telnet_password=telnet_password,
-        #     telnet_host=telnet_host,
-        #     telnet_port=telnet_port,
-        #     status=SpiderJob.STATUS.RUNNING,
-        #     log_file=log_file,
-        #     start_time=start_time,
-        #     cmdline_settings=self.cmdline_settings,
-        #     settings=settings,
-        # )
-        # job_model.save()
+        start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start_time))
+        settings = data['settings']
+        self.__save_job(job_id, self.project, spname, spargs, self.cmdline_settings, telnet_username, telnet_password, telnet_host, telnet_port, log_file, start_time, settings)
         return {
             "job_id": job_id,
             "project": self.project,
@@ -99,6 +85,24 @@ class SpiderHelper(Helper):
                 "password": telnet_password
             }
         }
+
+    def __save_job(self, job_id, project, spname, spargs, cmdline_settings, telnet_username, telnet_password, telnet_host, telnet_port, log_file, start_time, settings):
+        job_model = SpiderJob(
+            job_id=job_id,
+            project=project,
+            spider=spname,
+            spargs=spargs,
+            cmdline_settings=cmdline_settings,
+            telnet_username=telnet_username,
+            telnet_password=telnet_password,
+            telnet_host=telnet_host,
+            telnet_port=telnet_port,
+            status=SpiderJob.STATUS.RUNNING,
+            log_file=log_file,
+            start_time=start_time,
+            settings=settings,
+        )
+        job_model.save()
 
     @staticmethod
     def run_spider(args, callback=None):
