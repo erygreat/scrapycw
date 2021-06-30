@@ -28,18 +28,20 @@ HANDLE_LOG_MAXIMUM_SIZE = 500 * 1024 * 1024
 # 爬虫运行时缓存文件目录
 SPIDER_RUN_CACHE_DIR = None
 # 启动爬虫超时时间
-RUN_SPIDER_TIMEOUT = 60 * 1000
+RUN_SPIDER_TIMEOUT = 60
 
 # 临时文件路径
 TEMP_FILE_DIR = None
 
 # 开启守护进程超时时间
-START_DAEMON_TIMEOUT = 30 * 1000
+START_DAEMON_TIMEOUT = 30
 
 IS_DEV = True
 # scrapycw 日志文件所在目录
 LOGGING_FILE = None
 LOGGING_LEVEL = logging.DEBUG
+
+SPIDER_LISTEN_LOOP_TIME = 10
 
 try:
     from scrapycw_settings import * # noqa # pylint: disable=unused-import

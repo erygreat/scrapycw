@@ -1,5 +1,5 @@
 import os
-from scrapycw.utils.scpraycw import get_root_dir
+from scrapycw.utils.scrapycw import get_root_dir
 
 
 def version():

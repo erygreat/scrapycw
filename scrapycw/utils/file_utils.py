@@ -30,13 +30,13 @@ def read_until_or_timeout(filename, timeout=5000):
     :params filename 文件名称
     :params timeout 超时时间，单位为毫秒
     """
-    start_time = time.time() * 1000
+    start_time = time.time()
     while True:
         try:
             with open(filename, 'r', encoding='utf-8') as f:
                 return f.read()
         except FileNotFoundError:
-            if time.time() * 1000 - start_time > timeout:
+            if time.time() - start_time > timeout:
                 raise ScrapycwReadException("读取文件超时!")
             time.sleep(0.01)
 
@@ -54,7 +54,7 @@ def read_until_once_or_timeout(filename_and_types, timeout=5000):
     """
     if len(filename_and_types) == 0:
         raise ScrapycwReadException("请输入文件!")
-    start_time = time.time() * 1000
+    start_time = time.time()
     while True:
         for filename_and_type in filename_and_types:
             filename = filename_and_type['filename']
@@ -64,7 +64,7 @@ def read_until_once_or_timeout(filename_and_types, timeout=5000):
                     return type, f.read()
             except FileNotFoundError:
                 pass
-        if time.time() * 1000 - start_time > timeout:
+        if time.time() - start_time > timeout:
             raise ScrapycwReadException("读取文件超时!")
         time.sleep(0.01)
 

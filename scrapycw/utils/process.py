@@ -239,6 +239,15 @@ def is_running(pid):
     return False
 
 
+def create_time(pid):
+    """
+    获取进程创建时间
+    """
+    for _proc in psutil.process_iter():
+        if pid == _proc.pid:
+            return _proc.create_time()
+    return None
+
 def kill_process(pid, timeout=5000):
     """
     关闭进程
@@ -253,11 +262,11 @@ def kill_process(pid, timeout=5000):
     if not proc:
         return True
 
-    start_time = time.time() * 1000
+    start_time = time.time()
     try:
         proc.kill()
         while is_running(pid):
-            if time.time() * 1000 - start_time > timeout:
+            if time.time() - start_time > timeout:
                 return False
             time.sleep(0.01)
         return True

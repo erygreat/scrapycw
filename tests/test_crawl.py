@@ -6,7 +6,11 @@ def test_crawl(testdir):
     testdir.makepyfile("""
         import os
         import sys
-        sys.path.insert(0, "{}")
+        current_dir = "{}"
+        sys.path.insert(0, current_dir)
+        from scrapy.utils.conf import closest_scrapy_cfg
+        project_dir = os.path.dirname(closest_scrapy_cfg(current_dir))
+        os.chdir(project_dir)
 
         from tests.pytest_run_subprocess.test_crawl import pytest_crawl_spiders
         pytest_crawl_spiders()

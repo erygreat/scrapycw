@@ -6,8 +6,8 @@ import time
 from scrapy.crawler import CrawlerProcess, CrawlerRunner
 from scrapy.extensions.telnet import TelnetConsole
 
-from scrapycw.utils.scpraycw import get_scrapy_settings
-from scrapycw.utils.process import run_in_daemon
+from scrapycw.utils.scrapycw import get_scrapy_settings
+from scrapycw.utils import process
 from scrapycw.utils.json_encoder import ScrapySettingEncoder
 from scrapycw.helpers import Helper, ScrapycwHelperException
 from scrapycw.helpers.project import ProjectHelper
@@ -51,17 +51,16 @@ class SpiderHelper(Helper):
 
         if not self.project:
             raise ScrapycwHelperException(code=RESPONSE_CODE.PROJECT_NOT_FIND, message="没有项目[{}]".format(self.param_project))
-
         run_spider_args = {
             "project": self.project,
             "spname": spname,
             "spargs": spargs,
-            "cmdline_settings": self.cmdline_settings
+            "cmdline_settings": self.cmdline_settings,
         }
-        _, data = run_in_daemon(SpiderHelper.run_spider, args=run_spider_args, has_return_data=True)
-        return self.__handler_spider_data(data, spname, spargs)
+        spider_pid, data = process.run_in_daemon(SpiderHelper.run_spider, args=run_spider_args, has_return_data=True)
+        return self.__handler_spider_data(data, spname, spargs, spider_pid)
 
-    def __handler_spider_data(self, data, spname, spargs):
+    def __handler_spider_data(self, data, spname, spargs, spider_pid):
         job_id = data['job_id']
         log_file = data['log_file']
         telnet_username = data['telnet_username']
@@ -73,6 +72,7 @@ class SpiderHelper(Helper):
         start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start_time))
         settings = data['settings']
         self.__save_job(job_id, self.project, spname, spargs, self.cmdline_settings, telnet_username, telnet_password, telnet_host, telnet_port, log_file, start_time, settings)
+        # self.__register_job_listen(job_id, spider_pid)
         return {
             "job_id": job_id,
             "project": self.project,
@@ -104,6 +104,28 @@ class SpiderHelper(Helper):
         )
         job_model.save()
 
+    # def __register_job_listen(self, job_id, spider_pid):
+    #     _, data = process.run_in_daemon(SpiderHelper.listen_job, args={ "job_id": job_id, "pid": spider_pid }, has_return_data=True)
+    #     print(data)
+
+    # @staticmethod
+    # def listen_job(args, callback=None):
+    #     job_id = args['job_id']
+    #     pid = args['pid']
+        # 获取进程创建时间，用来做后续是否是对应进程时比对
+        # spider_process_create_time = process.create_time()
+        # if spider_process_create_time:
+
+        # callback({})
+        # model = SpiderJob.objects.get(job_id=job_id)
+        # callback({"success": is_running(pid), "job_name": model.spider})
+
+        # while True:
+        #     if not is_running(pid):
+        #         break
+        #     else:
+        #         time.sleep(SPIDER_LISTEN_LOOP_TIME)
+
     @staticmethod
     def run_spider(args, callback=None):
         project = args['project']
@@ -122,7 +144,7 @@ class SpiderHelper(Helper):
         try:
             process.crawl(spname, **spargs)
         except KeyError:
-            raise ScrapycwHelperException(code=RESPONSE_CODE.SPIDER_NOT_FIND, message="Spider not found: {}".format(spname))
+            raise ScrapycwHelperException(code=RESPONSE_CODE.SPIDER_NOT_FIND, message="爬虫没有找到: {}".format(spname))
 
         crawl = None
         for _crawl in process.crawlers:

@@ -1,4 +1,5 @@
-from scrapycw.utils.scpraycw import init_django_env
+
+from scrapycw.utils.scrapycw import init_django_env
 from scrapycw.commands.crawl import Command
 
 
