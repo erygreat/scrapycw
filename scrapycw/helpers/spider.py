@@ -1,5 +1,7 @@
 import json
 import os
+from scrapycw.settings import SPIDER_LISTEN_LOOP_TIME
+from scrapycw.helpers.job import JobHelper
 import nanoid
 import time
 
@@ -72,7 +74,7 @@ class SpiderHelper(Helper):
         start_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start_time))
         settings = data['settings']
         self.__save_job(job_id, self.project, spname, spargs, self.cmdline_settings, telnet_username, telnet_password, telnet_host, telnet_port, log_file, start_time, settings)
-        # self.__register_job_listen(job_id, spider_pid)
+        self.__register_job_listen(job_id, spider_pid)
         return {
             "job_id": job_id,
             "project": self.project,
@@ -104,27 +106,31 @@ class SpiderHelper(Helper):
         )
         job_model.save()
 
-    # def __register_job_listen(self, job_id, spider_pid):
-    #     _, data = process.run_in_daemon(SpiderHelper.listen_job, args={ "job_id": job_id, "pid": spider_pid }, has_return_data=True)
-    #     print(data)
+    def __register_job_listen(self, job_id, spider_pid):
+        process.run_in_daemon(SpiderHelper.listen_job, args={
+            "job_id": job_id,
+            "pid": spider_pid
+        })
 
-    # @staticmethod
-    # def listen_job(args, callback=None):
-    #     job_id = args['job_id']
-    #     pid = args['pid']
-        # 获取进程创建时间，用来做后续是否是对应进程时比对
-        # spider_process_create_time = process.create_time()
-        # if spider_process_create_time:
+    @staticmethod
+    def listen_job(args):
+        job_id = args['job_id']
+        pid = args['pid']
+        # 获取进程创建时间，用来做后续是否是对应进程时进行对比
+        process_create_time = process.create_time(pid)
+        job_helper = JobHelper(job_id)
+        if not process_create_time:
+            return job_helper.handler_when_close()
 
-        # callback({})
-        # model = SpiderJob.objects.get(job_id=job_id)
-        # callback({"success": is_running(pid), "job_name": model.spider})
+        # 防止启动的进程的ID不是这个 job 的
+        if not job_helper.is_running():
+            return job_helper.handler_when_close()
 
-        # while True:
-        #     if not is_running(pid):
-        #         break
-        #     else:
-        #         time.sleep(SPIDER_LISTEN_LOOP_TIME)
+        while True:
+            if process.is_running(pid, process_create_time):
+                time.sleep(SPIDER_LISTEN_LOOP_TIME)
+            else:
+                return job_helper.handler_when_close()
 
     @staticmethod
     def run_spider(args, callback=None):
@@ -151,7 +157,6 @@ class SpiderHelper(Helper):
             crawl = _crawl
         if not crawl:
             raise ScrapycwHelperException(code=RESPONSE_CODE.SPIDER_CODE_HAVE_BUG, message="爬虫启动失败，请检查爬虫代码是否正确，引入的依赖文件是否存在!")
-
         # 获取 Telnet 拓展信息
         telnet_middleware = None
         for mv in crawl.extensions.middlewares:

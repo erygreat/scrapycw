@@ -228,14 +228,18 @@ def __return_callback_wrapper(filename, error_filename):
     return callback
 
 
-def is_running(pid):
+def is_running(pid, create_time=None):
     """
     进程是否在运行
     :params pid 进程ID
     """
     for _proc in psutil.process_iter():
         if pid == _proc.pid:
-            return True
+            if not create_time:
+                return True
+            elif create_time == _proc.create_time():
+                return True
+            return False
     return False
 
 
