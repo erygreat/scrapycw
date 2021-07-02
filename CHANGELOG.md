@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 添加：爬虫列表查询添加查询全部爬虫
 - 添加：命令行输出格式化参数
-
+- 添加：添加日志解析，对爬虫运行情况进行监听，爬虫运行完成后进行日志解析，将解析结果保存到数据库。
+- 添加：爬虫运行支持 Windows
 ## [0.3.0] - 2020-2-9
 
 ### UPDATED

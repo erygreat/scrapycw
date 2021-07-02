@@ -16,7 +16,7 @@ def test_all_spiders():
     for item in r.data:
         assert(item['project'] in ['default', 'demo', 'project2', 'new_project'])
         if item['project'] == 'default':
-            item['spiders'] = ['baidu']
+            item['spiders'] = ['baidu', 'ip_taobao']
         else:
             item['spiders'] = []
 

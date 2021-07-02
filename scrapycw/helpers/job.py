@@ -15,11 +15,6 @@ class ScrapycwJobException(ScrapycwException):
     pass
 
 
-class CLOSE_REASON:
-
-    UNKOWN = "unkown"
-
-
 class JobStatsHelper(Helper):
 
     running_stats = None
@@ -141,6 +136,10 @@ class JobStatsHelper(Helper):
         return None
 
 class JobHelper(Helper):
+    class CLOSE_REASON:
+
+        UNKOWN = "unkown"
+        FINISHED = "finished"
 
     DEFAULT_CLOSE_REASON = CLOSE_REASON.UNKOWN
 
