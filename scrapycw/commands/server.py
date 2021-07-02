@@ -51,6 +51,7 @@ class Command(ScrapycwCommand):
         print("stop web server...")
         pid = read_until_or_timeout(self.pid_file)
         if pid is None:
+            self.logger.info("关闭 Web Service 时没有找到服务 PID 文件")
             print("pid file '{}' is not exist, can\'t close".format(self.pid_file))
             return
         pid = int(pid)
@@ -71,10 +72,12 @@ class Command(ScrapycwCommand):
                 children_pids.append(_proc.pid)
 
         if proc is None:
+            self.logger.info("关闭 Web Service 时没有找到对应服务")
             print('don\'t have pid "{}" '.format(pid))
             return
 
         if not is_project:
+            self.logger.info("关闭 Web Service 时没有找到对应服务")
             print('pid "{}" is not {} web service'.format(pid, Constant.PROJECT_NAME))
             return
 
@@ -90,14 +93,17 @@ class Command(ScrapycwCommand):
                 print("没有该进程! 进程ID: {}".format(children_pid))
 
         os.remove(self.pid_file)
-        print("关闭web service 完成")
+        print("关闭 Web Service 完成")
+        self.logger.info("关闭 Web Service 完成")
 
     def __start(self, args, opts):
 
         can_use_port = not port_is_used(opts.port)
         print("start web service ...")
+        self.logger.info("正在开启 Web Service")
 
         if not can_use_port:
+            self.logger.warning("开启 Web Service 失败，端口 {} 已被使用".format(opts.port))
             print("port:{} is used".format(opts.port))
             return
 
@@ -111,13 +117,14 @@ class Command(ScrapycwCommand):
                 write_once(self.pid_file, str(pid))
                 print(data)
             except ScrapycwDaemonProcessException as e:
+                self.logger.error("开启 Web Service 失败，失败原因: {}".format(e.message))
                 print("启动后台服务进程失败，失败原因: {}".format(e.message))
                 return
         else:
             pid = os.getpid()
             write_once(self.pid_file, str(pid))
             Command.start_server(args=args)
-
+            self.logger.info("开启 Web Service 完成")
             print("start web service finish!")
 
     @staticmethod

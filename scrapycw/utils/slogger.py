@@ -1,6 +1,6 @@
 import logging
 import os
-from scrapycw.settings import LOGGING_LEVEL, LOGGING_FILE
+from scrapycw.settings import LOGGING_FORMAT, LOGGING_LEVEL, LOGGING_FILE
 
 def get_filename():
     filename = LOGGING_FILE
@@ -14,7 +14,7 @@ def add_handler(logger, level):
     filename = get_filename()
     level = level if level else LOGGING_LEVEL
     handler = logging.FileHandler(filename)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(LOGGING_FORMAT)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(level)

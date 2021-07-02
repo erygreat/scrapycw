@@ -24,6 +24,7 @@ class Command(ScrapycwCommand):
         main()
         sys.argv = argv
         self.print("=========== 初始化完成 ===========")
+        self.logger.info("初始化环境完成!")
 
     def short_desc(self):
         return "init project, create database"

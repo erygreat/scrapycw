@@ -40,6 +40,7 @@ IS_DEV = True
 # scrapycw 日志文件所在目录
 LOGGING_FILE = None
 LOGGING_LEVEL = logging.DEBUG
+LOGGING_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
 
 SPIDER_LISTEN_LOOP_TIME = 10
 

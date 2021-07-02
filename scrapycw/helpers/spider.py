@@ -116,20 +116,26 @@ class SpiderHelper(Helper):
     def listen_job(args):
         job_id = args['job_id']
         pid = args['pid']
+        SpiderHelper.logger.info("[监听爬虫]: 任务ID: {}, PID: {}".format(job_id, pid))
+
         # 获取进程创建时间，用来做后续是否是对应进程时进行对比
         process_create_time = process.create_time(pid)
         job_helper = JobHelper(job_id)
         if not process_create_time:
+            SpiderHelper.logger.info("[爬虫已关闭]: 没有找到爬虫进程，任务ID: {}, PID: {}".format(job_id, pid))
             return job_helper.handler_when_close()
 
         # 防止启动的进程的ID不是这个 job 的
         if not job_helper.is_running():
+            SpiderHelper.logger.info("[爬虫已关闭]: 无法连接爬虫Telnet或Telnet显示已关闭，任务ID: {}, PID: {}".format(job_id, pid))
             return job_helper.handler_when_close()
 
         while True:
             if process.is_running(pid, process_create_time):
+                SpiderHelper.logger.debug("[爬虫正在运行中]: 任务ID: {}, PID: {}".format(job_id, pid))
                 time.sleep(SPIDER_LISTEN_LOOP_TIME)
             else:
+                SpiderHelper.logger.info("[爬虫已关闭]: 任务ID: {}, PID: {}".format(job_id, pid))
                 return job_helper.handler_when_close()
 
     @staticmethod
@@ -138,25 +144,29 @@ class SpiderHelper(Helper):
         cmdline_settings = args['cmdline_settings']
         spname = args['spname']
         spargs = args['spargs']
-        # 获取 settings
+        SpiderHelper.logger.info("[启动爬虫]: 项目名称: {}, 爬虫名称: {}".format(project, spname))
+
+        # 获取 Settings
         settings = get_scrapy_settings(project)
         if settings:
             settings.setdict(cmdline_settings, priority='cmdline')
         if not settings:
-            raise ScrapycwHelperException(code=RESPONSE_CODE.PROJECT_NOT_FIND, message="没有项目[{}]".format(project))
+            raise ScrapycwHelperException(code=RESPONSE_CODE.PROJECT_NOT_FIND, message="[爬虫启动失败]: 没有项目[{}]".format(project))
 
         # 获取爬虫进程
         process = CrawlerProcess(settings)
         try:
             process.crawl(spname, **spargs)
         except KeyError:
-            raise ScrapycwHelperException(code=RESPONSE_CODE.SPIDER_NOT_FIND, message="爬虫没有找到: {}".format(spname))
+            raise ScrapycwHelperException(code=RESPONSE_CODE.SPIDER_NOT_FIND, message="[爬虫启动失败]: 爬虫没有找到: {}".format(spname))
 
         crawl = None
         for _crawl in process.crawlers:
             crawl = _crawl
         if not crawl:
+            SpiderHelper.logger.warning("[爬虫启动失败]: 项目名称: {}, 爬虫名称: {}, 请检查爬虫代码是否正确，引入的依赖文件是否存在!".format(project, spname))
             raise ScrapycwHelperException(code=RESPONSE_CODE.SPIDER_CODE_HAVE_BUG, message="爬虫启动失败，请检查爬虫代码是否正确，引入的依赖文件是否存在!")
+
         # 获取 Telnet 拓展信息
         telnet_middleware = None
         for mv in crawl.extensions.middlewares:

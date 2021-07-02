@@ -151,6 +151,7 @@ class JobHelper(Helper):
         try:
             model = SpiderJob.objects.get(job_id=self.job_id)
         except SpiderJob.DoesNotExist:
+            self.logger.info("没有查询到任务 {}".format(self.job_id))
             raise ScrapycwJobException(code=RESPONSE_CODE.JOB_NOT_FIND, message="任务未找到，任务ID: [{}]".format(self.job_id))
         self.stats = JobStatsHelper(job_id)
 
