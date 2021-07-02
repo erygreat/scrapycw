@@ -1,6 +1,7 @@
 import datetime
 import os
 import re
+from scrapycw.core.scrapycw_object import ScrapycwObject
 
 from scrapycw.settings import HANDLE_LOG_MAXIMUM_SIZE
 from scrapycw.core.exception import ScrapycwException
@@ -180,7 +181,7 @@ class PathnameParser(FormatParser):
 # FORMAT_MESSAGE = "%(message)s"                      # 日志消息
 
 
-class LoggerParser:
+class LoggerParser(ScrapycwObject):
     handler_classes = [
         AsctimeFormatParser,
         CreatedFormatParser,
@@ -226,9 +227,14 @@ class LoggerParser:
             current_size = self.get_file_size_pretty(self.log_size)
             raise ScrapycwLoggerParserException(
                 RESPONSE_CODE.LOG_PARSER_LOG_SIZE_MAXIMUM, "当前设置最大可解析日志大小为{}，当前日志大小为: {}, 可以修改 HANDLE_LOG_MAXIMUM_SIZE 修改可解析日志大小".format(max_size, current_size))
-        # 获取所有日志内容 TODO 是否会存在内存不够用的问题？如果是，则需要逐行处理
-        with open(self.filename) as f:
-            return f.read()
+        # 获取所有日志内容
+        # TODO 是否会存在内存不够用的问题？如果是，则需要逐行处理
+        try:
+            with open(self.filename, encoding="utf-8") as f:
+                return f.read()
+        except Exception as e:
+            raise ScrapycwLoggerParserException(RESPONSE_CODE.LOG_PARSER_READ_FAIL, "读取文件失败，失败原因: ".format(e))
+
 
     def get_file_size_pretty(self, size, flag=0):
         flags = ["B", "KB", "MB", "GB", "TB"]

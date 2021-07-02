@@ -144,7 +144,6 @@ class JobHelper(Helper):
 
     DEFAULT_CLOSE_REASON = CLOSE_REASON.UNKOWN
 
-
     def __init__(self, job_id):
         super().__init__()
         self.job_id = job_id
@@ -156,6 +155,12 @@ class JobHelper(Helper):
         self.stats = JobStatsHelper(job_id)
 
     def handler_when_close(self):
+        try:
+            self.__handler_when_close()
+        except Exception as e:
+            self.logger.error(e)
+
+    def __handler_when_close(self):
         end_time = self.stats.end_time_or_none()
         if not end_time:
             end_time = django.utils.timezone.now()

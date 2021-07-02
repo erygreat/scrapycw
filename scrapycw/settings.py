@@ -25,6 +25,8 @@ INIT_EACH_RUN = False
 
 # 处理的爬虫日志的最大大小
 HANDLE_LOG_MAXIMUM_SIZE = 500 * 1024 * 1024
+# 处理日志和输出时是否使用当前时区时间（Scrapy 使用的是 UTC, 因此显示的时间都会差一个时区，见 https://github.com/scrapy/scrapy/issues/2992）
+HANDLE_LOG_USE_TIMEZONE = False
 # 爬虫运行时缓存文件目录
 SPIDER_RUN_CACHE_DIR = None
 # 启动爬虫超时时间
@@ -53,6 +55,6 @@ SERVER_PID_FILENAME = SERVER_PID_FILENAME if SERVER_PID_FILENAME else os.path.jo
 SPIDER_RUN_CACHE_DIR = SPIDER_RUN_CACHE_DIR if SPIDER_RUN_CACHE_DIR else os.path.join(RUNTIME_PATH, "spider_crawl")
 TEMP_FILE_DIR = TEMP_FILE_DIR if TEMP_FILE_DIR else os.path.join(RUNTIME_PATH, "temps")
 
-DEFAULT_LOG_PATH = os.path.join(RUNTIME_PATH, "log")
+DEFAULT_LOG_PATH = os.path.join(RUNTIME_PATH, "logs")
 current_date = datetime.date.today().strftime("%y%m%d")
 LOGGING_FILE = LOGGING_FILE if LOGGING_FILE else os.path.join(DEFAULT_LOG_PATH, "scrapycw_{}.log".format(current_date))

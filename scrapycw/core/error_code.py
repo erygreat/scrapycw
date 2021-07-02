@@ -30,6 +30,8 @@ class RESPONSE_CODE:
     LOG_PARSER_LOG_SIZE_MAXIMUM = 1012
     # 日志解析失败，请添加日志文件
     LOG_PARSER_FILENAME_IS_NONE = 1013
+    # 日志解析失败，读取文件失败
+    LOG_PARSER_READ_FAIL = 1014
 
     # 项目名称未找到
     PROJECT_NOT_FIND = 1020
