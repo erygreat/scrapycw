@@ -85,6 +85,7 @@ def add_options(parser, can_pretty):
     if can_pretty:
         parser.add_option("--pretty", help="pretty", action="store_true", default=False)
 
+
 def _iter_command_classes(module_name):
     for module in walk_modules(module_name):
         for obj in vars(module).values():

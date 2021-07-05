@@ -1,10 +1,8 @@
-from _pytest.config import ExitCode
 from scrapycw import settings
 from scrapycw.commands.server import Command
 
 import time
 import requests
-import pytest
 
 
 class Dict(dict):

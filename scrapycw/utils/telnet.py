@@ -152,6 +152,7 @@ class Telnet:
         self.close()
         return result
 
+
 if __name__ == "__main__":
     try:
         telnet = Telnet("127.0.0.1", 6028, "scrapy", '35f1140c8926e689')
