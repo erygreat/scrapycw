@@ -254,7 +254,6 @@ class JobHelper(Helper):
     def is_running(self):
         return self.stats.is_running()
 
-<<<<<<< HEAD
     def get_running_est(self):
         try:
             est = {}
@@ -334,12 +333,8 @@ class JobHelper(Helper):
         self.telnet_command("engine.unpause()")
 
     def pause(self):
-        try:
-            self.telnet.command_once("engine.pause()")
-            return { "status": self.JOB_STATUS.PAUSED }
-        except ScrapycwTelnetException as e:
-            e.data = { "status": self.JOB_STATUS.CLOSED }
-            raise e
+        self.telnet.command_once("engine.pause()")
+
 class JobStopHelper(JobHelper):
     def get(self):
         try:

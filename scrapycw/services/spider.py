@@ -1,3 +1,4 @@
+from scrapycw.utils.telnet import ScrapycwTelnetException
 from scrapycw.core.exception import ScrapycwException
 from scrapycw.services import BaseService
 from scrapycw.helpers import ScrapycwHelperException
@@ -30,6 +31,16 @@ class Service(BaseService):
     @classmethod
     def pause(cls, job_id):
         try:
-            return Response(data=JobHelper(job_id=job_id).pause())
+            paused = JobHelper(job_id=job_id).pause()
+            return Response(data={ "status": paused })
+        except ScrapycwTelnetException as e:
+            Response(
+                success=False,
+                message=e.message,
+                code=e.code,
+                data={
+                    "status": JobHelper.JOB_STATUS.CLOSED
+                }
+            )
         except ScrapycwException as e:
-            return Response(success=False, message=e.message, code=e.code, data=e.data)
+            return Response(success=False, message=e.message, code=e.code)
