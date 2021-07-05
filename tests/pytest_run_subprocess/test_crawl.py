@@ -48,7 +48,7 @@ def pytest_crawl_spiders_has_log():
             assert(model.item_count == 1 or model.item_count == 0)
             assert(model.updated_time > model.created_time)
             return
-        elif time.time() - start_time > 10:
+        elif time.time() - start_time > 30:
             assert(False)
         else:
             time.sleep(10)

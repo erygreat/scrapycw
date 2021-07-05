@@ -34,7 +34,9 @@ def read_until_or_timeout(filename, timeout=5000):
     while True:
         try:
             with open(filename, 'r', encoding='utf-8') as f:
-                return f.read()
+                data = f.read()
+                if data:
+                    return data
         except FileNotFoundError:
             if time.time() - start_time > timeout:
                 raise ScrapycwReadException("读取文件超时!")
