@@ -36,13 +36,13 @@ class Telnet:
             self.__connect()
         except ConnectionRefusedError as e:
             raise ScrapycwTelnetException(
-                RESPONSE_CODE.TELNET_CONNECTION_REFUSED_ERROR, e)
+                RESPONSE_CODE.TELNET_CONNECTION_REFUSED_ERROR, e.strerror)
         except ConnectionResetError as e:
             raise ScrapycwTelnetException(
-                RESPONSE_CODE.TELNET_CONNECTION_RESET_ERROR, e)
+                RESPONSE_CODE.TELNET_CONNECTION_RESET_ERROR, e.strerror)
         except socket.timeout as e:
             raise ScrapycwTelnetException(
-                RESPONSE_CODE.TELNET_CONNECTION_TIMEOUT, e)
+                RESPONSE_CODE.TELNET_CONNECTION_TIMEOUT, e.strerror)
 
     def __connect(self):
         """

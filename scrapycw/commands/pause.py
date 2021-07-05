@@ -1,6 +1,5 @@
+from scrapycw.services.spider import Service
 from scrapycw.commands import ScrapycwCommand
-from scrapycw.helpers.job import JobPauseHelper
-
 
 class Command(ScrapycwCommand):
 
@@ -8,7 +7,7 @@ class Command(ScrapycwCommand):
         job_id = None
         if len(args) != 0:
             job_id = args[0]
-        return JobPauseHelper(job_id=job_id).get_response()
+        return Service.pause(job_id=job_id)
 
     def short_desc(self):
         return "Pause Spider"
@@ -18,3 +17,6 @@ class Command(ScrapycwCommand):
 
     def syntax(self):
         return "<job-id>"
+
+    def add_options(self, parser):
+        pass

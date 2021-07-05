@@ -14,6 +14,7 @@ scrapycw <command> -h
 - [projects](#projects)
 - [spiders](#spiders)
 - [crawl](#crawl)
+- [pause](#pause)
 
 除了`init`和`server`命令，都包含`pretty`参数来格式化输出，例如:
 ```
@@ -130,7 +131,22 @@ $ scrapycw spiders -p default
 
 示例:
 ```
-$ python scrapycw/cmdline.py  crawl baidu
+$ scrapycw crawl baidu
 
 {"success": true, "message": null, "code": 0, "data": {"job_id": "20210629_203543_un6_ITAgoDWk", "project": "default", "spider": "baidu", "log_file": null, "telnet": {"host": "127.0.0.1", "port": 6023, "username": "scrapy", "password": "ef434708f541b17e"}}}
+```
+
+## pause
+
+语法: `scrapycw pause <job_id>`
+
+说明: 使目标爬虫任务暂停
+
+示例:
+```
+$ scrapycw pause 20210629_203543_un6_ITAgoDWk
+{"success": false, "message": "由于目标计算机积极拒绝，无法连接。", "code": 1002, "data": {"status": "closed"}}
+
+$ scrapycw pause 20210705_194355_v_kmpbHIDJXi
+{"success": true, "message": null, "code": 0, "data": {"status": "paused"}}
 ```
