@@ -172,6 +172,7 @@ class JobHelper(Helper):
 
     def handler_when_close(self):
         try:
+            self.stats = JobStatsHelper(self.job_id)
             self.__handler_when_close()
         except Exception as e:
             self.logger.error(e)
