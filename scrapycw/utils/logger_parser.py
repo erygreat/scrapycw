@@ -234,8 +234,7 @@ class LoggerParser(ScrapycwObject):
             with open(self.filename, encoding="utf-8") as f:
                 return f.read()
         except Exception as e:
-            raise ScrapycwLoggerParserException(RESPONSE_CODE.LOG_PARSER_READ_FAIL, "读取文件失败，失败原因: ".format(e))
-
+            raise ScrapycwLoggerParserException(RESPONSE_CODE.LOG_PARSER_READ_FAIL, "读取文件失败，失败原因: {}".format(e))
 
     def get_file_size_pretty(self, size, flag=0):
         flags = ["B", "KB", "MB", "GB", "TB"]
@@ -406,14 +405,14 @@ class ScrapyLoggerParser(LoggerParser):
                     "item": int(match.group(4)),
                 }
                 crawl_stats.append(crawl_stat)
-        
+
         if stats:
             page_count = stats.get("response_received_count", 0)
             item_count = stats.get("item_scraped_count", 0)
         else:
             page_count = crawl_stats[-1]['page_count'] if len(crawl_stats) > 0 else None
             item_count = crawl_stats[-1]['item_count'] if len(crawl_stats) > 0 else None
-    
+
         return {
             "start_time": start_time,
             "last_time": last_time,

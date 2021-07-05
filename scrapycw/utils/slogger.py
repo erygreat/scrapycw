@@ -2,6 +2,7 @@ import logging
 import os
 from scrapycw.settings import LOGGING_FORMAT, LOGGING_LEVEL, LOGGING_FILE
 
+
 def get_filename():
     filename = LOGGING_FILE
     dirname = os.path.dirname(filename)
@@ -19,10 +20,9 @@ def add_handler(logger, level):
     logger.addHandler(handler)
     logger.setLevel(level)
 
-def get_logger(name = 'default', level = None):
+
+def get_logger(name='default', level=None):
     logger = logging.getLogger(name)
     if not logger.handlers:
         add_handler(logger, level)
     return logger
-
-

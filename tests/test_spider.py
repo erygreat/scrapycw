@@ -20,6 +20,7 @@ def test_all_spiders():
         else:
             item['spiders'] = []
 
+
 def test_spiders():
     opts = Dict()
     opts['project'] = 'default'

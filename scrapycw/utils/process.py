@@ -255,6 +255,7 @@ def create_time(pid):
             return _proc.create_time()
     return None
 
+
 def kill_process(pid, timeout=5000):
     """
     关闭进程

@@ -14,6 +14,7 @@ from scrapycw.helpers.project import ProjectHelper
 from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.web.api.models import SpiderJob
 
+
 class SpiderHelper(Helper):
 
     def list(self):

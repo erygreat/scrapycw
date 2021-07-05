@@ -1,5 +1,4 @@
 from scrapycw.core.exception import ScrapycwException
-from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.services import BaseService
 from scrapycw.helpers import ScrapycwHelperException
 from scrapycw.utils.response import Response

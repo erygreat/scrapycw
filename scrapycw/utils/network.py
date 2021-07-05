@@ -12,4 +12,3 @@ def port_is_used(port, host="localhost"):
         return True
     except Exception:
         return False
-
