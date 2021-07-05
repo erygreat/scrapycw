@@ -7,14 +7,14 @@ def test_write():
     filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), "file_utils.txt")
     write_once(filename, "hello world")
 
-    data = read_until_or_timeout(filename, 1000)
+    data = read_until_or_timeout(filename, 1)
     assert(data == 'hello world')
 
 
 def test_read_timeout():
     filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), "file_utils_not_exist.txt")
     try:
-        read_until_or_timeout(filename, 3000)
+        read_until_or_timeout(filename, 3)
         assert(False)
     except ScrapycwReadException as e:
         assert(e.message == '读取文件超时!')
@@ -22,7 +22,7 @@ def test_read_timeout():
 
 def test_read_filename_and_types_1():
     try:
-        read_until_once_or_timeout([], 1000)
+        read_until_once_or_timeout([], 1)
         assert(False)
     except ScrapycwReadException as e:
         assert(e.message == '请输入文件!')
@@ -41,7 +41,7 @@ def test_read_filename_and_types_2():
                 "type": "data",
                 "filename": filename2
             }
-        ], 1000)
+        ], 1)
         assert(False)
     except ScrapycwReadException as e:
         assert(e.message == '读取文件超时!')
@@ -63,7 +63,7 @@ def test_read_filename_and_types_3():
                 "type": "data",
                 "filename": filename2
             }
-        ], 1000)
+        ], 1)
         assert(type == 'data')
         assert(data == file_data)
     except ScrapycwReadException as e:

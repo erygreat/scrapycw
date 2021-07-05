@@ -28,4 +28,4 @@ def test_spiders():
     assert(r.code == 0)
     assert(not r.message)
     assert(r.data['project'] == 'default')
-    assert(r.data['spiders'] == ['baidu'])
+    assert(r.data['spiders'] == ['baidu', 'ip_taobao'])

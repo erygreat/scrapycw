@@ -13,7 +13,7 @@ if __name__ == '__main__':
     current_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, current_dir)
 
-from scrapycw.utils.scpraycw import init_django_env
+from scrapycw.utils.scrapycw import init_django_env
 from scrapycw.utils.json_encoder import DatetimeJsonEncoder
 from scrapycw.commands import ScrapycwCommand, init
 from scrapycw.utils.constant import Constant

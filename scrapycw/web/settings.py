@@ -29,7 +29,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'scrapycw.web.api',
+    'scrapycw.web.app',
     'django_apscheduler',
     # 'django.contrib.admin',
     # 'django.contrib.auth',

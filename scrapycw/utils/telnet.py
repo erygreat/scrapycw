@@ -47,7 +47,7 @@ class Telnet:
     def __connect(self):
         """
          输入用户名和密码登录 scrapy telnet, 并创建sock连接
-         TODO 需要将其中对 DONT WILL DO WONT等操作改为自动识别
+         TODO 需要将其中对 DONT WILL DO WONT等操作改为自动识别, 以及对 Telnet 设置做自动解析
         :return:
         :exception ConnectionRefusedError 连接被拒绝(没有该telnet)
         :exception ConnectionResetError 连接被重置(该telnet被关闭)
@@ -119,7 +119,6 @@ class Telnet:
             raise ScrapycwTelnetNotConnectionException(
                 RESPONSE_CODE.TELNET_NOT_CONNECT, "Telnet don't connect, please connect it")
         self.__conn.close()
-
         return self.__conn.read_all()
 
     def change_type(self, data: str):
@@ -146,6 +145,11 @@ class Telnet:
         self.__sock.close()
         self.__conn = None
 
+    def command_once(self, command):
+        self.connect()
+        result = self.command(command)
+        self.close()
+        return result
 
 if __name__ == "__main__":
     try:
@@ -165,43 +169,3 @@ if __name__ == "__main__":
         print("telnet未连接")
     except ScrapycwTelnetException as e:
         print(e.message)
-
-
-# if __name__ == "__main__":
-#     tn = telnetlib.Telnet(host="127.0.0.1", port=6028,)
-#     sock = tn.get_socket()
-#     # 输入用户名
-#     buf = tn.read_until(b"Username:")
-#     sock.send(b"scrapy\r\n")
-#     sock.send(telnetlib.IAC + telnetlib.DO + telnetlib.ECHO)
-#
-#     # 输入密码
-#     buf = sock.recv(50)
-#     sock.send(b"35f1140c8926e689\r\n")
-#     sock.send(telnetlib.IAC + telnetlib.DONT + telnetlib.ECHO)
-#
-#     # telnet设置
-#     sock.send(b'\xff\xfd\x03\xff\xfb"\xff\xfa"\x03\x01\x03\x00\x03b\x03\x04\x02\x0f\x05\x02\x14\x07b\x1c\x08\x02\x04\tB\x1a\n\x02\x7f\x0b\x02\x15\x0c\x02\x17\r\x02\x12\x0e\x02\x16\x0f\x02\x11\x10\x02\x13\x11\x00\xff\xff\x12\x00\xff\xff\xff\xf0\xff\xfb\x1f\xff\xfa\x1f\x00\xcc\x00,\xff\xf0\xff\xfb\x03\xff\xfd\x01')
-#     sock.send(b'\xff\xfa"\x01\x06\xff\xf0')
-#
-#     # 获取输入结果
-#     buf = sock.recv(50)
-#     if str(buf).find("Authentication failed") != -1:
-#         print("Authentication failed")
-#         sock.close()
-#         sys.exit(1)
-#
-#     print("密码正确")
-#
-#     sock.send(b"len(engine.slot.inprogress)\r" + telnetlib.BINARY)
-#     buf = sock.recv(10*1024)
-#     print(buf)
-#
-#     sock.send(b"engine.slot.closing\r" + telnetlib.BINARY)
-#     buf = sock.recv(10*1024)
-#     print(buf)
-#
-#     sock.send(b"len(engine.downloader.active)\r" + telnetlib.BINARY)
-#     buf = sock.recv(10*1024)
-#     print(buf)
-#     sock.close()

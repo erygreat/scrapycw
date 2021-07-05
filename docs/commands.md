@@ -13,6 +13,7 @@ scrapycw <command> -h
 - [server](#server)
 - [projects](#projects)
 - [spiders](#spiders)
+- [crawl](#crawl)
 
 除了`init`和`server`命令，都包含`pretty`参数来格式化输出，例如:
 ```
@@ -114,4 +115,22 @@ $ scrapycw spiders
 
 $ scrapycw spiders -p default
 {"success": true, "message": null, "code": 0, "data": {"spiders": ["baidu"], "project": "default"}}
+```
+## crawl
+
+语法：`scrapycw crawl <spider-name> [option]`
+
+说明：启动爬虫
+
+参数：
+
+- project：爬虫所在项目名称, 默认值为默认项目
+- s：手动设置settings值，同 Scrapy
+- a：手动设置爬虫参数，同 Scrapy
+
+示例:
+```
+$ python scrapycw/cmdline.py  crawl baidu
+
+{"success": true, "message": null, "code": 0, "data": {"job_id": "20210629_203543_un6_ITAgoDWk", "project": "default", "spider": "baidu", "log_file": null, "telnet": {"host": "127.0.0.1", "port": 6023, "username": "scrapy", "password": "ef434708f541b17e"}}}
 ```

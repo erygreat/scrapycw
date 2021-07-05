@@ -1,14 +1,12 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from scrapycw.commands import ScrapycwCommand
-from scrapycw.core.slogger import getLogger
-from scrapycw.web.api.models import SpiderJob
-
-import time
+from scrapycw.utils.slogger import get_logger
+from scrapycw.web.app.models import SpiderJob
 
 
 
 def myfunc():
-    logger = getLogger("test")
+    logger = get_logger("test")
     models = SpiderJob.objects.filter(
         status=SpiderJob.STATUS.RUNNING
     ).all()

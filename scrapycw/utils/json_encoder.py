@@ -1,16 +1,26 @@
 import datetime
 import json
+import time
 
+from scrapycw import settings
+from scrapycw.core.scrapycw_object import ScrapycwObject
 from scrapy.settings import BaseSettings
 
 
-class DatetimeJsonEncoder(json.JSONEncoder):
+class DatetimeJsonEncoder(json.JSONEncoder, ScrapycwObject):
     """
     python对象转换为Json时的时间类型处理器
     """
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
-            return obj.strftime("%Y-%m-%d %H:%M:%S")
+            if settings.HANDLE_LOG_USE_TIMEZONE:
+                now_timestamp = time.time()
+                utc_diff_time = datetime.datetime.fromtimestamp(now_timestamp) - datetime.datetime.utcfromtimestamp(now_timestamp)
+                timezone_timestamp = time.mktime(obj.timetuple()) + utc_diff_time.total_seconds()
+                timezone_struct_time = time.localtime(timezone_timestamp)
+                return time.strftime('%Y-%m-%d %H:%M:%S', timezone_struct_time)
+            else:
+                return obj.strftime("%Y-%m-%d %H:%M:%S")
         if isinstance(obj, datetime.timedelta):
             return obj.__str__()
         return super(DatetimeJsonEncoder, self).default(obj)

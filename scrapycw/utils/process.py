@@ -77,6 +77,9 @@ def run_in_daemon(func, args=None, has_return_data=False):
             pid = run_in_daemon(Demo.hello)
     ```
     """
+    return __run_in_daemon(func, args, has_return_data)
+
+def __run_in_daemon(func, args=None, has_return_data=False):
     # 检查序列化
     try:
         json.dumps(args)
@@ -206,7 +209,7 @@ def __run_in_windows(func, args, has_return_data, pid_file_name, return_file_nam
     if has_return_data:
         cmd.append("--has_return_data")
     subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
+    # subprocess.Popen(cmd)
 
 def __run_daemon_windows(func, args, has_return_data, pid_file_name, return_file_name, error_file_name):
     __run_main(func, args, has_return_data, pid_file_name, return_file_name, error_file_name)
@@ -228,16 +231,29 @@ def __return_callback_wrapper(filename, error_filename):
     return callback
 
 
-def is_running(pid):
+def is_running(pid, create_time=None):
     """
     进程是否在运行
     :params pid 进程ID
     """
     for _proc in psutil.process_iter():
         if pid == _proc.pid:
-            return True
+            if not create_time:
+                return True
+            elif create_time == _proc.create_time():
+                return True
+            return False
     return False
 
+
+def create_time(pid):
+    """
+    获取进程创建时间
+    """
+    for _proc in psutil.process_iter():
+        if pid == _proc.pid:
+            return _proc.create_time()
+    return None
 
 def kill_process(pid, timeout=5000):
     """
@@ -253,11 +269,11 @@ def kill_process(pid, timeout=5000):
     if not proc:
         return True
 
-    start_time = time.time() * 1000
+    start_time = time.time()
     try:
         proc.kill()
         while is_running(pid):
-            if time.time() * 1000 - start_time > timeout:
+            if time.time() - start_time > timeout:
                 return False
             time.sleep(0.01)
         return True
@@ -304,7 +320,7 @@ if __name__ == "__main__":
         raise ScrapycwCommandParamMissingException("请输入pid存储文件 --pid_file_name")
     if opts.args:
         args = json.loads(args)
-
+    
     function_names = function_name.split(".")
     target_module = importlib.import_module(module_name)
     target_func = target_module

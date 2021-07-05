@@ -1,12 +1,14 @@
-from datetime import datetime, timedelta
 import json
 import math
 import time
+import django
+from datetime import timedelta
 
 from typing import Union
 from scrapycw.utils.logger_parser import ScrapyLoggerParser
 from scrapycw.utils.telnet import ScrapycwTelnetException, Telnet
-from scrapycw.web.api.models import SpiderJob
+from scrapycw.web.app.models import SpiderJob
+from scrapycw.utils.json_encoder import DatetimeJsonEncoder
 from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.core.exception import ScrapycwException
 from scrapycw.helpers import Helper
@@ -55,7 +57,7 @@ class JobListHelper(Helper):
                 "telnet_host": model.telnet_host,
                 "telnet_port": model.telnet_port,
                 "status": job.get_status(),
-                "closed_reason": job.get_closed_reason(),
+                "closed_reason": job.stats.closed_reason_or_none(),
                 "log_file": model.log_file,
                 "job_start_time": model.job_start_time,
                 "job_end_time": model.job_end_time,
@@ -64,9 +66,9 @@ class JobListHelper(Helper):
             "count": query.count(),
             "data": results
         }
+class JobStatsHelper(Helper):
 
-
-class JobHelper(Helper):
+    running_stats = None
 
     def __init__(self, job_id):
         super().__init__()
@@ -74,42 +76,60 @@ class JobHelper(Helper):
         try:
             model = SpiderJob.objects.get(job_id=self.job_id)
         except SpiderJob.DoesNotExist:
-            raise ScrapycwJobException(
-                code=RESPONSE_CODE.JOB_ID_NOT_FIND,
-                message="Don't have job id: [{}]".format(self.job_id)
-            )
-        self.model = model
+            raise ScrapycwJobException(code=RESPONSE_CODE.JOB_NOT_FIND, message="任务未找到，任务ID: [{}]".format(self.job_id))
+        self.job_model = model
         self.telnet_host = model.telnet_host
         self.telnet_port = model.telnet_port
         self.telnet_username = model.telnet_username
         self.telnet_password = model.telnet_password
         self.log_path = model.log_file
-        self.project = model.project
-        self.spider = model.spider
-        self.start_time = model.job_start_time
         self.telnet = Telnet(self.telnet_host, self.telnet_port, self.telnet_username, self.telnet_password)
-        self.settings = json.loads(model.settings)
-        # TODO 等到定时任务建立后改为尝试查日志，如果没有查询数据库字段
         self.log_info = self.parse_log()
 
-    def telnet_command(self, command):
-        self.telnet.connect()
-        result = self.telnet.command(command)
-        self.telnet.close()
-        return result
+    def parse_log(self):
+        if not self.log_path:
+            return {}
 
-    def stop(self):
-        self.telnet.connect()
-        self.telnet.command("engine.stop()")
-        self.telnet.read_util_close()
+        log_format = self.settings.get("LOG_FORMAT")
+        log_date_format = self.settings.get("LOG_DATEFORMAT")
+        parser = ScrapyLoggerParser(
+            filename=self.log_path,
+            format=log_format,
+            log_date_format=log_date_format,
+            telnet_password=self.telnet_password
+        )
+        log_info = parser.execute()
+        return log_info if log_info else {}
 
-    def pause(self):
-        self.telnet_command("engine.pause()")
+    def is_running(self):
+        try:
+            return self.telnet.command_once("engine.running")
+        except ScrapycwTelnetException:
+            return False
 
-    def unpause(self):
-        self.telnet_command("engine.unpause()")
+    def end_time_or_none(self):
+        end_time = self.job_model.end_time
+        if end_time:
+            return end_time
+        return self.log_info.get('end_time', None)
 
-    def get_running_stats(self) -> Union[dict, None]:
+    def closed_reason_or_none(self):
+        close_reason = self.job_model.close_reason
+        if close_reason:
+            return close_reason
+        return self.log_info.get('close_reason', None)
+
+    def __stats_db(self) -> Union[dict, None]:
+        stats = self.job_model.stats
+        if stats:
+            return json.loads(stats)
+        else:
+            return None
+
+    def __stats_log(self) -> Union[dict, None]:
+        return self.log_info.get("spider_stats", None)
+
+    def __stats_running(self) -> Union[dict, None]:
         try:
             self.telnet.connect()
             self.telnet.command("import json")
@@ -121,14 +141,101 @@ class JobHelper(Helper):
         except ScrapycwTelnetException:
             return None
 
-    def get_stats(self):
-        running_stats = self.get_running_stats()
-        if running_stats:
-            return running_stats
+    def __stats_running_cached(self) -> Union[dict, None]:
+        if not self.running_stats:
+            self.running_stats = self.__stats_running()
+        return self.running_stats
+
+    def spider_stats(self):
+        stats = self.__stats_db()
+        if stats:
+            return stats
+
+        stats = self.__stats_log()
+        if stats:
+            return stats
+
+        stats = self.__stats_running()
+        if stats:
+            return stats
+
+        return None
+
+    def pages(self):
+        if self.job_model.page_count:
+            return self.job_model.page_count
+
+        stats = self.__stats_running_cached()
+        if stats:
+            return stats.get("response_received_count", 0)
+
+        if self.log_info:
+            return self.log_info.get("pages", 0)
+
+        return None
+
+    def items(self):
+        if self.job_model.item_count:
+            return self.job_model.item_count
+
+        stats = self.__stats_running_cached()
+        if stats:
+            return stats.get("item_scraped_count", 0)
+
         elif self.log_info:
-            return self.log_info.get("spider_stats", None)
-        else:
-            return None
+            return self.log_info.get("items", 0)
+        return None
+
+class JobHelper(Helper):
+    class CLOSE_REASON:
+
+        UNKOWN = "unkown"
+        FINISHED = "finished"
+
+    DEFAULT_CLOSE_REASON = CLOSE_REASON.UNKOWN
+
+    def __init__(self, job_id):
+        super().__init__()
+        self.job_id = job_id
+        try:
+            model = SpiderJob.objects.get(job_id=self.job_id)
+        except SpiderJob.DoesNotExist:
+            self.logger.info("没有查询到任务 {}".format(self.job_id))
+            raise ScrapycwJobException(code=RESPONSE_CODE.JOB_NOT_FIND, message="任务未找到，任务ID: [{}]".format(self.job_id))
+        self.stats = JobStatsHelper(job_id)
+
+    def handler_when_close(self):
+        try:
+            self.__handler_when_close()
+        except Exception as e:
+            self.logger.error(e)
+
+    def __handler_when_close(self):
+        end_time = self.stats.end_time_or_none()
+        if not end_time:
+            end_time = django.utils.timezone.now()
+
+        close_reason = self.stats.closed_reason_or_none()
+        if not close_reason:
+            close_reason = self.DEFAULT_CLOSE_REASON
+
+        spider_stats = self.stats.spider_stats()
+        pages = self.stats.pages()
+        items = self.stats.items()
+
+        SpiderJob.objects.filter(job_id=self.job_id).update(
+            end_time=end_time,
+            close_reason=close_reason,
+            stats=json.dumps(spider_stats, cls=DatetimeJsonEncoder) if spider_stats else None,
+            log_info=json.dumps(self.stats.log_info, cls=DatetimeJsonEncoder) if self.stats.log_info else None,
+            page_count=pages,
+            item_count=items,
+            status=SpiderJob.STATUS.CLOSED,
+            updated_time=django.utils.timezone.now()
+        )
+
+    def is_running(self):
+        return self.stats.is_running()
 
     def get_running_est(self):
         try:
@@ -155,17 +262,6 @@ class JobHelper(Helper):
             return est
         except ScrapycwTelnetException:
             return None
-
-    def parse_log(self):
-        log_format = self.settings.get("LOG_FORMAT")
-        log_date_format = self.settings.get("LOG_DATEFORMAT")
-        parser = ScrapyLoggerParser(
-            filename=self.log_path,
-            format=log_format,
-            log_date_format=log_date_format,
-            telnet_password=self.telnet_password
-        )
-        return parser.execute()
     
     def get_status(self):
         if self.log_info and self.log_info.get("is_close"):
@@ -183,9 +279,6 @@ class JobHelper(Helper):
             pass
         return JobStatus.CLOSED
     
-    def get_closed_reason(self):
-        return self.log_info.get('close_reason') if self.log_info else None
-
     def get_start_time(self):
         # 开始时间, 运行中连接telent查询，运行完成查询数据库
         try:
@@ -208,25 +301,22 @@ class JobHelper(Helper):
         except ScrapycwTelnetException:
             return self.log_info.get('continuous_time') if self.log_info else None
 
-    def get_end_time(self):
-        return self.log_info.get('end_time') if self.log_info else None
+    def telnet_command(self, command):
+        self.telnet.connect()
+        result = self.telnet.command(command)
+        self.telnet.close()
+        return result
 
-    def get_pages(self):
-        stats = self.get_running_stats()
-        if stats:
-            return stats.get("response_received_count", 0)
-        if self.log_info:
-            return self.log_info.get("pages")
-        else:
-            return None
+    def stop(self):
+        self.telnet.connect()
+        self.telnet.command("engine.stop()")
+        self.telnet.read_util_close()
 
-    def get_items(self):
-        stats = self.get_running_stats()
-        if stats:
-            return stats.get("item_scraped_count", 0)
-        elif self.log_info:
-            return self.log_info.get("items")
-        return None
+    def pause(self):
+        self.telnet_command("engine.pause()")
+
+    def unpause(self):
+        self.telnet_command("engine.unpause()")
 class JobStopHelper(JobHelper):
     def get(self):
         try:
@@ -274,10 +364,10 @@ class JobStatusHelper(JobHelper):
             "spider": self.spider,
             "log_filename": self.log_path,
             "start_time": self.get_start_time(),
-            "end_time": self.get_end_time(),
-            "closed_reason": self.get_closed_reason(),
-            "pages": self.get_pages(),
-            "items": self.get_items(),
+            "end_time": self.stats.end_time_or_none(),
+            "closed_reason": self.stats.closed_reason_or_none(),
+            "pages": self.stats.pages(),
+            "items": self.stats.items(),
             "runtime": self.get_runtime(),
             "status": self.get_status()
         }
@@ -286,7 +376,7 @@ class JobStatusHelper(JobHelper):
             results["settings"] = self.settings
 
         if is_parse_stats:
-            results["stats"] = self.get_stats()
+            results["stats"] = self.stats.spider_stats()
             results["est"] = self.get_running_est()
 
         if is_parse_log:

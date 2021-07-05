@@ -28,6 +28,10 @@ class RESPONSE_CODE:
     LOG_PARSER_LOG_NOT_FIND = 1011
     # 日志解析失败，日志文件过大无法解析
     LOG_PARSER_LOG_SIZE_MAXIMUM = 1012
+    # 日志解析失败，请添加日志文件
+    LOG_PARSER_FILENAME_IS_NONE = 1013
+    # 日志解析失败，读取文件失败
+    LOG_PARSER_READ_FAIL = 1014
 
     # 项目名称未找到
     PROJECT_NOT_FIND = 1020
@@ -35,8 +39,8 @@ class RESPONSE_CODE:
     SPIDER_NOT_FIND = 1021
     # 爬虫代码中存在BUG
     SPIDER_CODE_HAVE_BUG = 1022
-    # job id没有找到
-    JOB_ID_NOT_FIND = 1023
+    # job 没有找到
+    JOB_NOT_FIND = 1023
     # 启动爬虫超时
     SPIDER_RUN_TIMEOUT = 1024
 

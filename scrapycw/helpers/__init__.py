@@ -4,7 +4,7 @@ import sys
 from scrapy.utils.conf import closest_scrapy_cfg
 from scrapycw.settings import SCRAPY_DEFAULT_PROJECT
 from scrapycw.core.exception import ScrapycwException
-from scrapycw.utils.scpraycw import get_scrapy_settings, init_django_env
+from scrapycw.utils.scrapycw import get_scrapy_settings, init_django_env
 from scrapycw.core.scrapycw_object import ScrapycwObject
 init_django_env()
 
@@ -42,7 +42,7 @@ class Helper(ScrapycwObject):
         if cmdline_settings is None:
             cmdline_settings = {}
         self.settings = self._get_settings(project)
-        if self.settings is not None:
+        if self.settings:
             self.settings.setdict(cmdline_settings, priority='cmdline')
 
     def _get_settings(self, project):

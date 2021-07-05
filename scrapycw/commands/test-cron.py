@@ -1,8 +1,7 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from scrapycw.commands import ScrapycwCommand
-from scrapycw.core.slogger import getLogger
 from scrapycw.helpers.job import JobStatusHelper
-from scrapycw.web.api.models import SpiderJob
+from scrapycw.web.app.models import SpiderJob
 
 import time
 
