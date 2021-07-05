@@ -210,7 +210,6 @@ class LoggerParser(ScrapycwObject):
         self.log_format = format
         self.log_date_format = log_date_format
         self.telnet_password = telnet_password
-        self.filename = filename
         self.log_size = self.get_file_size()
         self.content = self.read_log_file()
 

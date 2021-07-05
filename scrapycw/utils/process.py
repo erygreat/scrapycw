@@ -77,9 +77,6 @@ def run_in_daemon(func, args=None, has_return_data=False):
             pid = run_in_daemon(Demo.hello)
     ```
     """
-    return __run_in_daemon(func, args, has_return_data)
-
-def __run_in_daemon(func, args=None, has_return_data=False):
     # 检查序列化
     try:
         json.dumps(args)
@@ -321,7 +318,7 @@ if __name__ == "__main__":
         raise ScrapycwCommandParamMissingException("请输入pid存储文件 --pid_file_name")
     if opts.args:
         args = json.loads(args)
-    
+
     function_names = function_name.split(".")
     target_module = importlib.import_module(module_name)
     target_func = target_module

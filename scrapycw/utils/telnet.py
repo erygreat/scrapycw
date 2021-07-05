@@ -119,6 +119,7 @@ class Telnet:
             raise ScrapycwTelnetNotConnectionException(
                 RESPONSE_CODE.TELNET_NOT_CONNECT, "Telnet don't connect, please connect it")
         self.__conn.close()
+
         return self.__conn.read_all()
 
     def change_type(self, data: str):
