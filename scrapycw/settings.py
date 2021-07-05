@@ -44,6 +44,7 @@ LOGGING_FILE = None
 LOGGING_LEVEL = logging.DEBUG
 LOGGING_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
 
+# 每隔该秒数检测一下爬虫是否存在的心跳
 SPIDER_LISTEN_LOOP_TIME = 10
 
 try:

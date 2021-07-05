@@ -3,6 +3,8 @@ from scrapycw.services import BaseService
 from scrapycw.helpers import ScrapycwHelperException
 from scrapycw.utils.response import Response
 from scrapycw.helpers.spider import SpiderHelper
+from scrapycw.helpers.job import JobHelper
+
 
 
 class Service(BaseService):
@@ -24,3 +26,10 @@ class Service(BaseService):
             return Response(data=data)
         except ScrapycwException as e:
             return Response(success=False, message=e.message, code=e.code)
+
+    @classmethod
+    def pause(cls, job_id):
+        try:
+            return Response(data=JobHelper(job_id=job_id).pause())
+        except ScrapycwException as e:
+            return Response(success=False, message=e.message, code=e.code, data=e.data)

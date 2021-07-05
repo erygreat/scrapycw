@@ -3,8 +3,9 @@ import datetime
 import time
 import json
 from scrapycw.utils.scrapycw import init_django_env
-from scrapycw.commands.crawl import Command
-from scrapycw.helpers.job import JobHelper
+from scrapycw.commands.crawl import Command as CrawlCommand
+from scrapycw.commands.pause import Command as PauseCommand
+from scrapycw.helpers.job import JobHelper, JobStatsHelper
 
 
 class Dict(dict):
@@ -19,7 +20,7 @@ def pytest_crawl_spiders_has_log():
     opts = Dict()
     opts['project'] = "default"
     opts['spargs'] = {}
-    result = Command().run(["ip_taobao"], opts)
+    result = CrawlCommand().run(["ip_taobao"], opts)
     model = SpiderJob.objects.filter(job_id=result.data['job_id']).get()
     assert(model is not None)
     assert(model.job_id == result.data['job_id'])
@@ -60,7 +61,7 @@ def pytest_crawl_spiders():
     opts = Dict()
     opts['project'] = "default"
     opts['spargs'] = {}
-    result = Command().run(["baidu"], opts)
+    result = CrawlCommand().run(["baidu"], opts)
     model = SpiderJob.objects.filter(job_id=result.data['job_id']).get()
     assert(model is not None)
     assert(model.job_id == result.data['job_id'])
@@ -94,3 +95,23 @@ def pytest_crawl_spiders():
             assert(False)
         else:
             time.sleep(10)
+
+def pytest_pause_spider():
+    init_django_env()
+    from scrapycw.web.app.models import SpiderJob
+    opts = Dict()
+    opts['project'] = "default"
+    opts['spargs'] = {}
+    result = CrawlCommand().run(["baidu"], opts)
+    model = SpiderJob.objects.filter(job_id=result.data['job_id']).get()
+    job_id = model.job_id
+
+    assert(not JobStatsHelper(job_id=job_id).is_paused())
+    assert(JobStatsHelper(job_id=job_id).is_running())
+
+    result = PauseCommand().run([job_id], {})
+
+    assert(result.success)
+    assert(result['data']['status'] == "paused")
+    assert(JobStatsHelper(job_id=job_id).is_paused())
+    assert(JobStatsHelper(job_id=job_id).is_running())

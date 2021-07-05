@@ -56,6 +56,12 @@ class JobStatsHelper(Helper):
         except ScrapycwTelnetException:
             return False
 
+    def is_paused(self):
+        try:
+            return self.telnet.command_once("engine.paused")
+        except ScrapycwTelnetException:
+            return False
+
     def end_time_or_none(self):
         end_time = self.job_model.end_time
         if end_time:
@@ -142,16 +148,26 @@ class JobHelper(Helper):
         UNKOWN = "unkown"
         FINISHED = "finished"
 
+    class JOB_STATUS:
+
+        PAUSED = "paused"
+        CLOSED = "closed"
+
     DEFAULT_CLOSE_REASON = CLOSE_REASON.UNKOWN
 
     def __init__(self, job_id):
         super().__init__()
         self.job_id = job_id
         try:
-            SpiderJob.objects.get(job_id=self.job_id)
+            model = SpiderJob.objects.get(job_id=self.job_id)
         except SpiderJob.DoesNotExist:
             self.logger.info("没有查询到任务 {}".format(self.job_id))
             raise ScrapycwJobException(code=RESPONSE_CODE.JOB_NOT_FIND, message="任务未找到，任务ID: [{}]".format(self.job_id))
+        self.telnet_host = model.telnet_host
+        self.telnet_port = model.telnet_port
+        self.telnet_username = model.telnet_username
+        self.telnet_password = model.telnet_password
+        self.telnet = Telnet(self.telnet_host, self.telnet_port, self.telnet_username, self.telnet_password)
         self.stats = JobStatsHelper(job_id)
 
     def handler_when_close(self):
@@ -186,3 +202,11 @@ class JobHelper(Helper):
 
     def is_running(self):
         return self.stats.is_running()
+
+    def pause(self):
+        try:
+            self.telnet.command_once("engine.pause()")
+            return { "status": self.JOB_STATUS.PAUSED }
+        except ScrapycwTelnetException as e:
+            e.data = { "status": self.JOB_STATUS.CLOSED }
+            raise e
