@@ -15,7 +15,6 @@ def test_process_1(testdir):
     assert(r.ret == ExitCode.NO_TESTS_COLLECTED)
 
 
-
 def test_process_2(testdir):
     testdir.makepyfile("""
         import os
@@ -42,7 +41,6 @@ def test_process_3(testdir):
     assert(r.ret == ExitCode.NO_TESTS_COLLECTED)
 
 
-
 def test_process_4(testdir):
     testdir.makepyfile("""
         import os
@@ -54,7 +52,6 @@ def test_process_4(testdir):
 
     r = testdir.runpytest_subprocess()
     assert(r.ret == ExitCode.NO_TESTS_COLLECTED)
-
 
 
 def test_process_5(testdir):
@@ -70,7 +67,6 @@ def test_process_5(testdir):
     assert(r.ret == ExitCode.NO_TESTS_COLLECTED)
 
 
-
 def test_process_6(testdir):
     testdir.makepyfile("""
         import os
@@ -82,7 +78,6 @@ def test_process_6(testdir):
 
     r = testdir.runpytest_subprocess()
     assert(r.ret == ExitCode.NO_TESTS_COLLECTED)
-
 
 
 def test_process_7(testdir):
@@ -98,7 +93,6 @@ def test_process_7(testdir):
     assert(r.ret == ExitCode.NO_TESTS_COLLECTED)
 
 
-
 def test_process_8(testdir):
     testdir.makepyfile("""
         import os
@@ -110,4 +104,3 @@ def test_process_8(testdir):
 
     r = testdir.runpytest_subprocess()
     assert(r.ret == ExitCode.NO_TESTS_COLLECTED)
-

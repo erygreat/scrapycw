@@ -28,4 +28,3 @@ def test_sloger():
                 count += 1
                 assert(False)
     assert(count == 3)
-            
