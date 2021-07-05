@@ -348,19 +348,6 @@ class JobStopHelper(JobHelper):
             }
             raise e
 
-
-class JobPauseHelper(JobHelper):
-    def get(self):
-        try:
-            self.pause()
-            return {
-                "status": JobStatus.PAUSED
-            }
-        except ScrapycwTelnetException as e:
-            e.data = {"status": JobStatus.CLOSED}
-            raise e
-
-
 class JobUnauseHelper(JobHelper):
     def get(self):
         try:

@@ -8,7 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### UPDATED
 
-- 在job表添加settings字段
 - 修改：修改代码结构，添加 service 层
 - 修改：优化文档结构
 - 修改：优化进程关闭方式，添加 Windows 支持
