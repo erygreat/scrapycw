@@ -1,3 +1,4 @@
+from scrapycw.web.app.models import SpiderJob
 from scrapycw.utils.telnet import ScrapycwTelnetException
 from scrapycw.core.exception import ScrapycwException
 from scrapycw.services import BaseService
@@ -5,7 +6,6 @@ from scrapycw.helpers import ScrapycwHelperException
 from scrapycw.utils.response import Response
 from scrapycw.helpers.spider import SpiderHelper
 from scrapycw.helpers.job import JobHelper
-
 
 
 class Service(BaseService):
@@ -84,3 +84,42 @@ class Service(BaseService):
             )
         except ScrapycwException as e:
             return Response(success=False, message=e.message, code=e.code)
+
+    @classmethod
+    def jobs(cls, offset=0, limit=10, spname=None, project=None, status=None, closed_reason=None):
+        filter_args = {}
+        if spname:
+            filter_args['spider'] = spname
+
+        if project:
+            filter_args['project'] = project
+
+        if status and status == JobHelper.JOB_STATUS.RUNNING:
+            filter_args['status'] = SpiderJob.STATUS.RUNNING
+        elif status and status == JobHelper.JOB_STATUS.CLOSED:
+            filter_args['status'] = SpiderJob.STATUS.CLOSED
+
+        if closed_reason:
+            filter_args['closed_reason'] = closed_reason
+
+        models = SpiderJob.objects.filter(**filter_args).order_by("id").all()[offset: limit]
+        data = [{
+            "job_id": model.job_id,
+            "project": model.project,
+            "spider": model.spider,
+            "telnet": {
+                "username": model.telnet_username,
+                "password": model.telnet_password,
+                "host": model.telnet_host,
+                "port": model.telnet_port
+            },
+            "status": JobHelper.JOB_STATUS.RUNNING if model.status == SpiderJob.STATUS.RUNNING else JobHelper.JOB_STATUS.CLOSED,
+            "start_time": model.start_time,
+            "end_time": model.end_time,
+            "close_reason": model.close_reason,
+            "page_count": model.page_count,
+            "item_count": model.item_count,
+            "created_time": model.created_time,
+            "updated_time": model.updated_time,
+        } for model in models]
+        return Response(data=data)
