@@ -31,8 +31,10 @@ class Service(BaseService):
     @classmethod
     def pause(cls, job_id):
         try:
-            paused = JobHelper(job_id=job_id).pause()
-            return Response(data={ "status": paused })
+            JobHelper(job_id=job_id).pause()
+            return Response(data={
+                "status": JobHelper.JOB_STATUS.PAUSED
+            })
         except ScrapycwTelnetException as e:
             Response(
                 success=False,
