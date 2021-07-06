@@ -6,6 +6,7 @@ from scrapycw.utils.scrapycw import init_django_env
 from scrapycw.commands.crawl import Command as CrawlCommand
 from scrapycw.commands.pause import Command as PauseCommand
 from scrapycw.commands.unpause import Command as UnPauseCommand
+from scrapycw.commands.stop import Command as StopCommand
 from scrapycw.helpers.job import JobHelper, JobStatsHelper
 
 
@@ -105,7 +106,7 @@ def pytest_pause_spider():
     opts['project'] = "default"
     opts['spargs'] = {}
     # 启动爬虫
-    result = CrawlCommand().run(["baidu"], opts)
+    result = CrawlCommand().run(["baidu_log"], opts)
     model = SpiderJob.objects.filter(job_id=result.data['job_id']).get()
     job_id = model.job_id
     assert(not JobStatsHelper(job_id=job_id).is_paused())
@@ -122,3 +123,20 @@ def pytest_pause_spider():
     assert(result['data']['status'] == "running")
     assert(not JobStatsHelper(job_id=job_id).is_paused())
     assert(JobStatsHelper(job_id=job_id).is_running())
+    # 关闭爬虫
+    result = StopCommand().run([job_id], {})
+    assert(result.success)
+    assert(result['data']['status'] == "closing")
+    assert(not JobStatsHelper(job_id=job_id).is_running())
+    # 等待爬虫关闭
+    start_time = time.time()
+    while True:
+        model = SpiderJob.objects.filter(job_id=job_id).get()
+        if model.status == SpiderJob.STATUS.CLOSED:
+            assert(model.status == SpiderJob.STATUS.CLOSED)
+            assert(model.close_reason == JobHelper.CLOSE_REASON.SHUTDOWN)
+            return
+        elif time.time() - start_time > 2 * 60:
+            assert(False)
+        else:
+            time.sleep(10)
