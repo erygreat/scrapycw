@@ -5,6 +5,7 @@ import json
 from scrapycw.utils.scrapycw import init_django_env
 from scrapycw.commands.crawl import Command as CrawlCommand
 from scrapycw.commands.pause import Command as PauseCommand
+from scrapycw.commands.unpause import Command as UnPauseCommand
 from scrapycw.helpers.job import JobHelper, JobStatsHelper
 
 
@@ -61,6 +62,7 @@ def pytest_crawl_spiders():
     opts = Dict()
     opts['project'] = "default"
     opts['spargs'] = {}
+    # 启动爬虫
     result = CrawlCommand().run(["baidu"], opts)
     model = SpiderJob.objects.filter(job_id=result.data['job_id']).get()
     assert(model is not None)
@@ -102,16 +104,21 @@ def pytest_pause_spider():
     opts = Dict()
     opts['project'] = "default"
     opts['spargs'] = {}
+    # 启动爬虫
     result = CrawlCommand().run(["baidu"], opts)
     model = SpiderJob.objects.filter(job_id=result.data['job_id']).get()
     job_id = model.job_id
-
     assert(not JobStatsHelper(job_id=job_id).is_paused())
     assert(JobStatsHelper(job_id=job_id).is_running())
-
+    # 暂停爬虫
     result = PauseCommand().run([job_id], {})
-
     assert(result.success)
     assert(result['data']['status'] == "paused")
     assert(JobStatsHelper(job_id=job_id).is_paused())
+    assert(JobStatsHelper(job_id=job_id).is_running())
+    # 取消爬虫暂停
+    result = UnPauseCommand().run([job_id], {})
+    assert(result.success)
+    assert(result['data']['status'] == "running")
+    assert(not JobStatsHelper(job_id=job_id).is_paused())
     assert(JobStatsHelper(job_id=job_id).is_running())

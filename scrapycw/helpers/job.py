@@ -152,6 +152,7 @@ class JobHelper(Helper):
 
         PAUSED = "paused"
         CLOSED = "closed"
+        RUNNING = "running"
 
     DEFAULT_CLOSE_REASON = CLOSE_REASON.UNKOWN
 
@@ -203,6 +204,9 @@ class JobHelper(Helper):
 
     def is_running(self):
         return self.stats.is_running()
+
+    def unpause(self):
+        self.telnet.command_once("engine.unpause()")
 
     def pause(self):
         self.telnet.command_once("engine.pause()")
