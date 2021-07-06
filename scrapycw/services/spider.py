@@ -102,7 +102,7 @@ class Service(BaseService):
         if close_reason:
             filter_args['close_reason'] = close_reason
 
-        models = SpiderJob.objects.filter(**filter_args).order_by("id").all()[offset: limit]
+        models = SpiderJob.objects.filter(**filter_args).order_by("-id").all()[offset: limit]
         data = [{
             "job_id": model.job_id,
             "project": model.project,
