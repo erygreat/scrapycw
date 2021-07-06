@@ -16,7 +16,7 @@ def test_all_spiders():
     for item in r.data:
         assert(item['project'] in ['default', 'demo', 'project2', 'new_project'])
         if item['project'] == 'default':
-            item['spiders'] = ['baidu']
+            item['spiders'] = ['baidu', 'baidu_log', 'ip_taobao']
         else:
             item['spiders'] = []
 
@@ -29,4 +29,4 @@ def test_spiders():
     assert(r.code == 0)
     assert(not r.message)
     assert(r.data['project'] == 'default')
-    assert(r.data['spiders'] == ['baidu', 'ip_taobao'])
+    assert(r.data['spiders'] == ['baidu', 'baidu_log', 'ip_taobao'])

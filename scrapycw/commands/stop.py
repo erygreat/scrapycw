@@ -1,5 +1,5 @@
 from scrapycw.commands import ScrapycwCommand
-from scrapycw.helpers.job import JobHelper
+from scrapycw.services.spider import Service
 
 
 class Command(ScrapycwCommand):
@@ -8,7 +8,7 @@ class Command(ScrapycwCommand):
         job_id = None
         if len(args) != 0:
             job_id = args[0]
-        return JobHelper(job_id=job_id).stop()
+        return Service.stop(job_id=job_id)
 
     def short_desc(self):
         return "Stop Spider"
@@ -18,3 +18,6 @@ class Command(ScrapycwCommand):
 
     def syntax(self):
         return "<job-id>"
+
+    def add_options(self, parser):
+        pass

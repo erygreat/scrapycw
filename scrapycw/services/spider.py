@@ -65,3 +65,22 @@ class Service(BaseService):
             )
         except ScrapycwException as e:
             return Response(success=False, message=e.message, code=e.code)
+
+    @classmethod
+    def stop(cls, job_id):
+        try:
+            JobHelper(job_id=job_id).stop()
+            return Response(data={
+                "status": JobHelper.JOB_STATUS.CLOSING
+            })
+        except ScrapycwTelnetException as e:
+            return Response(
+                success=False,
+                message=e.message,
+                code=e.code,
+                data={
+                    "status": JobHelper.JOB_STATUS.CLOSED
+                }
+            )
+        except ScrapycwException as e:
+            return Response(success=False, message=e.message, code=e.code)
