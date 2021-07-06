@@ -86,10 +86,10 @@ class Service(BaseService):
             return Response(success=False, message=e.message, code=e.code)
 
     @classmethod
-    def jobs(cls, offset=0, limit=10, spname=None, project=None, status=None, closed_reason=None):
+    def jobs(cls, offset=0, limit=10, spider=None, project=None, status=None, close_reason=None):
         filter_args = {}
-        if spname:
-            filter_args['spider'] = spname
+        if spider:
+            filter_args['spider'] = spider
 
         if project:
             filter_args['project'] = project
@@ -99,8 +99,8 @@ class Service(BaseService):
         elif status and status == JobHelper.JOB_STATUS.CLOSED:
             filter_args['status'] = SpiderJob.STATUS.CLOSED
 
-        if closed_reason:
-            filter_args['closed_reason'] = closed_reason
+        if close_reason:
+            filter_args['close_reason'] = close_reason
 
         models = SpiderJob.objects.filter(**filter_args).order_by("id").all()[offset: limit]
         data = [{
