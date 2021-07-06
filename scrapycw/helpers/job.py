@@ -203,6 +203,7 @@ class JobHelper(Helper):
 
         PAUSED = "paused"
         CLOSED = "closed"
+        RUNNING = "running"
 
     DEFAULT_CLOSE_REASON = CLOSE_REASON.UNKOWN
 
@@ -331,7 +332,7 @@ class JobHelper(Helper):
         self.telnet.read_util_close()
 
     def unpause(self):
-        self.telnet_command("engine.unpause()")
+        self.telnet.command_once("engine.unpause()")
 
     def pause(self):
         self.telnet.command_once("engine.pause()")
@@ -348,18 +349,6 @@ class JobStopHelper(JobHelper):
                 "status": JobStatus.CLOSED,
             }
             raise e
-
-class JobUnauseHelper(JobHelper):
-    def get(self):
-        try:
-            self.unpause()
-            return {
-                "status": JobStatus.RUNNING,
-            }
-        except ScrapycwTelnetException as e:
-            e.data = {"status": JobStatus.CLOSED}
-            raise e
-
 
 class JobStatusHelper(JobHelper):
 

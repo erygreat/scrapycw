@@ -36,7 +36,26 @@ class Service(BaseService):
                 "status": JobHelper.JOB_STATUS.PAUSED
             })
         except ScrapycwTelnetException as e:
-            Response(
+            return Response(
+                success=False,
+                message=e.message,
+                code=e.code,
+                data={
+                    "status": JobHelper.JOB_STATUS.CLOSED
+                }
+            )
+        except ScrapycwException as e:
+            return Response(success=False, message=e.message, code=e.code)
+
+    @classmethod
+    def unpause(cls, job_id):
+        try:
+            JobHelper(job_id=job_id).unpause()
+            return Response(data={
+                "status": JobHelper.JOB_STATUS.RUNNING
+            })
+        except ScrapycwTelnetException as e:
+            return Response(
                 success=False,
                 message=e.message,
                 code=e.code,

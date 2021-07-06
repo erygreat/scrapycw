@@ -15,6 +15,7 @@ scrapycw <command> -h
 - [spiders](#spiders)
 - [crawl](#crawl)
 - [pause](#pause)
+- [unpause](#unpause)
 
 除了`init`和`server`命令，都包含`pretty`参数来格式化输出，例如:
 ```
@@ -149,4 +150,19 @@ $ scrapycw pause 20210629_203543_un6_ITAgoDWk
 
 $ scrapycw pause 20210705_194355_v_kmpbHIDJXi
 {"success": true, "message": null, "code": 0, "data": {"status": "paused"}}
+```
+
+## pause
+
+语法: `scrapycw unpause <job_id>`
+
+说明: 取消目标爬虫任务暂停
+
+示例:
+```
+$ scrapycw unpause 20210629_203543_un6_ITAgoDWk
+{"success": false, "message": "由于目标计算机积极拒绝，无法连接。", "code": 1002, "data": {"status": "closed"}}
+
+$ scrapycw pause 20210705_194355_v_kmpbHIDJXi
+{"success": true, "message": null, "code": 0, "data": {"status": "running"}}
 ```
