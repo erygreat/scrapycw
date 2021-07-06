@@ -5,10 +5,10 @@ import django
 from datetime import timedelta
 
 from typing import Union
+from scrapycw.utils.json_encoder import DatetimeJsonEncoder
 from scrapycw.utils.logger_parser import ScrapyLoggerParser
 from scrapycw.utils.telnet import ScrapycwTelnetException, Telnet
 from scrapycw.web.app.models import SpiderJob
-from scrapycw.utils.json_encoder import DatetimeJsonEncoder
 from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.core.exception import ScrapycwException
 from scrapycw.helpers import Helper
@@ -23,16 +23,6 @@ class JobStatus:
     PAUSED = "paused"
     CLOSING = "closing"
     CLOSED = "closed"
-
-
-class CloseReason:
-    """
-    SCRAPY 常见的关闭原因，但是由于关闭原因可以由用户自己设置，因此关闭原因并不是只有这几种。
-    """
-    FINISHED = "finished"
-    SHUTDOWN = "shutdown"
-    CANCELLED = "cancelled"
-
 
 class JobListHelper(Helper):
 
@@ -336,19 +326,6 @@ class JobHelper(Helper):
 
     def pause(self):
         self.telnet.command_once("engine.pause()")
-
-class JobStopHelper(JobHelper):
-    def get(self):
-        try:
-            self.stop()
-            return {
-                "status": JobStatus.CLOSING
-            }
-        except ScrapycwTelnetException as e:
-            e.data = {
-                "status": JobStatus.CLOSED,
-            }
-            raise e
 
 class JobStatusHelper(JobHelper):
 

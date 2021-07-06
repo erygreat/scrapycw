@@ -20,20 +20,6 @@ class Helper(ScrapycwObject):
     settings = None
     cmdline_settings = None
 
-    def get(self):
-        pass
-
-    def get_response(self, **options):
-        try:
-            return Response(data=self.get(**options))
-        except ScrapycwException as e:
-            return Response(
-                success=False,
-                data=e.data,
-                code=e.code,
-                message=e.message
-            )
-
     def __init__(self, project=SCRAPY_DEFAULT_PROJECT, cmdline_settings=None):
         project_dir = os.path.dirname(closest_scrapy_cfg())
         sys.path.append(project_dir)
