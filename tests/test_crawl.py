@@ -1,3 +1,4 @@
+from scrapycw.services.spider import Service
 from _pytest.config import ExitCode
 from tests.conftest import current_dir
 
@@ -51,3 +52,19 @@ def test_pause(testdir):
     """.format(current_dir))
     r = testdir.runpytest_subprocess()
     assert(r.ret == ExitCode.NO_TESTS_COLLECTED)
+
+def test_jobs():
+    jobs = Service.jobs(spider="baidu")
+    assert(len(jobs.data) > 0)
+    for job in jobs.data:
+        assert(job['status'] == "closed")
+        assert(job['close_reason'] == "unknown")
+    jobs = Service.jobs(status="running")
+    for job in jobs.data:
+        assert(job['status'] == "running")
+        assert(job['close_reason'] is None)
+
+    jobs = Service.jobs(close_reason="shutdown")
+    for job in jobs.data:
+        assert(job['status'] == "closed")
+        assert(job['close_reason'] == "shutdown")

@@ -3,11 +3,15 @@ import datetime
 import time
 import json
 from scrapycw.utils.scrapycw import init_django_env
+init_django_env()
+
+# flake8: noqa
 from scrapycw.commands.crawl import Command as CrawlCommand
 from scrapycw.commands.pause import Command as PauseCommand
 from scrapycw.commands.unpause import Command as UnPauseCommand
 from scrapycw.commands.stop import Command as StopCommand
 from scrapycw.helpers.job import JobHelper, JobStatsHelper
+from scrapycw.web.app.models import SpiderJob
 
 
 class Dict(dict):
@@ -15,10 +19,7 @@ class Dict(dict):
     __getattr__ = dict.__getitem__
 
 
-
 def pytest_crawl_spiders_has_log():
-    init_django_env()
-    from scrapycw.web.app.models import SpiderJob
     opts = Dict()
     opts['project'] = "default"
     opts['spargs'] = {}
@@ -58,8 +59,6 @@ def pytest_crawl_spiders_has_log():
 
 
 def pytest_crawl_spiders():
-    init_django_env()
-    from scrapycw.web.app.models import SpiderJob
     opts = Dict()
     opts['project'] = "default"
     opts['spargs'] = {}
@@ -99,9 +98,8 @@ def pytest_crawl_spiders():
         else:
             time.sleep(10)
 
+
 def pytest_pause_spider():
-    init_django_env()
-    from scrapycw.web.app.models import SpiderJob
     opts = Dict()
     opts['project'] = "default"
     opts['spargs'] = {}
