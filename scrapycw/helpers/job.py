@@ -36,6 +36,12 @@ class JobTelnetHelper(Helper):
         except ScrapycwTelnetException:
             return False
 
+    def is_closing(self):
+        try:
+            return self.telnet.command_once("slot.closing")
+        except ScrapycwTelnetException:
+            return False
+
 class JobStatsHelper(Helper):
 
     running_stats = None

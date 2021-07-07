@@ -270,3 +270,4 @@ $ scrapycw jobs --limit 1 --spider ip_taobao --pretty
   }
 }
 ```
+> 注意，当前返回的`status`目前不包含4种：`closed`, `running`, `paused`, `closing`

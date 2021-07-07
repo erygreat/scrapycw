@@ -90,7 +90,13 @@ class Service(BaseService):
         if job_model_status == SpiderJob.STATUS.CLOSED:
             return JobHelper.JOB_STATUS.CLOSED
         elif job_model_status == SpiderJob.STATUS.RUNNING:
-            return JobHelper.JOB_STATUS.PAUSED if JobTelnetHelper(job_id).is_paused() else JobHelper.JOB_STATUS.RUNNING
+            telnet_helper = JobTelnetHelper(job_id)
+            if telnet_helper.is_paused():
+                return JobHelper.JOB_STATUS.PAUSED
+            elif telnet_helper.is_closing():
+                return JobHelper.JOB_STATUS.CLOSING
+            else:
+                return JobHelper.JOB_STATUS.RUNNING
         else:
             return None
 
