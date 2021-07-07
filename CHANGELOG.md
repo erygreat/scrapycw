@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 修改：修改代码结构，添加 service 层
 - 修改：优化文档结构
 - 修改：优化进程关闭方式，添加 Windows 支持
+- 修改：`不兼容历史版本`, 重新设计数据表，需要删除数据库重新初始化数据库
 
 ### ADDED
 
@@ -18,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 添加：命令行输出格式化参数
 - 添加：添加日志解析，对爬虫运行情况进行监听，爬虫运行完成后进行日志解析，将解析结果保存到数据库。
 - 添加：爬虫运行支持 Windows
+- 添加：获取任务列表
+- 添加：获取项目列表
+- 添加：获取爬虫列表
 ## [0.3.0] - 2020-2-9
 
 ### UPDATED

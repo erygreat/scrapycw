@@ -54,17 +54,22 @@ def test_pause(testdir):
     assert(r.ret == ExitCode.NO_TESTS_COLLECTED)
 
 def test_jobs():
-    jobs = Service.jobs(spider="baidu")
-    assert(len(jobs.data) > 0)
-    for job in jobs.data:
+    response = Service.jobs(spider="baidu")
+    jobs = response.data['jobs']
+    assert(len(jobs) > 0)
+    assert(response.data['count'] > 0)
+    for job in jobs:
         assert(job['status'] == "closed")
         assert(job['close_reason'] == "unknown")
-    jobs = Service.jobs(status="running")
-    for job in jobs.data:
+
+    response = Service.jobs(status="running")
+    jobs = response.data['jobs']
+    for job in jobs:
         assert(job['status'] == "running")
         assert(job['close_reason'] is None)
 
-    jobs = Service.jobs(close_reason="shutdown")
-    for job in jobs.data:
+    response = Service.jobs(close_reason="shutdown")
+    jobs = response.data['jobs']
+    for job in jobs:
         assert(job['status'] == "closed")
         assert(job['close_reason'] == "shutdown")

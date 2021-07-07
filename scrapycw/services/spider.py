@@ -111,8 +111,12 @@ class Service(BaseService):
         if close_reason:
             filter_args['close_reason'] = close_reason
 
-        models = SpiderJob.objects.filter(**filter_args).order_by("-id").all()[offset: limit]
-        data = [{
+        query = SpiderJob.objects.filter(**filter_args)
+
+        models = query.order_by("-id").all()[offset: limit]
+        count = query.count()
+
+        jobs = [{
             "job_id": model.job_id,
             "project": model.project,
             "spider": model.spider,
@@ -131,4 +135,9 @@ class Service(BaseService):
             "created_time": model.created_time,
             "updated_time": model.updated_time,
         } for model in models]
-        return Response(data=data)
+        return Response(data={
+            "jobs": jobs,
+            "offset": offset,
+            "limit": limit,
+            "count": count
+        })
