@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 添加：获取任务列表
 - 添加：获取项目列表
 - 添加：获取爬虫列表
+- 添加：获取任务详细信息
+
 ## [0.3.0] - 2020-2-9
 
 ### UPDATED

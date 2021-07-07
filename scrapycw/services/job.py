@@ -127,3 +127,21 @@ class Service(BaseService):
             "limit": limit,
             "count": count
         })
+
+    @classmethod
+    def stats(cls, job_id, is_parse_settings=False, is_parse_log=False, is_parse_stats=False, is_parse_est=False):
+        helper = JobStatsHelper(job_id=job_id)
+        result = helper.self_stats()
+        if is_parse_settings:
+            result['settings'] = helper.settings
+
+        if is_parse_log:
+            result['log_info'] = helper.log_info
+
+        if is_parse_stats:
+            result['stats'] = helper.spider_stats()
+
+        if is_parse_est:
+            result['est'] = helper.spider_running_est()
+
+        return Response(data = result)
