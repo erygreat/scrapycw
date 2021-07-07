@@ -1,9 +1,9 @@
 from scrapy.utils.conf import get_config
 
-from scrapycw.helpers import Helper
+from scrapycw.helpers import SettingsHelper
 
 
-class ProjectHelper(Helper):
+class ProjectHelper(SettingsHelper):
 
     def list(self):
         config = get_config()
