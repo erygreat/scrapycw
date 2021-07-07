@@ -1,4 +1,4 @@
-from scrapycw.services.spider import Service
+from scrapycw.services.job import Service
 from scrapycw.commands import ScrapycwCommand
 
 class Command(ScrapycwCommand):

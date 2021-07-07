@@ -1,5 +1,5 @@
 from scrapycw.commands import ScrapycwCommand
-from scrapycw.services.spider import Service
+from scrapycw.services.job import Service
 
 
 class Command(ScrapycwCommand):

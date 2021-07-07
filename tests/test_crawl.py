@@ -1,4 +1,4 @@
-from scrapycw.services.spider import Service
+from scrapycw.services.job import Service
 from _pytest.config import ExitCode
 from tests.conftest import current_dir
 
