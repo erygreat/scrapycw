@@ -15,6 +15,27 @@ class ScrapycwJobException(ScrapycwException):
     pass
 
 
+class JobTelnetHelper(Helper):
+
+    def __init__(self, host, port, username, password):
+        self.host = host
+        self.port = port
+        self.username = username
+        self.password = password
+        self.telnet = Telnet(self.host, self.port, self.username, self.password)
+
+    def is_running(self):
+        try:
+            return self.telnet.command_once("engine.running")
+        except ScrapycwTelnetException:
+            return False
+
+    def is_paused(self):
+        try:
+            return self.telnet.command_once("engine.paused")
+        except ScrapycwTelnetException:
+            return False
+
 class JobStatsHelper(Helper):
 
     running_stats = None
@@ -31,8 +52,9 @@ class JobStatsHelper(Helper):
         self.telnet_port = model.telnet_port
         self.telnet_username = model.telnet_username
         self.telnet_password = model.telnet_password
+        self.telnet_helper = JobTelnetHelper(self.telnet_host, self.telnet_port, self.telnet_username, self.telnet_password)
+        self.telnet = self.telnet_helper.telnet
         self.log_path = model.log_file
-        self.telnet = Telnet(self.telnet_host, self.telnet_port, self.telnet_username, self.telnet_password)
         self.log_info = self.parse_log()
 
     def parse_log(self):
@@ -51,16 +73,10 @@ class JobStatsHelper(Helper):
         return log_info if log_info else {}
 
     def is_running(self):
-        try:
-            return self.telnet.command_once("engine.running")
-        except ScrapycwTelnetException:
-            return False
+        return self.telnet_helper.is_running()
 
     def is_paused(self):
-        try:
-            return self.telnet.command_once("engine.paused")
-        except ScrapycwTelnetException:
-            return False
+        return self.telnet_helper.is_paused()
 
     def end_time_or_none(self):
         end_time = self.job_model.end_time
@@ -142,10 +158,10 @@ class JobStatsHelper(Helper):
         return None
 
 
-class JobHelper(Helper):
+class JobHelper(JobTelnetHelper):
     class CLOSE_REASON:
 
-        UNKOWN = "unkown"
+        UNKNOWN = "unknown"
         FINISHED = "finished"
         SHUTDOWN = "shutdown"
 
@@ -156,10 +172,9 @@ class JobHelper(Helper):
         RUNNING = "running"
         CLOSING = "closing"
 
-    DEFAULT_CLOSE_REASON = CLOSE_REASON.UNKOWN
+    DEFAULT_CLOSE_REASON = CLOSE_REASON.UNKNOWN
 
     def __init__(self, job_id):
-        super().__init__()
         self.job_id = job_id
         try:
             model = SpiderJob.objects.get(job_id=self.job_id)
@@ -170,7 +185,7 @@ class JobHelper(Helper):
         self.telnet_port = model.telnet_port
         self.telnet_username = model.telnet_username
         self.telnet_password = model.telnet_password
-        self.telnet = Telnet(self.telnet_host, self.telnet_port, self.telnet_username, self.telnet_password)
+        self.telnet = JobTelnetHelper(self.telnet_host, self.telnet_port, self.telnet_username, self.telnet_password).telnet
         self.stats = JobStatsHelper(job_id)
 
     def handler_when_close(self):

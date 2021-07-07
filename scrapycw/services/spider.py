@@ -5,7 +5,7 @@ from scrapycw.services import BaseService
 from scrapycw.helpers import ScrapycwHelperException
 from scrapycw.utils.response import Response
 from scrapycw.helpers.spider import SpiderHelper
-from scrapycw.helpers.job import JobHelper
+from scrapycw.helpers.job import JobHelper, JobTelnetHelper
 
 
 class Service(BaseService):
@@ -84,6 +84,15 @@ class Service(BaseService):
             )
         except ScrapycwException as e:
             return Response(success=False, message=e.message, code=e.code)
+    
+    @classmethod
+    def job_status(cls, job_id, job_model_status):
+        if job_model_status == SpiderJob.STATUS.CLOSED:
+            return JobHelper.JOB_STATUS.CLOSED
+        elif job_model_status == SpiderJob.STATUS.RUNNING:
+            return JobHelper.JOB_STATUS.PAUSED if JobTelnetHelper(job_id).is_paused() else JobHelper.JOB_STATUS.RUNNING
+        else:
+            return None
 
     @classmethod
     def jobs(cls, offset=0, limit=10, spider=None, project=None, status=None, close_reason=None):
@@ -113,7 +122,7 @@ class Service(BaseService):
                 "host": model.telnet_host,
                 "port": model.telnet_port
             },
-            "status": JobHelper.JOB_STATUS.RUNNING if model.status == SpiderJob.STATUS.RUNNING else JobHelper.JOB_STATUS.CLOSED,
+            "status": cls.job_status(model.job_id, model.status),
             "start_time": model.start_time,
             "end_time": model.end_time,
             "close_reason": model.close_reason,
