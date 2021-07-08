@@ -1,7 +1,4 @@
 import os
-from scrapycw.utils.file_utils import read_until_or_timeout, write_once
-from scrapycw.utils.exception import ScrapycwDaemonProcessException
-from scrapycw.utils.process import kill_process, run_in_daemon
 import sys
 import psutil
 
@@ -12,6 +9,9 @@ from scrapycw.django_manage import main as django_main
 from scrapycw.settings import SERVER_PID_FILENAME
 from scrapycw.utils.constant import Constant
 from scrapycw.utils.network import port_is_used
+from scrapycw.utils.file_utils import read_until_or_timeout, write_once
+from scrapycw.utils.exception import ScrapycwDaemonProcessException
+from scrapycw.utils.process import kill_process, run_in_daemon
 
 
 class Command(ScrapycwCommand):

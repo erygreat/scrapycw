@@ -18,6 +18,8 @@ if __name__ == "__main__":
     from scrapy.utils.conf import closest_scrapy_cfg
     project_dir = os.path.dirname(closest_scrapy_cfg())
     sys.path.append(project_dir)
+    from scrapycw.utils.scrapycw import init_django_env
+    init_django_env()
 
 from scrapycw.utils.file_utils import read_until_once_or_timeout, read_until_or_timeout, remove_file_if_exists, write_once
 from scrapycw.utils.exception import ScrapycwCommandParamMissingException, ScrapycwDaemonProcessException, ScrapycwDaemonStartTimeoutException, ScrapycwNotSupportSystemException, ScrapycwArgsMustCanSerializationException, ScrapycwReadException
