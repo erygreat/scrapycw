@@ -65,8 +65,6 @@ class Command(ScrapycwCommand):
                 cmdline = " ".join(cmdline)
                 if cmdline.find(Constant.PROJECT_NAME) > -1:
                     is_project = True
-                if settings.IS_DEV and cmdline.find("pytest") > -1:
-                    is_project = True
                 proc = _proc
             if _proc.parent() is not None and _proc.parent().pid == pid:
                 children_pids.append(_proc.pid)
