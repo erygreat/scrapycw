@@ -11,13 +11,13 @@ from scrapy.extensions.telnet import TelnetConsole
 from scrapycw.utils.scrapycw import get_scrapy_settings
 from scrapycw.utils import process
 from scrapycw.utils.json_encoder import ScrapySettingEncoder
-from scrapycw.helpers import Helper, ScrapycwHelperException
+from scrapycw.helpers import ScrapycwHelperException, SettingsHelper
 from scrapycw.helpers.project import ProjectHelper
 from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.web.app.models import SpiderJob
 
 
-class SpiderHelper(Helper):
+class SpiderHelper(SettingsHelper):
 
     def list(self):
         if not self.param_project:
@@ -127,7 +127,7 @@ class SpiderHelper(Helper):
             return job_helper.handler_when_close()
 
         # 防止启动的进程的ID不是这个 job 的
-        if not job_helper.is_running():
+        if not job_helper.stats.is_running():
             SpiderHelper.logger.info("[爬虫已关闭]: 无法连接爬虫Telnet或Telnet显示已关闭，任务ID: {}, PID: {}".format(job_id, pid))
             return job_helper.handler_when_close()
 

@@ -18,6 +18,7 @@ scrapycw <command> -h
 - [unpause](#unpause)
 - [stop](#stop)
 - [jobs](#jobs)
+- [job_stats](#job_stats)
 
 除了`init`和`server`命令，都包含`pretty`参数来格式化输出，例如:
 ```
@@ -267,6 +268,86 @@ $ scrapycw jobs --limit 1 --spider ip_taobao --pretty
     "offset": 0,
     "limit": 1,
     "count": 3
+  }
+}
+```
+> 注意，当前返回的`status`目前不包含4种：`closed`, `running`, `paused`, `closing`
+
+
+## job_stats
+
+语法: `scrapycw job_stats <job-id> [options]`
+
+说明: 获取爬虫详细信息
+
+参数:
+
+- `settings`: 是否输出settings
+- `log`: 是否输出日志信息
+- `stats`: 是否输出任务stats信息
+- `est`: 是否输出运行时 est 信息 (如果任务没有运行，则输出 None)
+
+示例:
+```
+$ scrapycw job_stats 20210707_162315_0yIddAGU-zRh --pretty
+{
+  "success": true,
+  "message": null,
+  "code": 0,
+  "data": {
+    "job_id": "20210707_162315_0yIddAGU-zRh",
+    "project": "default",
+    "spider": "baidu_log",
+    "log_path": "C:\\Users\\L13\\git\\scrapycw_test_project\\logs\\baidu-have-log.log",
+    "start_time": "2021-07-07 16:23:15",
+    "end_time": "2021-07-07 16:23:17",
+    "closed_reason": "shutdown",
+    "pages": 1,
+    "items": 0,
+    "runtime": "0:00:02",
+    "status": "closed"
+  }
+}
+
+$ scrapycw job_stats 20210707_162315_0yIddAGU-zRh --stats --pretty
+{
+  "success": true,
+  "message": null,
+  "code": 0,
+  "data": {
+    "job_id": "20210707_162315_0yIddAGU-zRh",
+    "project": "default",
+    "spider": "baidu_log",
+    "log_path": "C:\\Users\\L13\\git\\scrapycw_test_project\\logs\\baidu-have-log.log",
+    "start_time": "2021-07-07 16:23:15",
+    "end_time": "2021-07-07 16:23:17",
+    "closed_reason": "shutdown",
+    "pages": 1,
+    "items": 0,
+    "runtime": "0:00:02",
+    "status": "closed",
+    "stats": {
+      "downloader/request_bytes": 422,
+      "downloader/request_count": 2,
+      "downloader/request_method_count/GET": 2,
+      "downloader/response_bytes": 1838,
+      "downloader/response_count": 2,
+      "downloader/response_status_count/200": 2,
+      "elapsed_time_seconds": 2.124792,
+      "finish_reason": "shutdown",
+      "finish_time": "2021-07-07 08:23:17",
+      "httpcompression/response_bytes": 2381,
+      "httpcompression/response_count": 1,
+      "log_count/DEBUG": 2,
+      "log_count/INFO": 10,
+      "request_depth_max": 1,
+      "response_received_count": 1,
+      "scheduler/dequeued": 2,
+      "scheduler/dequeued/memory": 2,
+      "scheduler/enqueued": 3,
+      "scheduler/enqueued/memory": 3,
+      "start_time": "2021-07-07 08:23:15"
+    }
   }
 }
 ```

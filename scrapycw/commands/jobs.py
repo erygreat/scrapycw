@@ -1,7 +1,7 @@
 from scrapycw.utils.scrapycw import value_from_class
 from scrapycw.commands import ScrapycwCommand
 from scrapycw.helpers.job import JobHelper
-from scrapycw.services.spider import Service
+from scrapycw.services.job import Service
 
 
 class Command(ScrapycwCommand):

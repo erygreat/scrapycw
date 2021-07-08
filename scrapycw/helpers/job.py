@@ -1,13 +1,11 @@
 import json
-import math
-import time
 import django
-from datetime import timedelta
 
 from typing import Union
 from scrapycw.utils.json_encoder import DatetimeJsonEncoder
 from scrapycw.utils.logger_parser import ScrapyLoggerParser
 from scrapycw.utils.telnet import ScrapycwTelnetException, Telnet
+from scrapycw.utils.scrapycw import current_time
 from scrapycw.web.app.models import SpiderJob
 from scrapycw.core.error_code import RESPONSE_CODE
 from scrapycw.core.exception import ScrapycwException
@@ -39,6 +37,12 @@ class JobTelnetHelper(Helper):
         except ScrapycwTelnetException:
             return False
 
+    def is_closing(self):
+        try:
+            return self.telnet.command_once("slot.closing")
+        except ScrapycwTelnetException:
+            return False
+
 class JobStatsHelper(Helper):
 
     running_stats = None
@@ -51,6 +55,9 @@ class JobStatsHelper(Helper):
         except SpiderJob.DoesNotExist:
             raise ScrapycwJobException(code=RESPONSE_CODE.JOB_NOT_FIND, message="任务未找到，任务ID: [{}]".format(self.job_id))
         self.job_model = model
+        self.project = model.project
+        self.settings = json.loads(model.settings)
+        self.spider = model.spider
         self.telnet_host = model.telnet_host
         self.telnet_port = model.telnet_port
         self.telnet_username = model.telnet_username
@@ -81,11 +88,46 @@ class JobStatsHelper(Helper):
     def is_paused(self):
         return self.telnet_helper.is_paused()
 
+    def is_closing(self):
+        return self.telnet_helper.is_closing()
+
+    def start_time(self):
+        return self.job_model.start_time
+
     def end_time_or_none(self):
         end_time = self.job_model.end_time
         if end_time:
             return end_time
         return self.log_info.get('end_time', None)
+
+    def runtime(self):
+        # 如果日志中有运行时间，则直接用日志中的
+        runtime = self.log_info.get('continuous_time', None)
+        if runtime:
+            return runtime
+        # 如果日志中没有运行时间，但是已经结束，则用结束时间减去开始时间
+        end_time = self.end_time_or_none()
+        start_time = self.start_time()
+        if end_time:
+            return end_time - start_time
+
+        # 如果还没有结束，则用当前时间减去开始时间
+        return current_time() - start_time
+
+    def status(self):
+        if self.job_model.status == SpiderJob.STATUS.CLOSED:
+            return JobHelper.JOB_STATUS.CLOSED
+
+        if self.is_closing():
+            return JobHelper.JOB_STATUS.CLOSING
+
+        if self.is_paused():
+            return JobHelper.JOB_STATUS.PAUSED
+
+        if self.is_running():
+            return JobHelper.JOB_STATUS.RUNNING
+
+        return JobHelper.JOB_STATUS.CLOSED
 
     def closed_reason_or_none(self):
         close_reason = self.job_model.close_reason
@@ -106,7 +148,6 @@ class JobStatsHelper(Helper):
     def __stats_running(self) -> Union[dict, None]:
         try:
             self.telnet.connect()
-            self.telnet.command("import json")
             self.telnet.command("import datetime")
             stats = self.telnet.command("stats.get_stats()")
             self.telnet.close()
@@ -160,8 +201,48 @@ class JobStatsHelper(Helper):
             return self.log_info.get("items", 0)
         return None
 
+    def spider_running_est(self):
+        try:
+            est = {}
+            telnet = self.telnet
+            telnet.connect()
+            telnet.command("from time import time")
+            est['time() - engine.start_time'] = telnet.command("time() - engine.start_time")
+            est['engine.has_capacity()'] = telnet.command("engine.has_capacity()")
+            est['len(engine.downloader.active)'] = telnet.command("len(engine.downloader.active)")
+            est['engine.scraper.is_idle()'] = telnet.command("engine.scraper.is_idle()")
+            est['engine.spider.name'] = telnet.command("engine.spider.name")
+            est['engine.spider_is_idle(engine.spider)'] = telnet.command("engine.spider_is_idle(engine.spider)")
+            est['engine.slot.closing'] = telnet.command("engine.slot.closing")
+            est['len(engine.slot.inprogress)'] = telnet.command("len(engine.slot.inprogress)")
+            est['len(engine.slot.scheduler.dqs or [])'] = telnet.command("len(engine.slot.scheduler.dqs or [])")
+            est['len(engine.slot.scheduler.mqs)'] = telnet.command("len(engine.slot.scheduler.mqs)")
+            est['len(engine.scraper.slot.queue)'] = telnet.command("len(engine.scraper.slot.queue)")
+            est['len(engine.scraper.slot.active)'] = telnet.command("len(engine.scraper.slot.active)")
+            est['engine.scraper.slot.active_size'] = telnet.command("engine.scraper.slot.active_size")
+            est['engine.scraper.slot.itemproc_size'] = telnet.command("engine.scraper.slot.itemproc_size")
+            est['engine.scraper.slot.needs_backout()'] = telnet.command("engine.scraper.slot.needs_backout()")
+            telnet.close()
+            return est
+        except ScrapycwTelnetException:
+            return None
 
-class JobHelper(JobTelnetHelper):
+    def self_stats(self):
+        return {
+            "job_id": self.job_id,
+            "project": self.project,
+            "spider": self.spider,
+            "log_path": self.log_path,
+            "start_time": self.start_time(),
+            "end_time": self.end_time_or_none(),
+            "closed_reason": self.closed_reason_or_none(),
+            "pages": self.pages(),
+            "items": self.items(),
+            "runtime": self.runtime(),
+            "status": self.status(),
+        }
+
+class JobHelper(Helper):
     class CLOSE_REASON:
 
         UNKNOWN = "unknown"
@@ -221,79 +302,6 @@ class JobHelper(JobTelnetHelper):
             status=SpiderJob.STATUS.CLOSED,
             updated_time=django.utils.timezone.now()
         )
-
-    def is_running(self):
-        return self.stats.is_running()
-
-    def get_running_est(self):
-        try:
-            est = {}
-            telnet = self.telnet
-            telnet.connect()
-            telnet.command("from time import time")
-            est['time() - engine.start_time'] = telnet.command("time() - engine.start_time")
-            est['engine.has_capacity()'] = telnet.command("engine.has_capacity()")
-            est['len(engine.downloader.active)'] = telnet.command("len(engine.downloader.active)")
-            est['engine.scraper.is_idle()'] = telnet.command("engine.scraper.is_idle()")
-            est['engine.spider.name'] = telnet.command("engine.spider.name")
-            est['engine.spider_is_idle(engine.spider)'] = telnet.command("engine.spider_is_idle(engine.spider)")
-            est['engine.slot.closing'] = telnet.command("engine.slot.closing")
-            est['len(engine.slot.inprogress)'] = telnet.command("len(engine.slot.inprogress)")
-            est['len(engine.slot.scheduler.dqs or [])'] = telnet.command("len(engine.slot.scheduler.dqs or [])")
-            est['len(engine.slot.scheduler.mqs)'] = telnet.command("len(engine.slot.scheduler.mqs)")
-            est['len(engine.scraper.slot.queue)'] = telnet.command("len(engine.scraper.slot.queue)")
-            est['len(engine.scraper.slot.active)'] = telnet.command("len(engine.scraper.slot.active)")
-            est['engine.scraper.slot.active_size'] = telnet.command("engine.scraper.slot.active_size")
-            est['engine.scraper.slot.itemproc_size'] = telnet.command("engine.scraper.slot.itemproc_size")
-            est['engine.scraper.slot.needs_backout()'] = telnet.command("engine.scraper.slot.needs_backout()")
-            telnet.close()
-            return est
-        except ScrapycwTelnetException:
-            return None
-    
-    def get_status(self):
-        if self.log_info and self.log_info.get("is_close"):
-            return JobStatus.CLOSED
-        try:
-            self.telnet.connect()
-            if self.telnet.command("engine.paused"):
-                return JobStatus.PAUSED
-            elif self.telnet.command("engine.running"):
-                return JobStatus.RUNNING
-            elif self.telnet.command("slot.closing"):
-                return JobStatus.CLOSING
-            self.telnet.close()
-        except ScrapycwException:
-            pass
-        return JobStatus.CLOSED
-    
-    def get_start_time(self):
-        # 开始时间, 运行中连接telent查询，运行完成查询数据库
-        try:
-            self.telnet.connect()
-            start_timestamp = self.telnet.command("engine.start_time")
-            start_time = math.floor(float(start_timestamp))
-            self.telnet.close()
-            return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start_time))
-        except ScrapycwTelnetException:
-            return self.start_time
-
-    def get_runtime(self):
-        # 运行时间, 运行中连接telent查询，运行完成查询日志
-        try:
-            self.telnet.connect()
-            start_timestamp = self.telnet.command("engine.start_time")
-            runtime = math.floor(time.time() - float(start_timestamp))
-            self.telnet.close()
-            return timedelta(seconds=runtime)
-        except ScrapycwTelnetException:
-            return self.log_info.get('continuous_time') if self.log_info else None
-
-    def telnet_command(self, command):
-        self.telnet.connect()
-        result = self.telnet.command(command)
-        self.telnet.close()
-        return result
 
     def stop(self):
         self.telnet.command_once("engine.stop()")

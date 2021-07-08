@@ -1,7 +1,9 @@
+from datetime import datetime
 import os
 import django
 from scrapy.settings import Settings
 from scrapy.utils.conf import get_config
+from scrapycw.settings import HANDLE_LOG_USE_TIMEZONE
 
 
 def get_root_dir():
@@ -30,3 +32,9 @@ def dict_from_class(cls, baseClass=object):
 
 def value_from_class(cls, baseClass=object):
     return [x for x in dict_from_class(cls, baseClass).values()]
+
+def current_time(self):
+    if HANDLE_LOG_USE_TIMEZONE:
+        return datetime.now()
+    else:
+        return datetime.utcnow()

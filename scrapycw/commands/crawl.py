@@ -8,7 +8,9 @@ from scrapycw.services.spider import Service
 class Command(ScrapycwCommand):
 
     def run(self, args, opts):
-        spname = args[0] if len(args) > 0 else None
+        if len(args) == 0:
+            raise UsageError()
+        spname = args[0]
         return Service.run(project=opts.project, spname=spname, cmdline_settings=self.cmdline_settings, spargs=opts.spargs)
 
     def short_desc(self):

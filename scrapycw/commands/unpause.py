@@ -1,13 +1,15 @@
+from scrapy.exceptions import UsageError
 from scrapycw.commands import ScrapycwCommand
-from scrapycw.services.spider import Service
+from scrapycw.services.job import Service
 
 
 class Command(ScrapycwCommand):
 
     def run(self, args, opts):
         job_id = None
-        if len(args) != 0:
-            job_id = args[0]
+        if len(args) == 0:
+            raise UsageError()
+        job_id = args[0]
         return Service.unpause(job_id=job_id)
 
     def short_desc(self):
