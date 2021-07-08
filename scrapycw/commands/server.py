@@ -4,18 +4,21 @@ import psutil
 
 from scrapycw import settings
 from scrapycw.commands import ScrapycwCommand, ScrapycwCommandException
-from scrapycw.django_manage import main
-from scrapycw.settings import PID_FILENAME
+from scrapycw.core.error_code import RESPONSE_CODE
+from scrapycw.django_manage import main as django_main
+from scrapycw.settings import SERVER_PID_FILENAME
 from scrapycw.utils.constant import Constant
 from scrapycw.utils.network import port_is_used
-from scrapycw.utils.pid import get_pid_by_file, kill_pid, write_pid_file
+from scrapycw.utils.file_utils import read_until_or_timeout, write_once
+from scrapycw.utils.exception import ScrapycwDaemonProcessException
+from scrapycw.utils.process import kill_process, run_in_daemon
 
 
 class Command(ScrapycwCommand):
 
     can_print_result = False
 
-    pid_file = PID_FILENAME
+    pid_file = SERVER_PID_FILENAME
 
     SUB_COMMAND = ["start", "restart", "stop"]
 
@@ -30,7 +33,10 @@ class Command(ScrapycwCommand):
 
         if sub_command not in self.SUB_COMMAND:
             sub_command_str = "|".join(self.SUB_COMMAND)
-            raise ScrapycwCommandException("Can't find sub command {}, you can us {}".format(sub_command, sub_command_str))
+            raise ScrapycwCommandException(
+                code=RESPONSE_CODE.NOT_SUPPORT_SUB_COMMAND,
+                message="Can't find sub command {}, you can us {}".format(sub_command, sub_command_str)
+            )
 
         if sub_command == "start":
             return self.__start(args, opts)
@@ -43,9 +49,10 @@ class Command(ScrapycwCommand):
 
     def __stop(self, args, opts):
         print("stop web server...")
-        pid = get_pid_by_file(self.pid_file)
+        pid = read_until_or_timeout(self.pid_file)
         if pid is None:
-            print('pid file "{}" is not exist, can\'t close'.find(self.pid_file))
+            self.logger.info("关闭 Web Service 时没有找到服务 PID 文件")
+            print("pid file '{}' is not exist, can\'t close".format(self.pid_file))
             return
         pid = int(pid)
 
@@ -63,64 +70,70 @@ class Command(ScrapycwCommand):
                 children_pids.append(_proc.pid)
 
         if proc is None:
+            self.logger.info("关闭 Web Service 时没有找到对应服务")
             print('don\'t have pid "{}" '.format(pid))
             return
 
         if not is_project:
+            self.logger.info("关闭 Web Service 时没有找到对应服务")
             print('pid "{}" is not {} web service'.format(pid, Constant.PROJECT_NAME))
             return
 
-        if kill_pid(pid):
+        if kill_process(pid):
             print("关闭进程成功! 进程ID: {}".format(pid))
         else:
             print("没有该进程! 进程ID: {}".format(pid))
 
         for children_pid in children_pids:
-            if kill_pid(children_pid):
+            if kill_process(children_pid):
                 print("关闭进程成功! 进程ID: {}".format(children_pid))
             else:
                 print("没有该进程! 进程ID: {}".format(children_pid))
 
-        print("关闭web service 完成")
+        os.remove(self.pid_file)
+        print("关闭 Web Service 完成")
+        self.logger.info("关闭 Web Service 完成")
 
     def __start(self, args, opts):
-        sys.argv = []
-        sys.argv.append(os.path.abspath(os.path.dirname(__file__)) + "/../django_manage.py")
-        sys.argv.append("runserver")
-        sys.argv.append("{}:{}".format(opts.host, opts.port))
 
         can_use_port = not port_is_used(opts.port)
-        print("start web service ...".format(opts.host, opts.port))
+        print("start web service ...")
+        self.logger.info("正在开启 Web Service")
 
         if not can_use_port:
+            self.logger.warning("开启 Web Service 失败，端口 {} 已被使用".format(opts.port))
             print("port:{} is used".format(opts.port))
             return
 
-        # TODO 简化、抽取创建守护进程流程，修改为只使用一次fork，主进程基本上会很快死掉，不存在僵尸进程的问题
+        args = {
+            "host": opts.host,
+            "port": opts.port
+        }
         if opts.daemon:
-            pid = os.fork()
-            if pid:
-                sys.exit(0)
-            os.umask(0)
-            os.setsid()
+            try:
+                pid, data = run_in_daemon(Command.start_server, has_return_data=True, args=args)
+                write_once(self.pid_file, str(pid))
+                print(data)
+            except ScrapycwDaemonProcessException as e:
+                self.logger.error("开启 Web Service 失败，失败原因: {}".format(e.message))
+                print("启动后台服务进程失败，失败原因: {}".format(e.message))
+                return
+        else:
+            pid = os.getpid()
+            write_once(self.pid_file, str(pid))
+            Command.start_server(args=args)
+            self.logger.info("开启 Web Service 完成")
+            print("start web service finish!")
 
-            _pid = os.fork()
-            if _pid:
-                sys.exit(0)
-
-            sys.stdout.flush()
-            sys.stderr.flush()
-
-            with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
-                os.dup2(read_null.fileno(), sys.stdin.fileno())
-                os.dup2(write_null.fileno(), sys.stdout.fileno())
-                os.dup2(write_null.fileno(), sys.stderr.fileno())
-
-        ppid = os.getpid()
-        write_pid_file(self.pid_file, ppid)
-        main()
-
-        # print("start web service finish, {}:{}".format(opts.host, opts.port))
+    @staticmethod
+    def start_server(args, callback=None):
+        sys.argv = []
+        sys.argv.append(os.path.abspath(os.path.dirname(__file__)) + "/../django_manage.py")
+        sys.argv.append("runserver")
+        sys.argv.append("{}:{}".format(args['host'], args['port']))
+        if callback:
+            callback("开启后台服务进程成功!")
+        django_main()
 
     def short_desc(self):
         return "Run Web Service"

@@ -2,20 +2,16 @@ from scrapy.exceptions import UsageError
 from scrapy.utils.conf import arglist_to_dict
 
 from scrapycw.commands import ScrapycwCommand
-from scrapycw.helpers.spider import SpiderHelper
+from scrapycw.services.spider import Service
 
 
 class Command(ScrapycwCommand):
 
     def run(self, args, opts):
         if len(args) == 0:
-            return {
-                "success": False,
-                "message": "Please enter spider name",
-                "project": opts.project,
-            }
+            raise UsageError()
         spname = args[0]
-        return SpiderHelper(project=opts.project, cmdline_settings=self.cmdline_settings).crawl(spname=spname, spargs=opts.spargs)
+        return Service.run(project=opts.project, spname=spname, cmdline_settings=self.cmdline_settings, spargs=opts.spargs)
 
     def short_desc(self):
         return "Run Spider"

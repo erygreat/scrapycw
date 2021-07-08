@@ -8,7 +8,7 @@ class CustomCrawlerProcess(CrawlerProcess):
         CrawlerRunner.__init__(self, settings)
         try:
             install_shutdown_handlers(self._signal_shutdown)
-        except:
+        except Exception:
             pass
         configure_logging(self.settings, install_root_handler)
         log_scrapy_info(self.settings)

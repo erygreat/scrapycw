@@ -3,8 +3,6 @@
 import os
 import sys
 
-from scrapy.utils.conf import closest_scrapy_cfg
-
 
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'scrapycw.web.settings')
@@ -22,5 +20,5 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     main()
