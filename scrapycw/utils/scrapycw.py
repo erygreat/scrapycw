@@ -24,14 +24,17 @@ def get_scrapy_settings(project):
             return settings
     return None
 
+
 def dict_from_class(cls, baseClass=object):
     class A(baseClass):
         pass
     _excluded_keys = set(A.__dict__.keys())
     return dict((key, value) for (key, value) in cls.__dict__.items() if key not in _excluded_keys)
 
+
 def value_from_class(cls, baseClass=object):
     return [x for x in dict_from_class(cls, baseClass).values()]
+
 
 def current_time(self):
     if HANDLE_LOG_USE_TIMEZONE:

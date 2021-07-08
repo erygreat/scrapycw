@@ -2,6 +2,7 @@ from scrapy.exceptions import UsageError
 from scrapycw.services.job import Service
 from scrapycw.commands import ScrapycwCommand
 
+
 class Command(ScrapycwCommand):
 
     def run(self, args, opts):

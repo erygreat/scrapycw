@@ -64,7 +64,7 @@ class Service(BaseService):
             )
         except ScrapycwException as e:
             return Response(success=False, message=e.message, code=e.code)
-    
+
     @classmethod
     def __status(cls, job_model):
         if job_model.status == SpiderJob.STATUS.CLOSED:
@@ -144,4 +144,4 @@ class Service(BaseService):
         if is_parse_est:
             result['est'] = helper.spider_running_est()
 
-        return Response(data = result)
+        return Response(data=result)

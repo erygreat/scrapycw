@@ -43,6 +43,7 @@ class JobTelnetHelper(Helper):
         except ScrapycwTelnetException:
             return False
 
+
 class JobStatsHelper(Helper):
 
     running_stats = None

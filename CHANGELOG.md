@@ -4,13 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-## [Unreleased]
+
+# [0.4.3] - 2021-7-8
+
+### UPDATED
+
+- 更新 setup.py
+
+## [0.4.1] - 2021-7-8
+
+### FIXED
+
+- 修改版本号
+## [0.4.0] - 2021-7-8
 
 ### UPDATED
 
 - 修改：修改代码结构，添加 service 层
 - 修改：优化文档结构
 - 修改：优化进程关闭方式，添加 Windows 支持
+- 修改：优化服务进程后台进程，添加 Windows 支持
 - 修改：`不兼容历史版本`, 重新设计数据表，需要删除数据库重新初始化数据库
 
 ### ADDED
