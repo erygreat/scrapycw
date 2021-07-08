@@ -16,6 +16,7 @@ class ScrapycwHelperException(ScrapycwException):
 class Helper(ScrapycwObject):
     pass
 
+
 class SettingsHelper(Helper):
 
     param_project = ""

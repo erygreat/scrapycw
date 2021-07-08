@@ -208,6 +208,7 @@ def __run_in_windows(func, args, has_return_data, pid_file_name, return_file_nam
     subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     # subprocess.Popen(cmd)
 
+
 def __run_daemon_windows(func, args, has_return_data, pid_file_name, return_file_name, error_file_name):
     __run_main(func, args, has_return_data, pid_file_name, return_file_name, error_file_name)
 

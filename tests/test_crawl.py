@@ -54,6 +54,7 @@ def test_pause(testdir):
     r = testdir.runpytest_subprocess()
     assert(r.ret == ExitCode.NO_TESTS_COLLECTED)
 
+
 def test_jobs():
     response = Service.jobs(spider="baidu")
     jobs = response.data['jobs']
@@ -75,6 +76,7 @@ def test_jobs():
         assert(job['status'] == "closed")
         assert(job['close_reason'] == "shutdown")
 
+
 def test_job_stats():
     response = Service.jobs()
     jobs = response.data['jobs']
@@ -87,22 +89,22 @@ def test_job_stats():
         stats = Service.stats(job_id=job_id, is_parse_settings=has_settings, is_parse_log=has_log, is_parse_stats=has_stats, is_parse_est=has_est)
         assert(stats['data']['status'] == "closed")
         if has_settings:
-            assert(stats['data'].get("settings", None) != None)
+            assert(stats['data'].get("settings", None) is not None)
         else:
-            assert(stats['data'].get("settings", None) == None)
+            assert(stats['data'].get("settings", None) is None)
 
         if has_log:
-            assert(stats['data'].get("log_info", None) != None)
+            assert(stats['data'].get("log_info", None) is not None)
         else:
-            assert(stats['data'].get("log_info", None) == None)
+            assert(stats['data'].get("log_info", None) is None)
 
         if has_est:
             if stats['data']['status'] == "running":
-                assert(stats['data'].get("est", None) != None)
+                assert(stats['data'].get("est", None) is not None)
             else:
-                assert(stats['data'].get("est", None) == None)
+                assert(stats['data'].get("est", None) is None)
         else:
-            assert(stats['data'].get("est", None) == None)
+            assert(stats['data'].get("est", None) is None)
 
         if not has_stats:
-            assert(stats['data'].get("stats", None) == None)
+            assert(stats['data'].get("stats", None) is None)

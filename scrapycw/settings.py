@@ -42,7 +42,7 @@ LOGGING_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
 SPIDER_LISTEN_LOOP_TIME = 10
 
 try:
-    from scrapycw_settings import * # noqa # pylint: disable=unused-import
+    from scrapycw_settings import *  # type: ignore # noqa
 except ImportError:
     pass
 
