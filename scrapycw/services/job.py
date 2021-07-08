@@ -66,11 +66,11 @@ class Service(BaseService):
             return Response(success=False, message=e.message, code=e.code)
     
     @classmethod
-    def __status(cls, job_id, job_model_status):
-        if job_model_status == SpiderJob.STATUS.CLOSED:
+    def __status(cls, job_model):
+        if job_model.status == SpiderJob.STATUS.CLOSED:
             return JobHelper.JOB_STATUS.CLOSED
-        elif job_model_status == SpiderJob.STATUS.RUNNING:
-            telnet_helper = JobTelnetHelper(job_id)
+        elif job_model.status == SpiderJob.STATUS.RUNNING:
+            telnet_helper = JobTelnetHelper(job_model.telnet_host, job_model.telnet_port, job_model.telnet_username, job_model.telnet_password)
             if telnet_helper.is_paused():
                 return JobHelper.JOB_STATUS.PAUSED
             elif telnet_helper.is_closing():
@@ -112,7 +112,7 @@ class Service(BaseService):
                 "host": model.telnet_host,
                 "port": model.telnet_port
             },
-            "status": cls.__status(model.job_id, model.status),
+            "status": cls.__status(model),
             "start_time": model.start_time,
             "end_time": model.end_time,
             "close_reason": model.close_reason,
