@@ -311,32 +311,3 @@ class JobHelper(Helper):
 
     def pause(self):
         self.telnet.command_once("engine.pause()")
-
-class JobStatusHelper(JobHelper):
-
-    def get(self, is_parse_settings=True, is_parse_stats=True, is_parse_log=True):
-        results ={
-            "job_id": self.job_id,
-            "project": self.project,
-            "spider": self.spider,
-            "log_filename": self.log_path,
-            "start_time": self.get_start_time(),
-            "end_time": self.stats.end_time_or_none(),
-            "closed_reason": self.stats.closed_reason_or_none(),
-            "pages": self.stats.pages(),
-            "items": self.stats.items(),
-            "runtime": self.get_runtime(),
-            "status": self.get_status()
-        }
-
-        if is_parse_settings:
-            results["settings"] = self.settings
-
-        if is_parse_stats:
-            results["stats"] = self.stats.spider_stats()
-            results["est"] = self.get_running_est()
-
-        if is_parse_log:
-            results["log"] = self.log_info
-
-        return results
