@@ -3,7 +3,9 @@
     "baseUrl": "./src",
     "paths": {
         "@/*": ["*"],
-        "@stylesheets/*": ["stylesheets/*"]
+        "@stylesheets/*": ["stylesheets/*"],
+        "@ui/*": ["./components/ui/*"],
+        "@ui": ["./components/ui/index"]
     },
     "target": "es6",
     "lib": [
@@ -22,7 +24,7 @@
     "resolveJsonModule": true,
     "isolatedModules": false,
     "noEmit": false,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "suppressImplicitAnyIndexErrors": true,
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },

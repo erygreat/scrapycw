@@ -13,6 +13,7 @@ config = merge(common, {
             ]
         }),
         new HtmlWebpackPlugin({
+            favicon: path.resolve(__dirname, '../src/favicon.ico'),
             template: 'src/index.html',
             filename: 'index.html',
         }),

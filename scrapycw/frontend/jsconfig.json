@@ -1,10 +1,11 @@
 {
     "compilerOptions": {
       "baseUrl": "src",
-      "paths": {  // 如果修改时无效，可能是语法有问题
+      "paths": {
         "@/*": ["./*"],
         "@stylesheets/*": ["./stylesheets/*"],
-        "@ui/*": ["./components/ui/*"]
+        "@ui/*": ["./components/ui/*"],
+        "@ui": ["./components/ui/index"]
       }
     }
   }
