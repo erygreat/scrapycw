@@ -256,11 +256,11 @@ def create_time(pid):
     return None
 
 
-def kill_process(pid, timeout=5000):
+def kill_process(pid, timeout=0):
     """
     关闭进程
     :params pid 进程ID
-    :params timeout 关闭超时时间, 单位毫秒
+    :params timeout 关闭超时时间, 单位秒
     """
     proc = None
     for _proc in psutil.process_iter():

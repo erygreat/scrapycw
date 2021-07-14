@@ -24,11 +24,11 @@ def write_once(filename, data):
     return True
 
 
-def read_until_or_timeout(filename, timeout=5000):
+def read_until_or_timeout(filename, timeout=0):
     """
     读取文件直到文件读取完成或者超时
     :params filename 文件名称
-    :params timeout 超时时间，单位为毫秒
+    :params timeout 超时时间，单位为秒
     """
     start_time = time.time()
     while True:
@@ -43,7 +43,7 @@ def read_until_or_timeout(filename, timeout=5000):
             time.sleep(0.01)
 
 
-def read_until_once_or_timeout(filename_and_types, timeout=5000):
+def read_until_once_or_timeout(filename_and_types, timeout=0):
     """
     :params filename_and_types 文件和类型列表 [{
         "filename": "xxxx.error",
