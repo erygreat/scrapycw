@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
     entry: {
@@ -55,7 +56,7 @@ module.exports = {
         alias: {
             '@': path.resolve(__dirname, '../src'),
             '@stylesheets': path.resolve(__dirname, '../src/stylesheets'),
-            '@ui': path.resolve(__dirname, '../src/components/ui')
+            '@ui': path.resolve(__dirname, '../src/ui')
         },
         extensions: [".ts", ".tsx", ".js"]
     },
@@ -64,6 +65,11 @@ module.exports = {
             $: 'jquery',
             jQuery: 'jquery',
             axios: 'axios'
+        }),
+        new HtmlWebpackPlugin({
+            favicon: path.resolve(__dirname, '../src/favicon.ico'),
+            template: 'src/index.html',
+            filename: 'index.html',
         }),
     ]
 };

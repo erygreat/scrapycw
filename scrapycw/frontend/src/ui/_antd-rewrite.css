@@ -1,0 +1,22 @@
+/* .ant-menu-inline-collapsed>.ant-menu-item,
+.ant-menu-inline-collapsed>.ant-menu-item-group>.ant-menu-item-group-list>.ant-menu-item,
+.ant-menu-inline-collapsed>.ant-menu-item-group>.ant-menu-item-group-list>.ant-menu-submenu>.ant-menu-submenu-title,
+.ant-menu-inline-collapsed>.ant-menu-submenu>.ant-menu-submenu-title {
+    padding: 0 1.7rem;
+}
+
+.ant-menu-inline-collapsed {
+    width: 64px;
+}
+.ant-btn-sm {
+    font-size: 1rem;
+}
+.ant-table-thead > tr > th,
+.ant-table-tbody > tr > td,
+.ant-table tfoot > tr > th,
+.ant-table tfoot > tr > td {
+    padding: 1rem;
+}
+.ant-table-thead > tr > th {
+    font-weight: 600;
+} */

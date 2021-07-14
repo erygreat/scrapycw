@@ -8,7 +8,7 @@ from scrapycw.helpers.spider import SpiderHelper
 class Service(BaseService):
 
     @classmethod
-    def list(cls, project):
+    def list(cls, project=None):
         if project:
             try:
                 return Response(data=SpiderHelper(project=project).list())

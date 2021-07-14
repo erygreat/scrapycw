@@ -4,8 +4,8 @@
     "paths": {
         "@/*": ["*"],
         "@stylesheets/*": ["stylesheets/*"],
-        "@ui/*": ["./components/ui/*"],
-        "@ui": ["./components/ui/index"]
+        "@ui/*": ["./ui/*"],
+        "@ui": ["./ui/index"]
     },
     "target": "es6",
     "lib": [
