@@ -13,12 +13,20 @@ interface HeaderItemProps {
     full?: boolean
 }
 
+const Item = styled.div<HeaderItemProps>`
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    padding: 0 10px;
+    ${ props => props.full && css`flex: auto` }
+`
+Item.displayName = "Header.Item"
+
 const HeaderPlaceholder = styled.div<HeaderProps>`
     height: ${ props => (props.height || styleGet("size.height.header")) + "px" };
     line-height: ${ props => (props.height || styleGet("size.height.header")) + "px" };
     width: 100%;
 `
-
 const HeaderWrapper = styled.header<HeaderProps>`
     display: flex;
     height: ${ props => (props.height || styleGet("size.height.header")) + "px" };
@@ -30,7 +38,6 @@ const HeaderWrapper = styled.header<HeaderProps>`
     align-items: stretch;
     flex-wrap: nowrap;
 `
-
 const HeaderFixed = (props: HeaderProps) => {
     return <>
         <HeaderWrapper {...props} />
@@ -41,23 +48,11 @@ const HeaderFixed = (props: HeaderProps) => {
 const Header = (props: HeaderProps) => {
     React.Children.forEach<React.ReactNode>(props.children, item => {
         if(!React.isValidElement(item) || (item as React.ReactElement).type !== Item) {
-            throw new UIException("Header 组件子组件只允许使用 Header.Item 组件")
+            throw new UIException(`Header 组件子组件只允许使用 ${ Item.displayName } 组件`)
         }
     })
-    return props.fixed 
-        ? <HeaderFixed {...props} />
-        : <HeaderWrapper {...props} />
+    return props.fixed ? <HeaderFixed {...props} /> : <HeaderWrapper {...props} />
 }
 
-const Item = styled.div<HeaderItemProps>`
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
-    padding: 0 10px;
-    ${ props => props.full && css`flex: auto` }
-`
-
-Item.displayName = "Header.Item"
 Header.Item = Item
-
 export default Header;
