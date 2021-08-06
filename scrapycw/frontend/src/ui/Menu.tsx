@@ -8,6 +8,7 @@ interface MenuProps extends AntdMenuProps {
 }
 
 export default styled(Menu)<MenuProps>`
+    border-right: 0;
     .ant-menu-submenu-arrow {
         color: inherit;
     }
@@ -15,10 +16,13 @@ export default styled(Menu)<MenuProps>`
         margin: 0;
         width: 100%;
     }
-    .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    & .ant-menu-item:active,
+    & .ant-menu-submenu-title:active {
+        ${ props => props.$subMenuActiveBgColor && css`background-color: ${ props.$subMenuActiveBgColor }` };
+    }
+    &.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
         ${ props => props.$subMenuActiveBgColor && css`background-color: ${ props.$subMenuActiveBgColor }` };
         ${ props => props.$subMenuActiveColor && css`color: ${ props.$subMenuActiveColor }` };
-        
     }
     .ant-menu-item::after {
         ${ props => props.$subMenuActiveBorderColor && css`border-right: 3px solid ${ props.$subMenuActiveBorderColor }` };
