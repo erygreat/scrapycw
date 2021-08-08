@@ -34,17 +34,11 @@ const router: Array<XOR<RouterLink, RouterChildren>> = [
     //     view: <Dashboard />,
     // },
     {
-        key: "spider-management",
-        title: "抓取",
+        key: "spiders",
+        title: "爬虫管理",
         icon: <BugOutlined />,
-        children: [
-            {
-                key: "spiders",
-                title: "爬虫管理",
-                link: "/spiders",
-                view: <Spiders />
-            }
-        ]
+        link: "/spiders",
+        view: <Spiders />
     }
 ]
 

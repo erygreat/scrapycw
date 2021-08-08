@@ -9,15 +9,18 @@ const styles = {
             sider: primitives.colors.dark.scale.gray[7],
             menuItem: primitives.colors.dark.scale.gray[7],
             menuItemActive: primitives.colors.dark.scale.blue[6],
+            btn: primitives.colors.dark.scale.gray[0],
+            btnBlue: primitives.colors.dark.scale.blue[4],
+            btnBlueHover: primitives.colors.dark.scale.blue[3],
         },
         text: {
             header: primitives.colors.dark.header.text,
             sider: primitives.colors.dark.scale.gray[1],
             menuItemActive: primitives.colors.dark.scale.white,
+            defaultWhite: primitives.colors.dark.scale.gray[0],
         },
         border: {
             sider: primitives.colors.dark.scale.gray[0],
-            menuItemActive: primitives.colors.dark.scale.blue[4],
         },
     },
     size: {

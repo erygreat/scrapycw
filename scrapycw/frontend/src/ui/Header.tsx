@@ -23,6 +23,7 @@ const Item = styled.div<HeaderItemProps>`
 Item.displayName = "Header.Item"
 
 const HeaderPlaceholder = styled.div<HeaderProps>`
+    flex: 0 0 ${ props => (props.height || styleGet("size.height.header")) + "px" };
     height: ${ props => (props.height || styleGet("size.height.header")) + "px" };
     line-height: ${ props => (props.height || styleGet("size.height.header")) + "px" };
     width: 100%;

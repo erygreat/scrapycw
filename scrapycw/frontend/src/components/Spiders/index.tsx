@@ -1,8 +1,3 @@
+import Spiders from "./Spiders";
 
-const SpidersTable = () => {
-    return <div>
-        
-    </div>
-}
-
-export default SpidersTable;
+export default Spiders;

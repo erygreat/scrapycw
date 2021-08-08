@@ -6,6 +6,7 @@ import router from '@/router';
 
 const StyledContent = styled.div`
     flex: auto;
+    overflow: scroll;
 `
 
 const Content = () => {
@@ -24,6 +25,7 @@ const Content = () => {
 
 const StyledMain = styled.div`
     display: flex;
+    overflow: hidden;
 `
 
 const Main: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
