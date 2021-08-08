@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { CollapseBtn, CollapseBtnProps } from "@ui/CollapseBtn"
+import { CollapseBtn, CollapseBtnProps } from "@ui"
 
 const StyldControls = styled.div`
     padding: 10px 0;

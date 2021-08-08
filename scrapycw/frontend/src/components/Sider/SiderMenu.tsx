@@ -1,6 +1,7 @@
 import { Menu } from "@ui"
 import routers from '@/router';
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 const { SubMenu } = Menu;
 const MenuItem = Menu.Item;
 
@@ -26,11 +27,19 @@ const SiderMenu: React.FC<React.HTMLAttributes<HTMLDivElement> & SiderMenuProps>
         >
         {
             routers.map(router => {
-                return <SubMenu key={ router.key } icon={ router.icon } title={ router.title }>
-                    { router.children.map(subRouter => {
-                        return <StyledMenuItem key={ subRouter.key }> { subRouter.content }</StyledMenuItem>
-                    }) }
-                </SubMenu>
+                return router.children
+                    ? <SubMenu key={ router.key } icon={ router.icon } title={ router.title }>
+                        {
+                            router.children.map(subRouter => {
+                                return <StyledMenuItem key={ subRouter.key } icon={ subRouter.icon }>
+                                    <Link to={ subRouter.link }>{ subRouter.title }</Link>
+                                </StyledMenuItem>
+                            })
+                        }
+                    </SubMenu>
+                    : <StyledMenuItem key={ router.key } icon={ router.icon }>
+                        <Link to={ router.link }>{ router.title }</Link>
+                    </StyledMenuItem>
             })
         }
     </Menu>

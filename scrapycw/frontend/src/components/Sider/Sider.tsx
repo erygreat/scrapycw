@@ -20,6 +20,9 @@ const SiderMenuWrapper = styled(SiderMenu)`
         background: ${ styleGet("color.bg.menuItem")};
         color: ${ styleGet("color.text.sider") };
     }
+    ${ StyledMenuItem } a {
+        color: ${ styleGet("color.text.sider") };
+    }
 `
 
 const StyledSider = styled.div`

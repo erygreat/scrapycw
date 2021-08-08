@@ -1,16 +1,36 @@
 import React from 'react';
-import style from "./Main.module.css"
+import styled from 'styled-components';
 import Sider from './Sider/Sider';
+import { Route, Switch } from "react-router-dom";
+import router from '@/router';
+
+const StyledContent = styled.div`
+    flex: auto;
+`
 
 const Content = () => {
-    return <div></div>
+    return <StyledContent>
+        <Switch>
+            {
+                router.map(item => {
+                    return item.children
+                        ? item.children.map(childItem => <Route key={ childItem.key } exact path={ childItem.link }>{ childItem.view }</Route>)
+                        : <Route key={ item.key } exact path={ item.link }>{ item.view }</Route>
+                })
+            }
+        </Switch>
+    </StyledContent>
 }
 
+const StyledMain = styled.div`
+    display: flex;
+`
+
 const Main: React.FC<React.HTMLAttributes<HTMLDivElement>> = (props) => {
-    return <div className={ `${ props.className } ${ style.main }` }>
+    return <StyledMain className={ `${ props.className }` }>
         <Sider />
         <Content />
-    </div>
+    </StyledMain>
 }
 
 export default Main;
