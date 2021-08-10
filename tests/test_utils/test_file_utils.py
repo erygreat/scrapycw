@@ -1,6 +1,6 @@
 import os
 from scrapycw.utils.file_utils import read_until_once_or_timeout, read_until_or_timeout, write_once
-from scrapycw.utils.exception import ScrapycwReadException
+from scrapycw.core.exception import ScrapycwReadException
 
 
 def test_write():

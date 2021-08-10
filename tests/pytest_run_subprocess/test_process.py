@@ -1,4 +1,4 @@
-from scrapycw.utils.exception import ScrapycwDaemonProcessException
+from scrapycw.core.exception import ScrapycwDaemonProcessException
 from scrapycw.utils.process import is_running, kill_process, run_in_daemon
 import time
 

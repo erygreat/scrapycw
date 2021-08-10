@@ -1,10 +1,12 @@
 import logging
 import os
 import datetime
+import sys
 
 from scrapy.utils.conf import closest_scrapy_cfg
 
 __BASE_URL = os.path.dirname(closest_scrapy_cfg())
+sys.path.append(__BASE_URL)
 
 # 服务器运行端口
 SERVER_PORT = 2312

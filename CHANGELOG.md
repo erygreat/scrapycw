@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [Unreleased]
+
+### FIXED
+
+- 修复：使用异常类基类不统一问题
+- 修复：获取 scrapycw_settings 文件路径问题
+- 修复：Mac 上基于 Django 启动爬虫触发 OBJC_DISABLE_INITIALIZE_FORK_SAFETY 而失败问题，Mac和Linux上进程启动方式由 Fork 修改为使用 subprocess.Popen 开启子进程
+
+### ADDED
+
+- 添加：默认异常代码 9999
+
+# [0.4.4] - 2021-7-15
+
+### FIXED
+
+- 修复关闭服务长时间未响应问题
+
 # [0.4.3] - 2021-7-8
 
 ### UPDATED

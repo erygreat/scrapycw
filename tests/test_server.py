@@ -2,7 +2,7 @@ from _pytest.config import ExitCode
 from tests.conftest import current_dir
 
 
-def test_server(testdir):
+def test_server_scrapycw(testdir):
     testdir.makepyfile("""
         import os
         import sys
