@@ -53,3 +53,5 @@ class RESPONSE_CODE:
 
     # 请输入爬虫名称
     NOT_ENTER_SPIDER_NAME = 2000
+
+    DEFAULT_ERROR = 9999

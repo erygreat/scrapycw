@@ -1,7 +1,6 @@
 import importlib
 import inspect
 import os
-import platform
 import json
 import time
 import sys
@@ -9,7 +8,6 @@ import subprocess
 import optparse
 import nanoid
 import psutil
-import io
 
 
 if __name__ == "__main__":
@@ -22,7 +20,7 @@ if __name__ == "__main__":
     init_django_env()
 
 from scrapycw.utils.file_utils import read_until_once_or_timeout, read_until_or_timeout, remove_file_if_exists, write_once
-from scrapycw.utils.exception import ScrapycwCommandParamMissingException, ScrapycwDaemonProcessException, ScrapycwDaemonStartTimeoutException, ScrapycwNotSupportSystemException, ScrapycwArgsMustCanSerializationException, ScrapycwReadException
+from scrapycw.core.exception import ScrapycwCommandParamMissingException, ScrapycwDaemonProcessException, ScrapycwDaemonStartTimeoutException, ScrapycwArgsMustCanSerializationException, ScrapycwReadException
 from scrapycw.settings import START_DAEMON_TIMEOUT, TEMP_FILE_DIR
 
 
@@ -93,13 +91,7 @@ def run_in_daemon(func, args=None, has_return_data=False):
     error_file_name = os.path.join(temp_dir, "{}.daemon.error".format(file_key))
 
     # 检查操作系统，并启动守护进程运行后台代码
-    system_os = platform.system()
-    if system_os == 'Darwin' or system_os == 'Linux':
-        __run_in_linux(func, args, has_return_data, pid_file_name, return_file_name, error_file_name)
-    elif system_os == 'Windows':
-        __run_in_windows(func, args, has_return_data, pid_file_name, return_file_name, error_file_name)
-    else:
-        raise ScrapycwNotSupportSystemException("不支持的操作系统: {}".format(system_os))
+    __run(func, args, has_return_data, pid_file_name, return_file_name, error_file_name)
 
     # 等待 PID 文件生成（守护进程创建完成）
     try:
@@ -138,42 +130,6 @@ def run_in_daemon(func, args=None, has_return_data=False):
     return pid, data
 
 
-def __run_in_linux(func, args, has_return_data, pid_file_name, return_file_name, error_file_name):
-    is_daemon = __fork_daemon_in_linux()
-    if not is_daemon:
-        return
-    else:
-        __run_main(func, args, has_return_data, pid_file_name, return_file_name, error_file_name)
-        sys.exit(0)
-
-
-def __fork_daemon_in_linux():
-    """
-    创建一个后台进程，在Linux，如果是主进程，返回 False，如果是后台进程，返回 True
-    """
-    pid = os.fork()
-    if pid:
-        return False
-    os.umask(0)
-    os.setsid()
-
-    _pid = os.fork()
-    if _pid:
-        os._exit(0)
-
-    sys.stdout.flush()
-    sys.stderr.flush()
-
-    with open('/dev/null') as read_null, open('/dev/null', 'w') as write_null:
-        try:
-            os.dup2(read_null.fileno(), sys.stdin.fileno())
-        except io.UnsupportedOperation:
-            pass
-        os.dup2(write_null.fileno(), sys.stdout.fileno())
-        os.dup2(write_null.fileno(), sys.stderr .fileno())
-    return True
-
-
 def __run_main(func, args, has_return_data, pid_file_name, return_file_name, error_file_name):
     # 保存PID
     ppid = os.getpid()
@@ -197,9 +153,9 @@ def __run_main(func, args, has_return_data, pid_file_name, return_file_name, err
         write_once(error_file_name, json.dumps(error_obj))
 
 
-def __run_in_windows(func, args, has_return_data, pid_file_name, return_file_name, error_file_name):
+def __run(func, args, has_return_data, pid_file_name, return_file_name, error_file_name):
 
-    cmd = ['python', os.path.abspath(__file__), "--module", inspect.getmodule(func).__name__, "--func", func.__qualname__, "--pid_file_name", pid_file_name, "--return_file_name", return_file_name, "--error_file_name", error_file_name]
+    cmd = ['python3', os.path.abspath(__file__), "--module", inspect.getmodule(func).__name__, "--func", func.__qualname__, "--pid_file_name", pid_file_name, "--return_file_name", return_file_name, "--error_file_name", error_file_name]
 
     if args:
         cmd.append("--args")
@@ -211,7 +167,7 @@ def __run_in_windows(func, args, has_return_data, pid_file_name, return_file_nam
     # subprocess.Popen(cmd)
 
 
-def __run_daemon_windows(func, args, has_return_data, pid_file_name, return_file_name, error_file_name):
+def __run_daemon(func, args, has_return_data, pid_file_name, return_file_name, error_file_name):
     __run_main(func, args, has_return_data, pid_file_name, return_file_name, error_file_name)
 
 
@@ -284,12 +240,8 @@ def kill_process(pid, timeout=0):
 
 if __name__ == "__main__":
     """
-    Windows 守护进程启动代码
     TODO 这里存在一个问题，就是如果这下面代码出现了 ERROR，那么在其他地方是无法知道报了什么错的，因此需要找个地方对错误进行记录，不过考虑到代码都是内部使用的，所以相信内部代码不会写出这种问题，所以暂时先不解决，等到真的需要时在解决
     """
-    if platform.system() != "Windows":
-        sys.exit(0)
-
     argv = sys.argv
     parser = optparse.OptionParser(formatter=optparse.TitledHelpFormatter())
     group = optparse.OptionGroup(parser, "Global Options")
@@ -321,11 +273,10 @@ if __name__ == "__main__":
         raise ScrapycwCommandParamMissingException("请输入pid存储文件 --pid_file_name")
     if opts.args:
         args = json.loads(args)
-
     function_names = function_name.split(".")
     target_module = importlib.import_module(module_name)
     target_func = target_module
     for function_name in function_names:
         target_func = getattr(target_func, function_name)
 
-    __run_daemon_windows(target_func, args, has_return_data, pid_file_name, return_file_name, error_file_name)
+    __run_daemon(target_func, args, has_return_data, pid_file_name, return_file_name, error_file_name)

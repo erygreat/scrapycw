@@ -1,7 +1,7 @@
 import os
 import time
 
-from scrapycw.utils.exception import ScrapycwReadException
+from scrapycw.core.exception import ScrapycwReadException
 
 
 def write_once(filename, data):
