@@ -36,7 +36,7 @@ def value_from_class(cls, baseClass=object):
     return [x for x in dict_from_class(cls, baseClass).values()]
 
 
-def current_time(self):
+def current_time():
     if HANDLE_LOG_USE_TIMEZONE:
         return datetime.now()
     else:

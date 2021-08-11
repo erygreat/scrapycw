@@ -132,7 +132,7 @@ class SpiderHelper(SettingsHelper):
             return job_helper.handler_when_close()
 
         while True:
-            if process.is_running(pid, process_create_time):
+            if process.is_running(pid, process_create_time) and job_helper.stats.is_running():
                 SpiderHelper.logger.debug("[爬虫正在运行中]: 任务ID: {}, PID: {}".format(job_id, pid))
                 time.sleep(SPIDER_LISTEN_LOOP_TIME)
             else:

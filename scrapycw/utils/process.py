@@ -192,13 +192,17 @@ def is_running(pid, create_time=None):
     进程是否在运行
     :params pid 进程ID
     """
-    for _proc in psutil.process_iter():
-        if pid == _proc.pid:
-            if not create_time:
-                return True
-            elif create_time == _proc.create_time():
-                return True
-            return False
+    try:
+        proc = psutil.Process(pid)
+    except psutil.NoSuchProcess:
+        return False
+
+    if not create_time:
+        return True
+
+    if create_time == proc.create_time():
+        return True
+
     return False
 
 
@@ -206,33 +210,25 @@ def create_time(pid):
     """
     获取进程创建时间
     """
-    for _proc in psutil.process_iter():
-        if pid == _proc.pid:
-            return _proc.create_time()
-    return None
+    try:
+        proc = psutil.Process(pid)
+        return proc.create_time()
+    except psutil.NoSuchProcess:
+        return None
 
 
-def kill_process(pid, timeout=0):
+def kill_process(pid, timeout=1):
     """
     关闭进程
     :params pid 进程ID
     :params timeout 关闭超时时间, 单位秒
     """
-    proc = None
-    for _proc in psutil.process_iter():
-        if pid == _proc.pid:
-            proc = _proc
-            break
-    if not proc:
-        return True
-
-    start_time = time.time()
     try:
+        proc = psutil.Process(pid)
         proc.kill()
-        while is_running(pid):
-            if time.time() - start_time > timeout:
-                return False
-            time.sleep(0.01)
+        proc.wait(timeout=timeout)
+        return not is_running(pid)
+    except psutil.NoSuchProcess:
         return True
     except OSError:
         return False

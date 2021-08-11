@@ -12,10 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 修复：使用异常类基类不统一问题
 - 修复：获取 scrapycw_settings 文件路径问题
 - 修复：Mac 上基于 Django 启动爬虫触发 OBJC_DISABLE_INITIALIZE_FORK_SAFETY 而失败问题，Mac和Linux上进程启动方式由 Fork 修改为使用 subprocess.Popen 开启子进程
+- 修复：检测爬虫关闭时爬虫关闭却检测不出来的问题
+- 修复：获取当前时间失败
 
 ### ADDED
 
 - 添加：默认异常代码 9999
+
+### UPDATED
+
+- 修改：修改进程关闭、判断是否运行方式
 
 # [0.4.4] - 2021-7-15
 
