@@ -10,7 +10,7 @@ setup(
         Scrapycw是一个Scrapy监控程序，你可以通过命令行或者web服务的方式监控Scrapy爬虫运行情况，以及进行运行爬虫等常用操作。
     """,
     install_requires=[
-        "Django==3.1.12",
+        "Django==3.1.13",
         'Scrapy>=1.0',
         "psutil>=5.0.0",
         'pytest',
